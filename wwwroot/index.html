@@ -1,0 +1,440 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Golden Corn · 後勁 Houjing | 線上點餐系統</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Top Striped Border (Matching Menu Cover) -->
+    <div class="striped-bar"></div>
+
+    <!-- Header & Brand Hero -->
+    <header class="header-hero">
+        <div class="brand-badge">NEW WAVE AMERICAN EATS</div>
+        <div class="brand-logo-area">
+            <h1 class="brand-title">GOLDEN CORN</h1>
+        </div>
+        <div class="brand-subtitle">後勁 Houjing · Texas Smoked BBQ & Soul Food</div>
+        
+        <div class="header-actions">
+            <button class="btn-header-action" onclick="openHistoryModal()">
+                <span>📱</span> 我的訂單
+            </button>
+            <button class="btn-header-action" onclick="openStoreInfoModal()">
+                <span>ℹ️</span> 門市資訊
+            </button>
+        </div>
+    </header>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <span class="announcement-icon">🔥</span>
+        <div class="announcement-text" id="announcementText">
+            歡迎光臨 Golden Corn！美式德州慢火燻烤、靈魂料理，餐點現點現做，感謝您的耐心等候。
+        </div>
+    </div>
+
+    <!-- Store Status Bar -->
+    <div class="store-info-bar">
+        <div id="storeStatusPill" class="status-pill open">
+            <span class="status-dot"></span>營業中 · 現點現烤
+        </div>
+        <div style="font-size:12px; color:var(--gc-text-muted);">
+            外帶 / 內用點餐
+        </div>
+    </div>
+
+    <!-- Sticky Category Navigation Bar -->
+    <nav class="category-nav-wrapper">
+        <div class="category-nav-container">
+            <div class="category-tabs" id="categoryTabs">
+                <!-- Dynamically populated -->
+            </div>
+            <button class="search-btn-trigger" onclick="toggleSearchBox()" title="搜尋餐點">
+                🔍
+            </button>
+        </div>
+    </nav>
+
+    <!-- Expandable Search Box -->
+    <div class="search-container" id="searchBoxContainer">
+        <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="menuSearchInput" class="search-input" placeholder="搜尋菜單品項、肉品、小點..." oninput="handleSearchInput(this)">
+        </div>
+    </div>
+
+    <!-- Main Menu Area -->
+    <main class="main-container" id="menuContainer">
+        <!-- Dynamically rendered menu items -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-info">
+        <div class="footer-brand">GOLDEN CORN</div>
+        <div>後勁 Houjing · Texas Smoked BBQ & Soul Food</div>
+        <div style="margin-top: 8px; color: #88998a;">All prices are takeout prices 外帶價 · 現點現烤</div>
+    </footer>
+    <div class="bottom-striped-bar"></div>
+
+    <!-- ================= Sticky Bottom Shopping Bar ================= -->
+    <div class="bottom-cart-bar" id="bottomCartBar">
+        <div class="cart-bar-content">
+            <div class="cart-bar-left">
+                <div class="cart-icon-badge">
+                    🌽
+                    <span class="cart-count-bubble" id="cartCountBubble">0</span>
+                </div>
+                <div>
+                    <div class="cart-bar-total-label">訂單總計</div>
+                    <div class="cart-bar-total-amount">NT$ <span id="cartTotalDisplay">0</span></div>
+                </div>
+            </div>
+            <button class="btn-open-cart" onclick="openCartModal()">
+                <span>查看購物車</span>
+                <span>➔</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= Modal 1: Plate & Item Customization ================= -->
+    <div class="modal-backdrop" id="optionsModalBackdrop" onclick="if(event.target===this) closeOptionsModal()">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalItemName">餐點名稱</div>
+                    <div class="modal-subtitle" id="modalItemEnglish">English Name</div>
+                </div>
+                <button class="btn-modal-close" onclick="closeOptionsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalOptionGroupsContainer">
+                    <!-- Dynamic option groups (e.g. 自選配料, 限量加購) -->
+                </div>
+
+                <div class="form-group" style="margin-top:16px;">
+                    <label class="form-label" for="modalItemNote">餐點備註（選填）</label>
+                    <input type="text" id="modalItemNote" class="form-control" placeholder="例：醬料分開、不要太焦等">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="quantity-controller">
+                    <button class="btn-qty" onclick="adjustModalQty(-1)">-</button>
+                    <span class="qty-display" id="modalQtyDisplay">1</span>
+                    <button class="btn-qty" onclick="adjustModalQty(1)">+</button>
+                </div>
+                <button class="btn-add-item" style="padding:10px 24px; font-size:15px;" onclick="confirmAddPlateModal()">
+                    加入購物車 · NT$ <span id="modalTotalPrice">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Modal 2: Cart & Checkout ================= -->
+    <div class="modal-backdrop" id="cartModalBackdrop" onclick="if(event.target===this) closeCartModal()">
+        <div class="modal-card" style="max-width: 580px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">購物車與結帳</div>
+                    <div class="modal-subtitle">Golden Corn Takeout & Dine-In</div>
+                </div>
+                <button class="btn-modal-close" onclick="closeCartModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Cart Items List -->
+                <div class="cart-items-list" id="cartModalItemsList">
+                    <!-- Dynamic Cart Items -->
+                </div>
+
+                <!-- Dining Type Toggle -->
+                <div class="form-group">
+                    <label class="form-label">用餐方式</label>
+                    <div class="dining-type-toggle">
+                        <button type="button" class="btn-dining-toggle active" id="btnDiningTakeout" onclick="setDiningType('Takeout')">
+                            🥡 外帶自取 (Takeout)
+                        </button>
+                        <button type="button" class="btn-dining-toggle" id="btnDiningDineIn" onclick="setDiningType('DineIn')">
+                            🍽️ 內用點餐 (Dine-in)
+                        </button>
+                    </div>
+                    <input type="hidden" id="orderDiningType" value="Takeout">
+                </div>
+
+                <!-- Table Number (if DineIn) -->
+                <div class="form-group" id="dineInTableGroup" style="display:none;">
+                    <label class="form-label" for="orderTableNumber">內用桌號 <span style="color:#b91c1c;">*</span></label>
+                    <input type="text" id="orderTableNumber" class="form-control" placeholder="請輸入桌號（例如：A1, 03）">
+                </div>
+
+                <!-- Customer Details -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="form-group">
+                        <label class="form-label" for="orderCustomerName">訂購人稱呼 <span style="color:#b91c1c;">*</span></label>
+                        <input type="text" id="orderCustomerName" class="form-control" placeholder="例如：陳先生 / Alice">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="orderCustomerPhone">聯絡手機 <span style="color:#b91c1c;">*</span></label>
+                        <input type="tel" id="orderCustomerPhone" class="form-control" placeholder="09xxxxxxxx">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="orderPickupTime">預計取餐時間</label>
+                    <input type="text" id="orderPickupTime" class="form-control" value="儘速製作 (約 15-20 分鐘)" placeholder="例如：儘速製作 或 18:30">
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="form-group">
+                    <label class="form-label">付款方式</label>
+                    <div class="payment-method-options">
+                        <div class="btn-payment-option active" data-method="Cash" onclick="setPaymentMethod('Cash')">
+                            💵 現場付款
+                        </div>
+                        <div class="btn-payment-option" data-method="LinePay" onclick="setPaymentMethod('LinePay')">
+                            💚 LINE Pay
+                        </div>
+                        <div class="btn-payment-option" data-method="BankTransfer" onclick="setPaymentMethod('BankTransfer')">
+                            🏦 銀行轉帳
+                        </div>
+                    </div>
+                    <input type="hidden" id="orderPaymentMethod" value="Cash">
+                </div>
+
+                <!-- Order Remarks -->
+                <div class="form-group">
+                    <label class="form-label" for="orderCustomerNote">全單備註說明</label>
+                    <textarea id="orderCustomerNote" class="form-control" rows="2" placeholder="是否有特殊過敏原或包裝需求..."></textarea>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary-box">
+                    <div class="summary-row">
+                        <span>餐點小計</span>
+                        <span id="cartSummarySubtotal">NT$ 0</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>應付總額</span>
+                        <span id="cartSummaryTotal">NT$ 0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" style="background:transparent; border:none; color:#dc2626; font-size:13px; font-weight:700; cursor:pointer;" onclick="clearCart()">
+                    清空購物車
+                </button>
+                <button type="button" class="btn-add-item" style="padding:12px 28px; font-size:15px;" id="btnSubmitOrder" onclick="submitOrder()">
+                    前往付款 / 確認訂單 ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Modal 2.5: Payment & Transfer Confirmation ================= -->
+    <div class="modal-backdrop" id="paymentModalBackdrop" onclick="if(event.target===this) closePaymentModal()">
+        <div class="modal-card" style="max-width:440px; text-align:center;">
+            <div class="modal-header" style="justify-content:center;">
+                <div style="text-align:center;">
+                    <div class="modal-title" id="paymentModalTitle">線上付款確認</div>
+                    <div class="modal-subtitle">付款完成後店家將立即收到訂單並開始製作</div>
+                </div>
+            </div>
+            <div class="modal-body" style="padding:20px 24px;">
+                <div style="background:#fefce8; border:1px solid #fde047; padding:12px; border-radius:10px; margin-bottom:16px;">
+                    <div style="font-size:13px; color:#854d0e; font-weight:700;">本次訂單應付總額</div>
+                    <div style="font-size:28px; font-weight:900; color:var(--gc-green-primary); font-family:var(--font-serif);" id="paymentDueAmount">NT$ 0</div>
+                </div>
+
+                <!-- LINE Pay Section -->
+                <div id="paymentSectionLinePay" style="display:none;">
+                    <div style="font-size:14px; font-weight:800; color:#16a34a; margin-bottom:10px;">
+                        💚 請使用 LINE App 掃描下方 QR Code 進行付款
+                    </div>
+                    <div style="background:#fff; padding:12px; border-radius:12px; border:2px solid #16a34a; display:inline-block; margin-bottom:12px;">
+                        <img src="/img/linepay_qr.png" alt="LINE Pay QR Code" style="width:200px; height:200px; display:block; border-radius:8px;">
+                    </div>
+                    <p style="font-size:12px; color:var(--gc-text-muted); line-height:1.5;">
+                        💡 掃描轉帳完成後，請點擊下方按鈕送出訂單，店家收到通知後將立即安排製作！
+                    </p>
+                </div>
+
+                <!-- Bank Transfer Section -->
+                <div id="paymentSectionBankTransfer" style="display:none; text-align:left;">
+                    <div style="font-size:14px; font-weight:800; color:#1e40af; margin-bottom:10px; text-align:center;">
+                        🏦 請轉帳至以下指定銀行帳戶
+                    </div>
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px; margin-bottom:14px;">
+                        <div style="margin-bottom:6px;"><strong>銀行機構：</strong><span id="payBankName">中國信託 (822)</span></div>
+                        <div style="margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                            <span><strong>轉帳帳號：</strong><span style="font-size:18px; font-weight:900; color:#1e3a8a; letter-spacing:1px;" id="payBankAccount">129540943647</span></span>
+                            <button type="button" onclick="copyBankAccount()" style="background:#2563eb; color:#fff; border:none; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:700; cursor:pointer;">複製帳號</button>
+                        </div>
+                        <div><strong>帳戶戶名：</strong><span id="payBankAccName">Golden Corn 後勁店</span></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="paymentTransferLast5">您的轉帳帳號後五碼 <span style="color:#b91c1c;">* (方便核帳)</span></label>
+                        <input type="text" id="paymentTransferLast5" class="form-control" placeholder="請輸入 5 位數字（例：94364）" maxlength="10">
+                    </div>
+                    <p style="font-size:12px; color:var(--gc-text-muted); line-height:1.5;">
+                        💡 轉帳完成後請填寫後五碼並確認送出，店家核對後即刻開火烹煮！
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer" style="flex-direction:column; gap:8px;">
+                <button type="button" class="btn-add-item" style="width:100%; padding:12px; font-size:15px; justify-content:center;" id="btnConfirmPaidSubmit" onclick="confirmPaymentAndSubmitOrder()">
+                    ✅ 我已完成付款，立即送出訂單
+                </button>
+                <button type="button" style="background:transparent; border:none; color:var(--gc-text-muted); font-size:13px; cursor:pointer; padding:6px;" onclick="closePaymentModal()">
+                    ➔ 返回修改訂單
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Modal 3: Live Order Status Tracking ================= -->
+    <div class="modal-backdrop" id="trackerModalBackdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">訂單即時進度</div>
+                    <div class="modal-subtitle">Live Order Tracker</div>
+                </div>
+                <button class="btn-modal-close" onclick="closeOrderTracker()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tracker-status-card">
+                    <div style="font-size:12px; color:var(--gc-text-muted); font-weight:700;">訂單編號</div>
+                    <div class="tracker-order-number" id="trackerOrderNumber">GC-00000000-000</div>
+                    <div class="tracker-badge Pending" id="trackerStatusBadge">待確認</div>
+                    <div id="trackerStatusHint" style="font-size:13px; color:var(--gc-green-dark); margin-top:8px;">
+                        店家已收到您的訂單，正準備安排製作...
+                    </div>
+                </div>
+
+                <!-- Stepper -->
+                <div class="stepper">
+                    <div class="step-item" id="stepItem_0">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">已收單</div>
+                    </div>
+                    <div class="step-item" id="stepItem_1">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">製作中</div>
+                    </div>
+                    <div class="step-item" id="stepItem_2">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">可取餐</div>
+                    </div>
+                    <div class="step-item" id="stepItem_3">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">已完成</div>
+                    </div>
+                </div>
+
+                <!-- Order Meta -->
+                <div style="background:#fff; border-radius:10px; border:1px solid var(--gc-border); padding:14px; margin-bottom:14px; font-size:13px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <span style="color:var(--gc-text-muted);">訂購人</span>
+                        <strong id="trackerCustomer">-</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <span style="color:var(--gc-text-muted);">用餐方式</span>
+                        <strong id="trackerDiningType">外帶自取</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <span style="color:var(--gc-text-muted);">預計時間</span>
+                        <strong id="trackerPickupTime">儘速製作</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="color:var(--gc-text-muted);">付款方式</span>
+                        <strong id="trackerPaymentMethod">-</strong>
+                    </div>
+                </div>
+
+                <!-- Order Item Summary -->
+                <div style="background:#fff; border-radius:10px; border:1px solid var(--gc-border); padding:14px;">
+                    <div style="font-size:13px; font-weight:800; color:var(--gc-green-primary); margin-bottom:8px;">餐點明細</div>
+                    <div id="trackerItemsList">
+                        <!-- Dynamic items -->
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:2px solid var(--gc-border); font-weight:900;">
+                        <span>總計金額</span>
+                        <span style="color:var(--gc-text-gold);" id="trackerTotalAmount">NT$ 0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content:center;">
+                <button class="btn-add-item" style="padding:10px 32px;" onclick="closeOrderTracker()">
+                    關閉並返回點餐
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Modal 4: History Lookup ================= -->
+    <div class="modal-backdrop" id="historyModalBackdrop" onclick="if(event.target===this) closeHistoryModal()">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">查詢歷史訂單</div>
+                    <div class="modal-subtitle">輸入手機號碼查詢近期點餐紀錄</div>
+                </div>
+                <button class="btn-modal-close" onclick="closeHistoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; gap:8px; margin-bottom:16px;">
+                    <input type="tel" id="historyPhoneInput" class="form-control" placeholder="請輸入手機號碼 (09xxxxxxxx)">
+                    <button class="btn-add-item" style="white-space:nowrap; padding:0 20px;" onclick="searchOrderHistory()">查詢</button>
+                </div>
+                <div id="historyResultList" style="display:flex; flex-direction:column; gap:10px;">
+                    <!-- Search results -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Modal 5: Store Info ================= -->
+    <div class="modal-backdrop" id="storeInfoModalBackdrop" onclick="if(event.target===this) closeStoreInfoModal()">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">門市資訊</div>
+                    <div class="modal-subtitle" id="storeInfoBrandTitle">Golden Corn 後勁店</div>
+                </div>
+                <button class="btn-modal-close" onclick="closeStoreInfoModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="font-size:14px; line-height:1.8;">
+                <div style="margin-bottom:12px;">
+                    <strong>🏪 門市名稱：</strong><span id="storeInfoName">Golden Corn 後勁店</span>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <strong>🍖 風格料理：</strong><span id="storeInfoStyle">後勁 Houjing · Texas Smoked BBQ & Soul Food</span>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <strong>📞 聯絡電話：</strong><span id="storeInfoPhone">0910237105</span>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <strong>📍 門市地址：</strong><span id="storeInfoAddress">高雄市楠梓區金富街85-1號</span>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <strong>⏰ 營業時間：</strong><span id="storeInfoHours" style="white-space:pre-wrap;">週四至週六 16:30-22:30 [週日至週三僅接受線上提前預點] ----- *有任何問題，如企業商務套餐、下午茶點心團購等等，請私訊IG粉專，由主廚一對一服務 IG: goldencorn_diner</span>
+                </div>
+                <div style="background:#eaf1ec; padding:12px; border-radius:8px; margin-top:16px; font-size:13px; color:var(--gc-green-dark); line-height:1.6;" id="storeInfoTip">
+                    💡 美式慢火柴燻牛胸肉、豬梅花每日限量供應，餐點現點現烤，建議提前線上預約取餐！
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Element -->
+    <div class="toast-msg" id="toastMsg">通知訊息</div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
