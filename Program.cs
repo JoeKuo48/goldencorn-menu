@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using GoldenCornOrder.Data;
 
@@ -19,10 +19,36 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
     });
 
-// Configure SQLite Database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=goldencorn.db";
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(connectionString));
+// Configure Database (PostgreSQL on Cloud vs SQLite on Local)
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    string npgsqlConnStr;
+    try
+    {
+        var uri = new Uri(databaseUrl);
+        var userInfo = uri.UserInfo.Split(':');
+        var user = userInfo[0];
+        var password = userInfo.Length > 1 ? userInfo[1] : "";
+        var host = uri.Host;
+        var portNum = uri.Port > 0 ? uri.Port : 5432;
+        var dbName = uri.AbsolutePath.TrimStart('/');
+        npgsqlConnStr = $"Host={host};Port={portNum};Database={dbName};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    }
+    catch
+    {
+        npgsqlConnStr = databaseUrl;
+    }
+
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(npgsqlConnStr));
+}
+else
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=goldencorn.db";
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
 
 // Add CORS
 builder.Services.AddCors(options =>
