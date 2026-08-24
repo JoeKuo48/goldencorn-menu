@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GoldenCornOrder.Models;
@@ -88,7 +88,6 @@ namespace GoldenCornOrder.Data
                 context.SaveChanges();
             }
 
-            // Helper for plate options
             List<OptionGroup> CreatePlateOptionGroups()
             {
                 var sideGroup = new OptionGroup
@@ -128,7 +127,6 @@ namespace GoldenCornOrder.Data
                 return new List<OptionGroup> { sideGroup, addOnGroup };
             }
 
-            // Seed Plate Items
             void EnsureMenuItem(int catId, string name, string engName, decimal price, string desc, string? badge, bool reqPlate, int order, string img = "/img/2.jpg")
             {
                 if (!context.MenuItems.Any(m => m.Name == name))
@@ -154,8 +152,8 @@ namespace GoldenCornOrder.Data
                 }
             }
 
-            // 1. 美式餐盤
-            EnsureMenuItem(catPlates.Id, "克里奧雞腿排", "Creole Chicken Thigh", 180, "特選鮮嫩雞腿排，以路易斯安那克里奧辛香料醃製炭烤", "人氣", true, 1, "/img/2.jpg");
+            // 1. 美式餐盤 (填入您專屬的最新描述)
+            EnsureMenuItem(catPlates.Id, "克里奧雞腿排", "Creole Chicken Thigh", 180, "南方香料醃製, 烤出焦香外皮與飽滿肉汁。\n附水耕生菜及自選美式配料。新美式快餐也能低GI！主餐加購雞汁小米飯只要10元！", "人氣", true, 1, "/img/2.jpg");
             EnsureMenuItem(catPlates.Id, "古巴風烤豬排", "Cuban Grilled Pork Chop", 190, "經典古巴柑橘大蒜風味醃汁，高溫炙烤鎖住鮮甜肉汁", null, true, 2, "/img/2.jpg");
             EnsureMenuItem(catPlates.Id, "德州燻烤豬梅花", "Texas Smoked Pork Collar", 190, "低溫慢火果木柴燻，油花均勻軟嫩多汁，道地德州風味", "招牌", true, 3, "/img/2.jpg");
             EnsureMenuItem(catPlates.Id, "卡津風味烤魚", "Cajun Grilled Fish", 230, "精選厚切魚排，搭配香濃卡津香料炙烤，外香裡嫩", null, true, 4, "/img/2.jpg");
@@ -177,17 +175,16 @@ namespace GoldenCornOrder.Data
             EnsureMenuItem(catVeggies.Id, "燒烤杏鮑菇", "Grilled King Oyster Mushroom", 100, "多汁厚實杏鮑菇，刷上微甜烤醬炭火燒烤", null, false, 2, "/img/5.jpg");
             EnsureMenuItem(catVeggies.Id, "燒烤甜椒青椒", "Grilled Green and Bell Pepper", 100, "紅黃彩椒與翠綠青椒高溫炭烤，甜脆爽口", null, false, 3, "/img/5.jpg");
 
-            // 4. 最佳綠葉 (SALAD)
+            // 4. 最佳綠葉
             EnsureMenuItem(catSalad.Id, "純 水耕嫩生菜杯", "Mesclun", 60, "嚴選水耕嫩葉綜合生菜，鮮嫩爽脆甘甜", null, false, 1, "/img/6.jpg");
             EnsureMenuItem(catSalad.Id, "燒烤嫩雞胸沙拉", "Grilled Chicken Breast Salad", 150, "低脂低卡炭火炙燒嫩雞胸，搭配豐富新鮮生菜", "輕食推薦", false, 2, "/img/6.jpg");
 
-            // 5. 醬料 (SAUCE)
+            // 5. 醬料
             EnsureMenuItem(catSauces.Id, "卡羅萊納BBQ燒烤醬", "Carolina BBQ Sauce", 15, "美式卡羅萊納經典酸甜微辣燒烤沾醬，肉品絕配", null, false, 1, "/img/6.jpg");
             EnsureMenuItem(catSauces.Id, "蒔蘿優格醬", "Ranch Sauce", 15, "新鮮蒔蘿香草結合濃郁優格酸奶，清新解膩", null, false, 2, "/img/6.jpg");
 
             context.SaveChanges();
 
-            // Settings check & update
             var defaultSettings = new Dictionary<string, (string Value, string Desc)>
             {
                 ["StoreName"] = ("Golden Corn 後勁店", "店家名稱"),
@@ -195,8 +192,8 @@ namespace GoldenCornOrder.Data
                 ["Phone"] = ("0910237105", "門市電話"),
                 ["Address"] = ("高雄市楠梓區金富街85-1號", "門市地址"),
                 ["BusinessHours"] = ("週四至週六 16:30-22:30 [週日至週三僅接受線上提前預點] ----- *有任何問題，如企業商務套餐、下午茶點心團購等等，請私訊IG粉專，由主廚一對一服務 IG: goldencorn_diner", "營業時間"),
-                ["Announcement"] = ("🔥 歡迎光臨 Golden Corn！美式德州慢火燻烤、靈魂料理，餐點現點現烤，感謝您的耐心等候。", "前台跑馬燈公告"),
-                ["StoreTip"] = ("💡 美式慢火柴燻牛胸肉、豬梅花每日限量供應，餐點現點現烤，建議提前線上預約取餐！", "門市資訊燈泡備註/溫馨提示"),
+                ["Announcement"] = ("🔥 歡迎光臨 Golden Corn！美式德州慢火燻烤、靈魂料理，餐點現點現做，感謝您的耐心等候。", "前台跑馬燈公告"),
+                ["StoreTip"] = ("💡 現階段為主廚一人工作室，建議提前預約，部分燻肉品項才不會缺貨唷！\n💡 如需外送，皆以LALAMOVE平台試算運費。EX.7.5公里機車外送約140元\n💡 試營運期間，消費滿600元外送直接免運！再送美式燒烤玉米肋排乙份！\n💡 有任何問題，如企業商務套餐、下午茶點心團購等等，請私訊IG粉專，由主廚一對一服務。", "門市資訊燈泡備註/溫馨提示"),
                 ["BankCode"] = ("822", "銀行代碼"),
                 ["BankName"] = ("中國信託", "銀行名稱"),
                 ["BankAccount"] = ("129540943647", "銀行帳號"),
@@ -216,14 +213,6 @@ namespace GoldenCornOrder.Data
                         Value = kvp.Value.Value,
                         Description = kvp.Value.Desc
                     });
-                }
-                else
-                {
-                    // Update default values for phone, address, business hours, and store tip if not modified
-                    if (kvp.Key == "Phone" || kvp.Key == "Address" || kvp.Key == "BusinessHours" || kvp.Key == "StoreTip" || kvp.Key == "BankCode" || kvp.Key == "BankAccount")
-                    {
-                        existing.Value = kvp.Value.Value;
-                    }
                 }
             }
 
