@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Golden Corn · 慢靈魂製造所 | 後勁 Houjing Texas BBQ & Soul Food</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gc-green-dark: #1e3927;
+            --gc-green-main: #244630;
+            --gc-gold: #c69214;
+            --gc-gold-hover: #d89e17;
+            --gc-gold-light: #fef6dd;
+            --gc-cream-bg: #f5f0e6;
+            --gc-border: #e2dac9;
+            --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            --font-serif: "Noto Serif TC", "Georgia", serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--gc-green-dark);
+            color: #1a291e;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Checkered Top and Bottom Bands (🟩⬜🟩⬜) */
+        .checkered-bar {
+            height: 16px;
+            width: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #1e3927 0px,
+                #1e3927 16px,
+                #f5f0e6 16px,
+                #f5f0e6 32px
+            );
+            border-bottom: 2px solid #14281a;
+            position: relative;
+            z-index: 10;
+        }
+
+        .checkered-bar.bottom {
+            border-bottom: none;
+            border-top: 2px solid #14281a;
+            margin-top: 40px;
+        }
+
+        /* ================= Page 1: Bespoke Fullscreen Green Cover Screen ================= */
+        .hero-poster-wrapper {
+            min-height: calc(100vh - 32px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--gc-green-dark);
+            padding: 16px 14px 30px;
+            position: relative;
+        }
+
+        .poster-card-frame {
+            max-width: 460px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .poster-img-full {
+            width: 100%;
+            height: auto;
+            max-height: 68vh;
+            object-fit: contain;
+            border-radius: 18px;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.5);
+            display: block;
+        }
+
+        /* Action Buttons Row on Green Page */
+        .poster-actions-row {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 460px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-announcement-pill {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 2px solid var(--gc-gold);
+            border-radius: 50px;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-announcement-pill:hover {
+            background: var(--gc-gold);
+            color: #1e3927;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(198, 146, 20, 0.4);
+        }
+
+        .btn-swipe-prompt {
+            background: var(--gc-gold);
+            color: #1e3927;
+            border: 2px solid #ffffff;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 6px 20px rgba(198, 146, 20, 0.4);
+            transition: all 0.2s;
+            text-decoration: none;
+            animation: pulseBtn 2.2s infinite;
+        }
+
+        .btn-swipe-prompt:hover {
+            background: var(--gc-gold-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(198, 146, 20, 0.65);
+        }
+
+        @keyframes pulseBtn {
+            0% { box-shadow: 0 0 0 0 rgba(229, 169, 30, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(229, 169, 30, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(229, 169, 30, 0); }
+        }
+
+        /* ================= Page 2: Dual Big Box Selection (綠白格子風格模板) ================= */
+        .portal-section {
+            background: var(--gc-cream-bg);
+            padding: 50px 20px 60px;
+            border-top: 4px solid var(--gc-gold);
+        }
+
+        .portal-container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .portal-header {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .portal-pill-tag {
+            display: inline-block;
+            background: var(--gc-green-dark);
+            color: var(--gc-gold-light);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .portal-title {
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 900;
+            color: var(--gc-green-dark);
+            margin-bottom: 6px;
+        }
+
+        .portal-subtitle {
+            font-size: 14px;
+            color: #5f6f63;
+        }
+
+        .portal-quick-btns {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .btn-quick-outline {
+            background: #ffffff;
+            border: 1.5px solid var(--gc-green-dark);
+            color: var(--gc-green-dark);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .btn-quick-outline:hover {
+            background: var(--gc-green-dark);
+            color: #ffffff;
+        }
+
+        /* Dual Big Boxes Grid */
+        .portal-grid-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .portal-big-card {
+            background: #ffffff;
+            border: 3px solid var(--gc-green-dark);
+            border-radius: 20px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(30, 57, 39, 0.08);
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        }
+
+        .portal-big-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 36px rgba(30, 57, 39, 0.16);
+            border-color: var(--gc-gold);
+        }
+
+        .card-strip-checkered {
+            height: 14px;
+            width: 100%;
+        }
+
+        .card-strip-checkered.green {
+            background: repeating-linear-gradient(90deg, #1e3927 0px, #1e3927 14px, #ffffff 14px, #ffffff 28px);
+        }
+
+        .card-strip-checkered.gold {
+            background: repeating-linear-gradient(90deg, #c69214 0px, #c69214 14px, #ffffff 14px, #ffffff 28px);
+        }
+
+        .portal-card-inner {
+            padding: 26px 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            text-align: center;
+        }
+
+        .card-badge {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 0 auto 12px;
+        }
+
+        .card-badge.party {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .card-badge.menu {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .card-emoji {
+            font-size: 46px;
+            margin-bottom: 8px;
+        }
+
+        .card-title-chinese {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--gc-green-dark);
+            margin-bottom: 2px;
+        }
+
+        .card-title-english {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: var(--gc-gold);
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .card-bullet-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 22px 0;
+            text-align: left;
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.8;
+        }
+
+        .card-action-btn {
+            margin-top: auto;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 900;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            transition: background 0.2s;
+        }
+
+        .card-action-btn.party {
+            background: #0284c7;
+        }
+
+        .card-action-btn.menu {
+            background: #16a34a;
+        }
+
+        .portal-big-card:hover .card-action-btn.party {
+            background: #0369a1;
+        }
+
+        .portal-big-card:hover .card-action-btn.menu {
+            background: #15803d;
+        }
+
+        /* Story Note */
+        .portal-story-note {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px dashed var(--gc-border);
+            margin-top: 10px;
+        }
+
+        .story-quote-text {
+            font-family: var(--font-serif);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gc-green-dark);
+            font-style: italic;
+        }
+
+        .story-quote-author {
+            font-size: 12px;
+            color: #5f6f63;
+            margin-top: 4px;
+        }
+
+        /* ================= Modal: Clean 門市公告 ================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 29, 20, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card-box {
+            background: #ffffff;
+            max-width: 520px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 2px solid var(--gc-gold);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-top-bar {
+            background: var(--gc-green-dark);
+            color: #ffffff;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--gc-gold);
+        }
+
+        .modal-top-bar .tag {
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 800;
+            color: var(--gc-gold);
+        }
+
+        .modal-top-bar .title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #ffffff;
+            margin-top: 2px;
+        }
+
+        .btn-modal-close-round {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #ffffff;
+            font-size: 22px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+
+        .btn-modal-close-round:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body-scroll {
+            max-height: calc(82vh - 130px);
+            overflow-y: auto;
+            padding: 22px;
+        }
+
+        .notice-section-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+        }
+
+        .notice-section-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--gc-green-dark);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .notice-section-content {
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.7;
+        }
+
+        .notice-highlight-text {
+            color: #b45309;
+            font-weight: 700;
+        }
+
+        .modal-bottom-row {
+            padding: 14px 22px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-modal-close-main {
+            background: var(--gc-green-dark);
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        .btn-modal-close-main:hover {
+            background: var(--gc-green-main);
+        }
+
+        /* Footer */
+        .page-footer {
+            text-align: center;
+            padding: 30px 16px 20px;
+            color: #8da493;
+            font-size: 12px;
+            background: var(--gc-green-dark);
+        }
+
+        .page-footer a {
+            color: var(--gc-gold);
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 650px) {
+            .portal-grid-boxes {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .hero-poster-wrapper {
+                padding: 12px 10px 24px;
+            }
+            .poster-img-full {
+                max-height: 65vh;
+            }
+            .poster-actions-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .btn-announcement-pill, .btn-swipe-prompt {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Checkered Border (🟩⬜🟩⬜) -->
+    <div class="checkered-bar"></div>
+
+    <!-- ================= Section 1: Fullscreen Bespoke Green Poster Hero ================= -->
+    <main class="hero-poster-wrapper">
+        <div class="poster-card-frame">
+            <img src="/img/cover_poster.png" alt="Golden Corn · 慢靈魂製造所" class="poster-img-full">
+        </div>
+        
+        <!-- Action Buttons Directly on this Green Page -->
+        <div class="poster-actions-row">
+            <button class="btn-announcement-pill" onclick="openAnnouncementModal()">
+                <span>📢</span>
+                <span>門市公告資訊</span>
+            </button>
+            <a href="#orderSelection" class="btn-swipe-prompt" onclick="scrollToSelection(event)">
+                <span>SWIPE FOR MY STORY... →</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- ================= Section 2: Dual Big Box Selection (綠白格子風格模板) ================= -->
+    <section id="orderSelection" class="portal-section">
+        <div class="portal-container">
+
+            <div class="portal-header">
+                <div class="portal-pill-tag">CHOOSE YOUR ORDER TYPE</div>
+                <h2 class="portal-title">選擇您的美味模式</h2>
+                <p class="portal-subtitle">外公的田間貨櫃工作室 · 柴火低溫慢燻 · 慢靈魂料理</p>
+                
+                <div class="portal-quick-btns">
+                    <button class="btn-quick-outline" onclick="openAnnouncementModal()">
+                        📢 門市公告與營業資訊
+                    </button>
+                    <a href="/menu.html?action=history" class="btn-quick-outline">
+                        📱 查詢我的訂單
+                    </a>
+                </div>
+            </div>
+
+            <!-- The Two Big Boxes Grid -->
+            <div class="portal-grid-boxes">
+                
+                <!-- BOX A: 派對餐盒 (Party Box) -->
+                <a href="/party.html" class="portal-big-card">
+                    <div class="card-strip-checkered green"></div>
+                    <div class="portal-card-inner">
+                        <span class="card-badge party">🎉 團體聚會 · 露營野餐 · 預約外燴</span>
+                        <div class="card-emoji">🍱</div>
+                        <h3 class="card-title-chinese">A. 派對餐盒</h3>
+                        <div class="card-title-english">PARTY BOX & CATERING</div>
+                        <p class="card-desc">
+                            專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！
+                        </p>
+                        <ul class="card-bullet-list">
+                            <li>✨ 德州慢燻牛胸肉 / 焦糖豬肋排大拼盤</li>
+                            <li>✨ 美式靈魂炸雞派對桶</li>
+                            <li>✨ 炭烤黃金玉米 & 主廚特調雙醬</li>
+                        </ul>
+                        <div class="card-action-btn party">
+                            <span>探索派對餐盒</span>
+                            <span>➔</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- BOX B: 門市菜單 (Diner Menu) -->
+                <a href="/menu.html" class="portal-big-card">
+                    <div class="card-strip-checkered gold"></div>
+                    <div class="portal-card-inner">
+                        <span class="card-badge menu">🔥 現點現烤 · A+B+C 自由配 · 預約外帶</span>
+                        <div class="card-emoji">🌽</div>
+                        <h3 class="card-title-chinese">B. 門市菜單</h3>
+                        <div class="card-title-english">DINER MENU & ORDERING</div>
+                        <p class="card-desc">
+                            個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。
+                        </p>
+                        <ul class="card-bullet-list">
+                            <li>✨ 德州燻烤牛胸肉、豬梅花、古巴烤豬排</li>
+                            <li>✨ 招牌美式奶油玉米、蘋果捲心菜</li>
+                            <li>✨ 線上預約取餐時間、Line Pay 快速結帳</li>
+                        </ul>
+                        <div class="card-action-btn menu">
+                            <span>進入線上點餐</span>
+                            <span>➔</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Story Quote -->
+            <div class="portal-story-note">
+                <div class="story-quote-text">「世界太快，我們在田裡為你製造一點慢靈魂。」</div>
+                <div class="story-quote-author">Golden Corn · 慢靈魂製造所 🌽 柴燒煙燻工作室</div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Bottom Checkered Border (🟩⬜🟩⬜) -->
+    <div class="checkered-bar bottom"></div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div>GOLDEN CORN · 慢靈魂製造所</div>
+        <div style="margin: 4px 0;">後勁 Houjing · Texas Smoked BBQ & Soul Food</div>
+        <div style="font-size: 11px; margin-top: 6px;">工作室地址：高雄市楠梓區金富街85-1號 · 0910237105</div>
+        <div style="margin-top: 10px;">
+            <a href="/admin.html">⚙️ 店家管理後台登入</a>
+        </div>
+    </footer>
+
+    <!-- ================= Modal: 精美 門市公告彈窗 (點擊才打開，無日曆) ================= -->
+    <div id="announcementModalBackdrop" class="modal-overlay" onclick="if(event.target===this) closeAnnouncementModal()">
+        <div class="modal-card-box">
+            
+            <div class="modal-top-bar">
+                <div>
+                    <div class="tag">STORE NOTICE</div>
+                    <div class="title">📢 門市公告與營業資訊</div>
+                </div>
+                <button class="btn-modal-close-round" onclick="closeAnnouncementModal()">&times;</button>
+            </div>
+
+            <div class="modal-body-scroll">
+
+                <!-- 營業時間 -->
+                <div class="notice-section-box">
+                    <div class="notice-section-title">
+                        <span>⏰</span> 營業與預約時間
+                    </div>
+                    <div class="notice-section-content" id="noticeHours">
+                        <strong>週四至週六 16:30 - 22:30</strong><br>
+                        <span class="notice-highlight-text">《週日至週三僅接受線上提前預點取餐》</span>
+                    </div>
+                </div>
+
+                <!-- 取餐地點與工作室 -->
+                <div class="notice-section-box">
+                    <div class="notice-section-title">
+                        <span>📍</span> 工作室取餐地址
+                    </div>
+                    <div class="notice-section-content" id="noticeAddress">
+                        高雄市楠梓區金富街85-1號（外公的田間貨櫃工作室）
+                    </div>
+                </div>
+
+                <!-- 外送與優惠 -->
+                <div class="notice-section-box">
+                    <div class="notice-section-title">
+                        <span>🛵</span> 外送與自取說明
+                    </div>
+                    <div class="notice-section-content">
+                        • 本店餐點皆為<strong>低溫慢火柴燻、現點現烤</strong>，建議提前預約以確保肉品庫存。<br>
+                        • <strong>外送服務</strong>：以 LALAMOVE 平台配送（例如 7.5 公里機車外送約 140 元）。<br>
+                        • <strong>試營運優惠</strong>：消費滿 <strong>$600</strong> 免運！再送<strong>美式燒烤玉米肋排</strong>乙份！
+                    </div>
+                </div>
+
+                <!-- 聯絡與專人服務 -->
+                <div class="notice-section-box">
+                    <div class="notice-section-title">
+                        <span>💬</span> 企業團訂與客製諮詢
+                    </div>
+                    <div class="notice-section-content">
+                        企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：<br>
+                        📸 <strong>IG: @goldencorn_diner</strong><br>
+                        📞 <strong>電話: 0910-237-105</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-bottom-row">
+                <button class="btn-modal-close-main" onclick="closeAnnouncementModal()">
+                    我知道了
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            loadStoreInfo();
+            // NOTE: No automatic popup on load! User stays cleanly on the green page.
+        });
+
+        function scrollToSelection(e) {
+            if (e) e.preventDefault();
+            const el = document.getElementById("orderSelection");
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function openAnnouncementModal() {
+            const m = document.getElementById("announcementModalBackdrop");
+            if (m) m.classList.add("show");
+        }
+
+        function closeAnnouncementModal() {
+            const m = document.getElementById("announcementModalBackdrop");
+            if (m) m.classList.remove("show");
+        }
+
+        async function loadStoreInfo() {
+            try {
+                const res = await fetch("/api/settings");
+                if (!res.ok) return;
+                const settings = await res.json();
+                
+                if (settings.BusinessHours && document.getElementById("noticeHours")) {
+                    document.getElementById("noticeHours").innerHTML = `<strong>${settings.BusinessHours}</strong>`;
+                }
+                if (settings.Address && document.getElementById("noticeAddress")) {
+                    document.getElementById("noticeAddress").textContent = settings.Address;
+                }
+            } catch (e) {
+                console.error("Failed to load settings:", e);
+            }
+        }
+    </script>
+</body>
+</html>
