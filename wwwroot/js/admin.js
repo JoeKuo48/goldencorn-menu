@@ -56,7 +56,7 @@ async function submitAdminAuth() {
             initAdminApp();
         } else {
             if (errorMsg) {
-                errorMsg.textContent = "密碼錯誤，請重新輸入 (預設: Hawking)";
+                errorMsg.textContent = "密碼錯誤，請重新輸入";
                 errorMsg.style.display = "block";
             }
             document.getElementById("inputAdminPin").value = "";
