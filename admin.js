@@ -1044,6 +1044,39 @@ async function loadAdminHomepageSettings() {
         if (document.getElementById("cmsNoticeDelivery")) document.getElementById("cmsNoticeDelivery").value = s.NoticeDelivery || "• 本店餐點皆為低溫慢火柴燻、現點現烤，建議提前預約以確保肉品庫存。\n• 外送服務：以 LALAMOVE 平台配送（例如 7.5 公里機車外送約 140 元）。\n• 試營運優惠：消費滿 $600 免運！再送美式燒烤玉米肋排乙份！";
         if (document.getElementById("cmsNoticeContact")) document.getElementById("cmsNoticeContact").value = s.NoticeContact || "企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：\n📸 IG: @goldencorn_diner\n📞 電話: 0910-237-105";
 
+        // Party Box (party.html)
+        if (document.getElementById("cmsPartyHeroBadge")) document.getElementById("cmsPartyHeroBadge").value = s.PartyHeroBadge || "🎉 PARTY BOX & CATERING";
+        if (document.getElementById("cmsPartyHeroTitle")) document.getElementById("cmsPartyHeroTitle").value = s.PartyHeroTitle || "美式煙燻派對餐盒";
+        if (document.getElementById("cmsPartyHeroSubtitle")) document.getElementById("cmsPartyHeroSubtitle").value = s.PartyHeroSubtitle || "露營野餐 · 朋友歡聚 · 企業團訂 · 生日派對的大份量美式靈魂盛宴！";
+        if (document.getElementById("cmsPartyHeroTags")) document.getElementById("cmsPartyHeroTags").value = s.PartyHeroTags || "🪵 16小時原木柴燒慢燻 | 🍗 現炸美式靈魂炸雞 | 🌽 招牌炭烤黃金玉米";
+        if (document.getElementById("cmsPartyNoticeTitle")) document.getElementById("cmsPartyNoticeTitle").value = s.PartyNoticeTitle || "【派對餐盒預訂須知】";
+        if (document.getElementById("cmsPartyNoticeText")) document.getElementById("cmsPartyNoticeText").value = s.PartyNoticeText || "派對餐盒採大份量客製化低溫燻烤製作，需提前 2~3 天 預訂，讓主廚有充裕時間備料與長時間慢火煙燻。目前線上菜單自選功能籌備中，歡迎直接透過 IG 或電話與主廚預訂！";
+
+        if (document.getElementById("cmsPartySet1Badge")) document.getElementById("cmsPartySet1Badge").value = s.PartySet1Badge || "人氣首選 4~6人";
+        if (document.getElementById("cmsPartySet1Title")) document.getElementById("cmsPartySet1Title").value = s.PartySet1Title || "🥩 德州慢燻狂歡肉品盛宴盒";
+        if (document.getElementById("cmsPartySet1Subtitle")) document.getElementById("cmsPartySet1Subtitle").value = s.PartySet1Subtitle || "Texas Smoked BBQ Carnivore Feast";
+        if (document.getElementById("cmsPartySet1Desc")) document.getElementById("cmsPartySet1Desc").value = s.PartySet1Desc || "肉食愛好者的終極救贖！一次品嚐三種經典低溫煙燻肉品。";
+        if (document.getElementById("cmsPartySet1Items")) document.getElementById("cmsPartySet1Items").value = s.PartySet1Items || "🔥 德州柴燒慢燻牛胸肉 400g\n🔥 經典焦糖煙燻豬肋排 半扇\n🔥 獨門香料手撕豬梅花 300g\n🥗 附贈：美式蘋果捲心菜、特製酸黃瓜、自製BBQ醬";
+
+        if (document.getElementById("cmsPartySet2Badge")) document.getElementById("cmsPartySet2Badge").value = s.PartySet2Badge || "聚會必點 4~6人";
+        if (document.getElementById("cmsPartySet2Title")) document.getElementById("cmsPartySet2Title").value = s.PartySet2Title || "🍗 靈魂炸雞 & 黃金玉米歡聚組";
+        if (document.getElementById("cmsPartySet2Subtitle")) document.getElementById("cmsPartySet2Subtitle").value = s.PartySet2Subtitle || "Soul Fried Chicken & Corn Ribs Box";
+        if (document.getElementById("cmsPartySet2Desc")) document.getElementById("cmsPartySet2Desc").value = s.PartySet2Desc || "外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。";
+        if (document.getElementById("cmsPartySet2Items")) document.getElementById("cmsPartySet2Items").value = s.PartySet2Items || "🍗 美式酸奶酥脆炸雞柳條 12 塊\n🍗 楓糖水牛城微辣炸雞 8 塊\n🌽 美式燒烤黃金玉米肋排 8 支\n🍟 附贈：海鹽美式細薯、蒔蘿優格沾醬";
+
+        if (document.getElementById("cmsPartySet3Badge")) document.getElementById("cmsPartySet3Badge").value = s.PartySet3Badge || "戶外露營神器";
+        if (document.getElementById("cmsPartySet3Title")) document.getElementById("cmsPartySet3Title").value = s.PartySet3Title || "🏕️ 露營野餐低溫真空即享組";
+        if (document.getElementById("cmsPartySet3Subtitle")) document.getElementById("cmsPartySet3Subtitle").value = s.PartySet3Subtitle || "Outdoor Camping Ready-to-Heat Pack";
+        if (document.getElementById("cmsPartySet3Desc")) document.getElementById("cmsPartySet3Desc").value = s.PartySet3Desc || "主廚已煙燻熟成並低溫真空封裝。隔水加熱即可享受大師級烤肉！";
+        if (document.getElementById("cmsPartySet3Items")) document.getElementById("cmsPartySet3Items").value = s.PartySet3Items || "🏕️ 熟成煙燻牛胸肉真空包 2 包\n🏕️ 古巴風烤豬排真空包 2 包\n🏕️ 雞汁小米飯 & 奶油玉米包 各 2 包\n✨ 附贈專用復熱教學卡與特調香料粉";
+
+        if (document.getElementById("cmsPartyInquiryTitle")) document.getElementById("cmsPartyInquiryTitle").value = s.PartyInquiryTitle || "📞 預約與客製化洽詢";
+        if (document.getElementById("cmsPartyInquiryDesc")) document.getElementById("cmsPartyInquiryDesc").value = s.PartyInquiryDesc || "不論是家庭聚餐、朋友露營、公司慶生或大型活動外燴，主廚皆可為您量身規劃份量與菜色組合！";
+        if (document.getElementById("cmsPartyInquiryIgText")) document.getElementById("cmsPartyInquiryIgText").value = s.PartyInquiryIgText || "📸 私訊 IG 預約：@goldencorn_diner";
+        if (document.getElementById("cmsPartyInquiryIgLink")) document.getElementById("cmsPartyInquiryIgLink").value = s.PartyInquiryIgLink || "https://www.instagram.com/goldencorn_diner/";
+        if (document.getElementById("cmsPartyInquiryPhoneText")) document.getElementById("cmsPartyInquiryPhoneText").value = s.PartyInquiryPhoneText || "📞 電話洽詢：0910-237-105";
+        if (document.getElementById("cmsPartyInquiryPhoneLink")) document.getElementById("cmsPartyInquiryPhoneLink").value = s.PartyInquiryPhoneLink || "tel:0910237105";
+
     } catch (e) {
         console.error("Homepage settings load failed:", e);
     }
@@ -1083,7 +1116,40 @@ async function saveAdminHomepageSettings() {
         StoryAuthor: document.getElementById("cmsStoryAuthor")?.value || "",
 
         NoticeDelivery: document.getElementById("cmsNoticeDelivery")?.value || "",
-        NoticeContact: document.getElementById("cmsNoticeContact")?.value || ""
+        NoticeContact: document.getElementById("cmsNoticeContact")?.value || "",
+
+        // Party Box Settings
+        PartyHeroBadge: document.getElementById("cmsPartyHeroBadge")?.value || "",
+        PartyHeroTitle: document.getElementById("cmsPartyHeroTitle")?.value || "",
+        PartyHeroSubtitle: document.getElementById("cmsPartyHeroSubtitle")?.value || "",
+        PartyHeroTags: document.getElementById("cmsPartyHeroTags")?.value || "",
+        PartyNoticeTitle: document.getElementById("cmsPartyNoticeTitle")?.value || "",
+        PartyNoticeText: document.getElementById("cmsPartyNoticeText")?.value || "",
+
+        PartySet1Badge: document.getElementById("cmsPartySet1Badge")?.value || "",
+        PartySet1Title: document.getElementById("cmsPartySet1Title")?.value || "",
+        PartySet1Subtitle: document.getElementById("cmsPartySet1Subtitle")?.value || "",
+        PartySet1Desc: document.getElementById("cmsPartySet1Desc")?.value || "",
+        PartySet1Items: document.getElementById("cmsPartySet1Items")?.value || "",
+
+        PartySet2Badge: document.getElementById("cmsPartySet2Badge")?.value || "",
+        PartySet2Title: document.getElementById("cmsPartySet2Title")?.value || "",
+        PartySet2Subtitle: document.getElementById("cmsPartySet2Subtitle")?.value || "",
+        PartySet2Desc: document.getElementById("cmsPartySet2Desc")?.value || "",
+        PartySet2Items: document.getElementById("cmsPartySet2Items")?.value || "",
+
+        PartySet3Badge: document.getElementById("cmsPartySet3Badge")?.value || "",
+        PartySet3Title: document.getElementById("cmsPartySet3Title")?.value || "",
+        PartySet3Subtitle: document.getElementById("cmsPartySet3Subtitle")?.value || "",
+        PartySet3Desc: document.getElementById("cmsPartySet3Desc")?.value || "",
+        PartySet3Items: document.getElementById("cmsPartySet3Items")?.value || "",
+
+        PartyInquiryTitle: document.getElementById("cmsPartyInquiryTitle")?.value || "",
+        PartyInquiryDesc: document.getElementById("cmsPartyInquiryDesc")?.value || "",
+        PartyInquiryIgText: document.getElementById("cmsPartyInquiryIgText")?.value || "",
+        PartyInquiryIgLink: document.getElementById("cmsPartyInquiryIgLink")?.value || "",
+        PartyInquiryPhoneText: document.getElementById("cmsPartyInquiryPhoneText")?.value || "",
+        PartyInquiryPhoneLink: document.getElementById("cmsPartyInquiryPhoneLink")?.value || ""
     };
 
     try {
@@ -1094,7 +1160,7 @@ async function saveAdminHomepageSettings() {
         });
 
         if (res.ok) {
-            showAdminToast("✅ 首頁所有文案、卡片與圖片設定已成功儲存！");
+            showAdminToast("✅ 首頁與派對餐盒所有文案設定已成功儲存！");
         } else {
             showAdminToast("設定儲存失敗");
         }
