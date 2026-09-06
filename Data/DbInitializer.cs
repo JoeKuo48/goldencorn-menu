@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GoldenCornOrder.Models;
@@ -211,7 +211,7 @@ namespace GoldenCornOrder.Data
                 ["BankAccount"] = ("129540943647", "銀行帳號"),
                 ["BankAccountName"] = ("Golden Corn 後勁店", "銀行戶名"),
                 ["IsOpen"] = ("true", "是否營業中 (true/false)"),
-                ["AdminPin"] = ("8888", "店家管理密碼/PIN碼")
+                ["AdminPin"] = ("Hawking", "店家管理密碼")
             };
 
             foreach (var kvp in defaultSettings)
@@ -226,9 +226,10 @@ namespace GoldenCornOrder.Data
                         Description = kvp.Value.Desc
                     });
                 }
-                else
+                else if (kvp.Key == "AdminPin" && existing.Value == "8888")
                 {
-                    existing.Value = kvp.Value.Value;
+                    // 自動將舊預設密碼 8888 遷移至 Hawking
+                    existing.Value = "Hawking";
                 }
             }
 
