@@ -282,9 +282,9 @@
 
                 <div class="form-group">
                     <label class="form-label" for="settingAdminPin">
-                        🔒 後台管理密碼 <span style="color:#16a34a;">(預設: Hawking)</span>
+                        🔒 後台管理密碼
                     </label>
-                    <input type="text" id="settingAdminPin" class="form-control" placeholder="請設定管理密碼 (例如: Hawking)">
+                    <input type="password" id="settingAdminPin" class="form-control" placeholder="請設定後台管理密碼">
                 </div>
 
                 <button type="button" class="btn-primary-admin" onclick="saveAdminSettings()" style="padding:12px 28px; font-size:15px;">
@@ -743,8 +743,8 @@
             </div>
             <div class="modal-body" style="padding:28px 24px;">
                 <div class="form-group">
-                    <label class="form-label" style="text-align:center; margin-bottom:10px;">管理密碼 (預設: Hawking)</label>
-                    <input type="password" id="inputAdminPin" class="form-control" placeholder="請輸入管理密碼" style="text-align:center; font-size:20px; letter-spacing:3px; font-weight:900;" maxlength="32" onkeydown="if(event.key==='Enter') submitAdminAuth()">
+                    <label class="form-label" style="text-align:center; margin-bottom:10px;">管理密碼</label>
+                    <input type="password" id="inputAdminPin" class="form-control" placeholder="請輸入密碼" style="text-align:center; font-size:20px; letter-spacing:4px; font-weight:900;" maxlength="32" onkeydown="if(event.key==='Enter') submitAdminAuth()">
                 </div>
                 <div id="authErrorMsg" style="color:#dc2626; font-size:13px; font-weight:700; display:none; margin-top:8px;">密碼錯誤，請重新輸入</div>
             </div>
