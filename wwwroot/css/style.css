@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    Golden Corn - Brand Theme & Stylesheet (Customer Web App)
    Colors: Forest Green (#203B29), Mustard Gold (#C99700), Cream (#F7F3E9)
    ========================================================================== */
@@ -32,8 +32,9 @@
   --radius-lg: 20px;
   --radius-full: 9999px;
   
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", Roboto, sans-serif;
-  --font-serif: "Noto Serif TC", "Georgia", serif;
+  --font-display: 'Fraunces', 'DM Serif Display', 'Noto Serif TC', serif;
+  --font-sans: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-serif: 'Fraunces', 'Noto Serif TC', "Georgia", serif;
 }
 
 * {
