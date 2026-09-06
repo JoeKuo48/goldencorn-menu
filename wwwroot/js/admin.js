@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Golden Corn - Admin & Kitchen Management JS (admin.js)
  */
 
@@ -468,12 +468,16 @@ function printCurrentReceipt() {
     window.print();
 }
 
-// 5. Menu & Inventory Management
+// 5. Menu & Inventory Management & Category Management
+let allCategories = [];
+
 async function loadAdminMenu() {
     const tbody = document.getElementById("adminMenuTableBody");
     if (!tbody) return;
 
     try {
+        await loadAdminCategories();
+
         const res = await fetch("/api/admin/menu");
         if (!res.ok) return;
 
@@ -481,12 +485,20 @@ async function loadAdminMenu() {
         let html = "";
 
         allMenuItems.forEach(item => {
+            const imgUrl = item.imageUrl || "/img/2.jpg";
             html += `
                 <tr>
-                    <td><strong>${item.name}</strong><br><small style="color:var(--admin-muted);">${item.englishName || ''}</small></td>
+                    <td style="width:50px;">
+                        <img src="${imgUrl}" alt="${item.name}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0;">
+                    </td>
+                    <td>
+                        <strong>${item.name}</strong>
+                        ${item.requiresPlateSides ? '<span style="background:#dcfce7; color:#166534; font-size:10px; font-weight:800; padding:1px 6px; border-radius:4px; margin-left:4px;">餐盤自選配料</span>' : ''}
+                        <br><small style="color:var(--admin-muted);">${item.englishName || ''}</small>
+                    </td>
                     <td>${item.category ? item.category.name : '-'}</td>
                     <td><strong>NT$ ${item.price}</strong></td>
-                    <td>${item.badge ? `<span style="background:#fef3c7; color:#92400e; font-size:11px; padding:2px 6px; border-radius:4px;">${item.badge}</span>` : '-'}</td>
+                    <td>${item.badge ? `<span style="background:#fef3c7; color:#92400e; font-size:11px; padding:2px 6px; border-radius:4px; font-weight:700;">${item.badge}</span>` : '-'}</td>
                     <td>
                         <label class="stock-toggle-switch">
                             <span class="switch">
@@ -499,7 +511,10 @@ async function loadAdminMenu() {
                         </label>
                     </td>
                     <td>
-                        <button class="btn-kds-action print" onclick="openEditItemModal(${item.id})">編輯</button>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-kds-action print" style="padding:4px 8px; font-size:12px;" onclick="openEditItemModal(${item.id})">✏️ 編輯</button>
+                            <button class="btn-kds-action cancel" style="padding:4px 8px; font-size:12px;" onclick="deleteMenuItem(${item.id})">🗑️ 刪除</button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -510,6 +525,314 @@ async function loadAdminMenu() {
 
     } catch (err) {
         console.error("Failed to load menu items:", err);
+    }
+}
+
+async function loadAdminCategories() {
+    try {
+        const res = await fetch("/api/admin/categories");
+        if (res.ok) {
+            allCategories = await res.json();
+            populateCategoryDropdown();
+        }
+    } catch (e) {
+        console.error("Failed to load categories:", e);
+    }
+}
+
+function populateCategoryDropdown(selectedCatId) {
+    const select = document.getElementById("editItemCategory");
+    if (!select) return;
+
+    select.innerHTML = allCategories.map(c => `
+        <option value="${c.id}" ${c.id === selectedCatId ? 'selected' : ''}>
+            ${c.name} (${c.englishName || ''})
+        </option>
+    `).join("");
+}
+
+function openCreateItemModal() {
+    document.getElementById("editItemId").value = "";
+    document.getElementById("editItemName").value = "";
+    document.getElementById("editItemEnglish").value = "";
+    document.getElementById("editItemPrice").value = "";
+    document.getElementById("editItemBadge").value = "";
+    document.getElementById("editItemOrder").value = "1";
+    document.getElementById("editItemImageUrl").value = "/img/2.jpg";
+    updateItemImagePreview("/img/2.jpg");
+    document.getElementById("editItemRequiresPlateSides").checked = false;
+    document.getElementById("editItemDesc").value = "";
+    
+    document.getElementById("editItemModalTitle").textContent = "➕ 新增餐點品項";
+    document.getElementById("editItemModalSubtitle").textContent = "填寫餐點資料以新增至線上點餐菜單";
+
+    populateCategoryDropdown(allCategories.length > 0 ? allCategories[0].id : 1);
+    document.getElementById("editItemModalBackdrop").classList.add("show");
+}
+
+function openEditItemModal(itemId) {
+    const item = allMenuItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    document.getElementById("editItemId").value = item.id;
+    document.getElementById("editItemName").value = item.name;
+    document.getElementById("editItemEnglish").value = item.englishName || "";
+    document.getElementById("editItemPrice").value = item.price;
+    document.getElementById("editItemBadge").value = item.badge || "";
+    document.getElementById("editItemOrder").value = item.displayOrder || 1;
+    document.getElementById("editItemImageUrl").value = item.imageUrl || "/img/2.jpg";
+    updateItemImagePreview(item.imageUrl || "/img/2.jpg");
+    document.getElementById("editItemRequiresPlateSides").checked = !!item.requiresPlateSides;
+    document.getElementById("editItemDesc").value = item.description || "";
+    
+    document.getElementById("editItemModalTitle").textContent = "✏️ 編輯餐點品項";
+    document.getElementById("editItemModalSubtitle").textContent = `修改「${item.name}」的品名、價格或分類`;
+
+    populateCategoryDropdown(item.categoryId);
+    document.getElementById("editItemModalBackdrop").classList.add("show");
+}
+
+function closeEditItemModal() {
+    document.getElementById("editItemModalBackdrop").classList.remove("show");
+}
+
+function updateItemImagePreview(url) {
+    const preview = document.getElementById("editItemImagePreview");
+    if (preview) {
+        preview.src = url || "/img/2.jpg";
+    }
+}
+
+function selectPresetImage(url) {
+    const input = document.getElementById("editItemImageUrl");
+    if (input) {
+        input.value = url;
+        updateItemImagePreview(url);
+    }
+}
+
+async function saveMenuItem() {
+    const id = document.getElementById("editItemId").value;
+    const name = document.getElementById("editItemName").value.trim();
+    const englishName = document.getElementById("editItemEnglish").value.trim();
+    const price = parseFloat(document.getElementById("editItemPrice").value) || 0;
+    const badge = document.getElementById("editItemBadge").value.trim();
+    const displayOrder = parseInt(document.getElementById("editItemOrder").value) || 1;
+    const imageUrl = document.getElementById("editItemImageUrl").value.trim() || "/img/2.jpg";
+    const requiresPlateSides = document.getElementById("editItemRequiresPlateSides").checked;
+    const desc = document.getElementById("editItemDesc").value.trim();
+    const categoryId = parseInt(document.getElementById("editItemCategory").value) || 1;
+
+    if (!name) {
+        showAdminToast("⚠️ 請填寫餐點名稱");
+        return;
+    }
+    if (price <= 0) {
+        showAdminToast("⚠️ 請填寫正確售價");
+        return;
+    }
+
+    const payload = {
+        name,
+        englishName,
+        price,
+        badge,
+        imageUrl,
+        requiresPlateSides,
+        displayOrder,
+        description: desc,
+        categoryId,
+        isAvailable: true
+    };
+
+    try {
+        const url = id ? `/api/admin/menu/${id}` : "/api/admin/menu";
+        const method = id ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            showAdminToast(id ? "✅ 餐點已成功修改！" : "✅ 新餐點已成功新增！");
+            closeEditItemModal();
+            loadAdminMenu();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            showAdminToast(err.message || "儲存失敗");
+        }
+    } catch (e) {
+        showAdminToast("儲存失敗，請檢查網路連線");
+    }
+}
+
+async function deleteMenuItem(itemId) {
+    const item = allMenuItems.find(i => i.id === itemId);
+    const itemName = item ? item.name : "此餐點";
+
+    if (!confirm(`確定要刪除「${itemName}」嗎？刪除後前台將不再顯示此品項。`)) {
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/admin/menu/${itemId}`, { method: "DELETE" });
+        if (res.ok) {
+            showAdminToast(`🗑️ 已刪除「${itemName}」`);
+            loadAdminMenu();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            showAdminToast(err.message || "刪除失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線失敗");
+    }
+}
+
+// Category Management Functions
+function openCategoryManagerModal() {
+    renderCategoryList();
+    resetCategoryForm();
+    document.getElementById("categoryModalBackdrop").classList.add("show");
+}
+
+function closeCategoryManagerModal() {
+    document.getElementById("categoryModalBackdrop").classList.remove("show");
+}
+
+function renderCategoryList() {
+    const container = document.getElementById("adminCategoryListContainer");
+    if (!container) return;
+
+    if (allCategories.length === 0) {
+        container.innerHTML = `<div style="color:var(--admin-muted); font-size:13px;">目前尚無分類</div>`;
+        return;
+    }
+
+    let html = `
+        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <thead>
+                <tr style="border-bottom:2px solid var(--admin-border); text-align:left;">
+                    <th style="padding:6px;">排序</th>
+                    <th style="padding:6px;">分類名稱</th>
+                    <th style="padding:6px;">英文名稱</th>
+                    <th style="padding:6px; text-align:right;">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    allCategories.forEach(cat => {
+        html += `
+            <tr style="border-bottom:1px solid var(--admin-border);">
+                <td style="padding:8px 6px;">#${cat.displayOrder}</td>
+                <td style="padding:8px 6px; font-weight:700;">${cat.name}</td>
+                <td style="padding:8px 6px; color:var(--admin-muted);">${cat.englishName || '-'}</td>
+                <td style="padding:8px 6px; text-align:right;">
+                    <button class="btn-kds-action print" style="padding:2px 6px; font-size:11px;" onclick="editCategoryInline(${cat.id})">編輯</button>
+                    <button class="btn-kds-action cancel" style="padding:2px 6px; font-size:11px;" onclick="deleteCategory(${cat.id})">刪除</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+function resetCategoryForm() {
+    document.getElementById("manageCatId").value = "";
+    document.getElementById("manageCatName").value = "";
+    document.getElementById("manageCatEng").value = "";
+    document.getElementById("manageCatOrder").value = (allCategories.length + 1).toString();
+    document.getElementById("manageCatDesc").value = "";
+    document.getElementById("catFormTitle").textContent = "➕ 新增分類";
+    const cancelBtn = document.getElementById("btnCancelCatEdit");
+    if (cancelBtn) cancelBtn.style.display = "none";
+}
+
+function editCategoryInline(catId) {
+    const cat = allCategories.find(c => c.id === catId);
+    if (!cat) return;
+
+    document.getElementById("manageCatId").value = cat.id;
+    document.getElementById("manageCatName").value = cat.name;
+    document.getElementById("manageCatEng").value = cat.englishName || "";
+    document.getElementById("manageCatOrder").value = cat.displayOrder;
+    document.getElementById("manageCatDesc").value = cat.description || "";
+    document.getElementById("catFormTitle").textContent = `✏️ 編輯分類「${cat.name}」`;
+    
+    const cancelBtn = document.getElementById("btnCancelCatEdit");
+    if (cancelBtn) cancelBtn.style.display = "inline-block";
+}
+
+async function saveCategory() {
+    const id = document.getElementById("manageCatId").value;
+    const name = document.getElementById("manageCatName").value.trim();
+    const englishName = document.getElementById("manageCatEng").value.trim();
+    const displayOrder = parseInt(document.getElementById("manageCatOrder").value) || 1;
+    const desc = document.getElementById("manageCatDesc").value.trim();
+
+    if (!name) {
+        showAdminToast("⚠️ 請輸入分類名稱");
+        return;
+    }
+
+    const payload = {
+        name,
+        englishName,
+        displayOrder,
+        description: desc,
+        isActive: true
+    };
+
+    try {
+        const url = id ? `/api/admin/categories/${id}` : "/api/admin/categories";
+        const method = id ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            showAdminToast(id ? "✅ 分類已更新" : "✅ 分類已新增");
+            await loadAdminCategories();
+            renderCategoryList();
+            resetCategoryForm();
+            loadAdminMenu();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            showAdminToast(err.message || "儲存分類失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線失敗");
+    }
+}
+
+async function deleteCategory(catId) {
+    const cat = allCategories.find(c => c.id === catId);
+    const catName = cat ? cat.name : "此分類";
+
+    if (!confirm(`確定要刪除分類「${catName}」嗎？若底下有餐點將無法刪除。`)) {
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/admin/categories/${catId}`, { method: "DELETE" });
+        if (res.ok) {
+            showAdminToast(`🗑️ 分類「${catName}」已刪除`);
+            await loadAdminCategories();
+            renderCategoryList();
+            loadAdminMenu();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            showAdminToast(err.message || "刪除失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線失敗");
     }
 }
 
@@ -573,73 +896,6 @@ async function toggleOptionStock(optionId) {
         }
     } catch (e) {
         showAdminToast("更新配料庫存失敗");
-    }
-}
-
-function openEditItemModal(itemId) {
-    const item = allMenuItems.find(i => i.id === itemId);
-    if (!item) return;
-
-    document.getElementById("editItemId").value = item.id;
-    document.getElementById("editItemName").value = item.name;
-    document.getElementById("editItemEnglish").value = item.englishName || "";
-    document.getElementById("editItemPrice").value = item.price;
-    document.getElementById("editItemBadge").value = item.badge || "";
-    document.getElementById("editItemDesc").value = item.description || "";
-    document.getElementById("editItemCategory").value = item.categoryId;
-    document.getElementById("editItemModalTitle").textContent = "編輯餐點";
-
-    document.getElementById("editItemModalBackdrop").classList.add("show");
-}
-
-function closeEditItemModal() {
-    document.getElementById("editItemModalBackdrop").classList.remove("show");
-}
-
-async function saveMenuItem() {
-    const id = document.getElementById("editItemId").value;
-    const name = document.getElementById("editItemName").value.trim();
-    const englishName = document.getElementById("editItemEnglish").value.trim();
-    const price = parseFloat(document.getElementById("editItemPrice").value) || 0;
-    const badge = document.getElementById("editItemBadge").value.trim();
-    const desc = document.getElementById("editItemDesc").value.trim();
-    const categoryId = parseInt(document.getElementById("editItemCategory").value) || 1;
-
-    if (!name) {
-        showAdminToast("請輸入品名");
-        return;
-    }
-
-    const payload = {
-        name,
-        englishName,
-        price,
-        badge,
-        description: desc,
-        categoryId,
-        isAvailable: true,
-        displayOrder: 1
-    };
-
-    try {
-        const url = id ? `/api/admin/menu/${id}` : "/api/admin/menu";
-        const method = id ? "PUT" : "POST";
-
-        const res = await fetch(url, {
-            method: method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-            showAdminToast("餐點已成功儲存");
-            closeEditItemModal();
-            loadAdminMenu();
-        } else {
-            showAdminToast("儲存失敗");
-        }
-    } catch (e) {
-        showAdminToast("儲存失敗");
     }
 }
 

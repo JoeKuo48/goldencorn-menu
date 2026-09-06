@@ -42,8 +42,8 @@ namespace GoldenCornOrder.Controllers
                 return BadRequest(new { message = "本店今日已打烊，暫停線上點餐服務，敬請見諒！" });
             }
 
-            // Generate Order Number: GC-yyyyMMdd-001
-            var today = DateTime.Today;
+            // Generate Order Number: GC-yyyyMMdd-001 using Taiwan Timezone (UTC+8)
+            var today = TaiwanTimeHelper.Today;
             var tomorrow = today.AddDays(1);
             var todayOrdersCount = await _context.Orders
                 .CountAsync(o => o.CreatedAt >= today && o.CreatedAt < tomorrow);
@@ -64,7 +64,7 @@ namespace GoldenCornOrder.Controllers
                 PaymentStatus = dto.PaymentMethod == "Cash" ? "Unpaid" : "Paid",
                 TransferLast5 = dto.TransferLast5?.Trim(),
                 OrderStatus = "Pending",
-                CreatedAt = DateTime.Now
+                CreatedAt = TaiwanTimeHelper.Now
             };
 
             decimal totalAmount = 0;

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -84,10 +84,18 @@
 
         <!-- ================= TAB 2: Menu & Stock Management ================= -->
         <section id="tabMenu" class="tab-pane">
-            <div class="menu-mgr-header">
+            <div class="menu-mgr-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
                 <div>
                     <h2 class="kds-title">菜單與即時庫存管理</h2>
-                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">可隨時一鍵切換餐點、配料或加購品項的供應/沽清狀態</p>
+                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">可隨時新增、修改餐點品名、價格、分類，並一鍵切換供應/沽清狀態</p>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="btn-primary-admin" onclick="openCreateItemModal()" style="background:#16a34a; border-color:#16a34a;">
+                        <span>➕</span> 新增餐點品項
+                    </button>
+                    <button type="button" class="btn-primary-admin" onclick="openCategoryManagerModal()" style="background:#0284c7; border-color:#0284c7;">
+                        <span>📂</span> 分類管理
+                    </button>
                 </div>
             </div>
 
@@ -106,6 +114,7 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th>圖片</th>
                             <th>品名 / 英文品名</th>
                             <th>類別</th>
                             <th>價格</th>
@@ -324,51 +333,153 @@
         </div>
     </div>
 
-    <!-- ================= Modal 2: Edit Menu Item ================= -->
+    <!-- ================= Modal 2: Create / Edit Menu Item ================= -->
     <div class="modal-backdrop" id="editItemModalBackdrop" onclick="if(event.target===this) closeEditItemModal()">
-        <div class="modal-card">
+        <div class="modal-card" style="max-width:550px;">
             <div class="modal-header">
-                <div class="modal-title" id="editItemModalTitle">編輯餐點</div>
+                <div>
+                    <div class="modal-title" id="editItemModalTitle">編輯餐點</div>
+                    <div class="modal-subtitle" id="editItemModalSubtitle">新增或修改菜單品項資訊</div>
+                </div>
                 <button class="btn-modal-close" onclick="closeEditItemModal()">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height:calc(85vh - 140px); overflow-y:auto;">
                 <input type="hidden" id="editItemId">
+                
                 <div class="form-group">
-                    <label class="form-label" for="editItemName">餐點名稱</label>
-                    <input type="text" id="editItemName" class="form-control">
+                    <label class="form-label" for="editItemName">餐點名稱 <span style="color:#dc2626;">*</span></label>
+                    <input type="text" id="editItemName" class="form-control" placeholder="例: 德州柴燒慢燻牛胸肉餐盤">
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label" for="editItemEnglish">英文名稱</label>
-                    <input type="text" id="editItemEnglish" class="form-control">
+                    <label class="form-label" for="editItemEnglish">英文名稱 (選填)</label>
+                    <input type="text" id="editItemEnglish" class="form-control" placeholder="例: Texas Smoked Beef Brisket Plate">
                 </div>
+
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                     <div class="form-group">
-                        <label class="form-label" for="editItemPrice">售價 (NT$)</label>
-                        <input type="number" id="editItemPrice" class="form-control">
+                        <label class="form-label" for="editItemPrice">售價 (NT$) <span style="color:#dc2626;">*</span></label>
+                        <input type="number" id="editItemPrice" class="form-control" placeholder="380">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="editItemBadge">特色標籤 (選填)</label>
-                        <input type="text" id="editItemBadge" class="form-control" placeholder="例: 招牌、人氣">
+                        <input type="text" id="editItemBadge" class="form-control" placeholder="例: 招牌、人氣首選、限量">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="editItemCategory">所屬分類</label>
-                    <select id="editItemCategory" class="form-control">
-                        <option value="1">美式餐盤 (GOLDEN BBQ PLATE)</option>
-                        <option value="2">美墨小點 (SNACKS)</option>
-                        <option value="3">吃點蔬菜 (VEGETABLE)</option>
-                        <option value="4">最佳綠葉 (SALAD)</option>
-                        <option value="5">醬料 (SAUCE)</option>
-                    </select>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label class="form-label" for="editItemCategory">所屬分類 <span style="color:#dc2626;">*</span></label>
+                        <select id="editItemCategory" class="form-control">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editItemOrder">排序權重 (越小越前)</label>
+                        <input type="number" id="editItemOrder" class="form-control" value="1">
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label" for="editItemDesc">餐點描述</label>
-                    <textarea id="editItemDesc" class="form-control" rows="2"></textarea>
+                    <label class="form-label" for="editItemImageUrl">餐點照片路徑 / 圖片網址</label>
+                    <input type="text" id="editItemImageUrl" class="form-control" placeholder="/img/2.jpg" oninput="updateItemImagePreview(this.value)">
+                    <div style="margin-top:8px; display:flex; align-items:center; gap:12px;">
+                        <img id="editItemImagePreview" src="/img/2.jpg" alt="預覽" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #ccc;">
+                        <div style="font-size:12px; color:var(--admin-muted);">
+                            可選既有照片庫：
+                            <button type="button" class="btn-img-preset" onclick="selectPresetImage('/img/2.jpg')">煙燻牛胸</button>
+                            <button type="button" class="btn-img-preset" onclick="selectPresetImage('/img/1.jpg')">手撕豬</button>
+                            <button type="button" class="btn-img-preset" onclick="selectPresetImage('/img/3.jpg')">古巴豬排</button>
+                            <button type="button" class="btn-img-preset" onclick="selectPresetImage('/img/G4.jpg')">美式炸雞</button>
+                            <button type="button" class="btn-img-preset" onclick="selectPresetImage('/img/G11.jpg')">玉米肋排</button>
+                            <button type="button" class="btn-img-preset" onclick="selectPresetImage('/img/5.jpg')">蔬菜沙拉</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input type="checkbox" id="editItemRequiresPlateSides" style="width:18px; height:18px;">
+                        <span><strong>啟用美式餐盤自選配料模式</strong>（顧客點選時需自選主廚配料與自選澱粉）</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editItemDesc">餐點描述與特色介紹</label>
+                    <textarea id="editItemDesc" class="form-control" rows="3" placeholder="請填寫餐點風味、食材細節與推薦吃法..."></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-primary-admin" style="width:100%; justify-content:center;" onclick="saveMenuItem()">
-                    確認儲存
+            <div class="modal-footer" style="display:flex; gap:12px;">
+                <button type="button" class="btn-primary-admin" style="flex:1; justify-content:center; background:#64748b; border-color:#64748b;" onclick="closeEditItemModal()">
+                    取消
+                </button>
+                <button type="button" class="btn-primary-admin" style="flex:2; justify-content:center;" onclick="saveMenuItem()">
+                    💾 確認儲存餐點
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Modal 3: Category Management ================= -->
+    <div class="modal-backdrop" id="categoryModalBackdrop" onclick="if(event.target===this) closeCategoryManagerModal()">
+        <div class="modal-card" style="max-width:600px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">📂 菜單分類管理</div>
+                    <div class="modal-subtitle">新增、修改或刪除前台菜單分類</div>
+                </div>
+                <button class="btn-modal-close" onclick="closeCategoryManagerModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height:calc(85vh - 140px); overflow-y:auto;">
+                
+                <!-- Add / Edit Category Form Box -->
+                <div style="background:#f8fafc; border:1px solid var(--admin-border); border-radius:8px; padding:16px; margin-bottom:20px;">
+                    <h4 id="catFormTitle" style="font-size:14px; font-weight:800; color:var(--gc-green); margin-bottom:12px;">
+                        ➕ 新增分類
+                    </h4>
+                    <input type="hidden" id="manageCatId">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px;">
+                        <div>
+                            <label class="form-label" for="manageCatName">分類名稱 <span style="color:#dc2626;">*</span></label>
+                            <input type="text" id="manageCatName" class="form-control" placeholder="例: 炸物分享桶">
+                        </div>
+                        <div>
+                            <label class="form-label" for="manageCatEng">英文名稱</label>
+                            <input type="text" id="manageCatEng" class="form-control" placeholder="例: FRIED CHICKEN">
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                        <div>
+                            <label class="form-label" for="manageCatOrder">排序編號</label>
+                            <input type="number" id="manageCatOrder" class="form-control" value="1">
+                        </div>
+                        <div>
+                            <label class="form-label" for="manageCatDesc">分類簡述</label>
+                            <input type="text" id="manageCatDesc" class="form-control" placeholder="例: 外酥內嫩南方炸雞">
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn-primary-admin" onclick="saveCategory()" style="padding:8px 18px; font-size:13px;">
+                            儲存分類
+                        </button>
+                        <button type="button" class="btn-primary-admin" id="btnCancelCatEdit" onclick="resetCategoryForm()" style="padding:8px 18px; font-size:13px; background:#94a3b8; border-color:#94a3b8; display:none;">
+                            取消編輯
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Existing Categories List -->
+                <div>
+                    <h4 style="font-size:14px; font-weight:800; color:#1e293b; margin-bottom:10px;">現有分類清單</h4>
+                    <div id="adminCategoryListContainer">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer" style="justify-content:flex-end;">
+                <button type="button" class="btn-primary-admin" style="background:#64748b; border-color:#64748b;" onclick="closeCategoryManagerModal()">
+                    關閉
                 </button>
             </div>
         </div>

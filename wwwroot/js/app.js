@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Golden Corn - Customer Web App (app.js)
  * Modern, responsive ordering experience with live cart, payments, and order tracking.
  */
@@ -601,6 +601,11 @@ function openCartModal() {
         showToast("購物車目前是空的");
         return;
     }
+    const preDate = sessionStorage.getItem("gc_selected_pickup_date");
+    const pickupInput = document.getElementById("orderPickupTime");
+    if (preDate && pickupInput && (pickupInput.value === "儘速製作 (約 15-20 分鐘)" || !pickupInput.value)) {
+        pickupInput.value = `${preDate} 17:30 (預約取餐)`;
+    }
     renderCartModalItems();
     const backdrop = document.getElementById("cartModalBackdrop");
     if (backdrop) backdrop.classList.add("show");
@@ -1060,6 +1065,18 @@ function checkUrlForOrderTracking() {
     const orderNumber = urlParams.get("order");
     if (orderNumber) {
         openOrderTracker(orderNumber);
+    }
+    const action = urlParams.get("action");
+    if (action === "history") {
+        openHistoryModal();
+    }
+    // Check if a date was selected from the landing calendar
+    const preselectedDate = sessionStorage.getItem("gc_selected_pickup_date");
+    if (preselectedDate) {
+        const pickupInput = document.getElementById("orderPickupTime");
+        if (pickupInput && !pickupInput.value) {
+            pickupInput.value = `${preselectedDate} 17:30 (預約)`;
+        }
     }
 }
 

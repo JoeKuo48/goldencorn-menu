@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GoldenCornOrder.Data;
 using GoldenCornOrder.Models;
@@ -40,7 +40,7 @@ namespace GoldenCornOrder.Controllers
                 if (setting != null)
                 {
                     setting.Value = kvp.Value;
-                    setting.UpdatedAt = DateTime.Now;
+                    setting.UpdatedAt = TaiwanTimeHelper.Now;
                 }
                 else
                 {
@@ -48,7 +48,7 @@ namespace GoldenCornOrder.Controllers
                     {
                         Key = kvp.Key,
                         Value = kvp.Value,
-                        UpdatedAt = DateTime.Now
+                        UpdatedAt = TaiwanTimeHelper.Now
                     });
                 }
             }

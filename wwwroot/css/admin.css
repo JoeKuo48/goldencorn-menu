@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    Golden Corn - Admin & Kitchen Display System (KDS) Stylesheet
    ========================================================================== */
 
@@ -434,6 +434,26 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+.btn-img-preset {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  margin-right: 4px;
+  margin-top: 4px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.2s;
+}
+
+.btn-img-preset:hover {
+  background: var(--gc-gold);
+  color: #182e20;
+  border-color: var(--gc-gold);
 }
 
 .admin-table-card {

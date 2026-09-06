@@ -102,7 +102,7 @@ namespace GoldenCornOrder.Controllers
             {
                 order.KitchenNote = dto.KitchenNote;
             }
-            order.UpdatedAt = DateTime.Now;
+            order.UpdatedAt = TaiwanTimeHelper.Now;
 
             await _context.SaveChangesAsync();
 
@@ -127,7 +127,7 @@ namespace GoldenCornOrder.Controllers
 
             return Ok(new
             {
-                storeName = storeSettings.GetValueOrDefault("StoreName", "Golden Corn"),
+                storeName = storeSettings.GetValueOrDefault("StoreName", "Golden Corn 後勁店"),
                 brandSub = storeSettings.GetValueOrDefault("BrandSub", "後勁 Houjing · Texas Smoked BBQ & Soul Food"),
                 phone = storeSettings.GetValueOrDefault("Phone", ""),
                 address = storeSettings.GetValueOrDefault("Address", ""),
@@ -163,15 +163,49 @@ namespace GoldenCornOrder.Controllers
             {
                 CategoryId = dto.CategoryId,
                 Name = dto.Name.Trim(),
-                EnglishName = dto.EnglishName.Trim(),
+                EnglishName = (dto.EnglishName ?? "").Trim(),
                 Description = dto.Description,
                 Price = dto.Price,
-                ImageUrl = dto.ImageUrl ?? "/img/2.jpg",
-                Badge = dto.Badge,
+                ImageUrl = string.IsNullOrWhiteSpace(dto.ImageUrl) ? "/img/2.jpg" : dto.ImageUrl.Trim(),
+                Badge = string.IsNullOrWhiteSpace(dto.Badge) ? null : dto.Badge.Trim(),
                 IsAvailable = dto.IsAvailable,
-                DisplayOrder = dto.DisplayOrder,
-                RequiresPlateSides = dto.RequiresPlateSides
+                DisplayOrder = dto.DisplayOrder > 0 ? dto.DisplayOrder : 1,
+                RequiresPlateSides = dto.RequiresPlateSides || dto.CategoryId == 1
             };
+
+            // If it requires plate sides, copy from default option groups if available
+            if (menuItem.RequiresPlateSides)
+            {
+                var existingGroup = await _context.OptionGroups
+                    .Include(g => g.Options)
+                    .FirstOrDefaultAsync(g => g.Name == "美式餐盤自選配料");
+                
+                if (existingGroup != null)
+                {
+                    menuItem.OptionGroups = new List<OptionGroup>
+                    {
+                        new()
+                        {
+                            Name = existingGroup.Name,
+                            EnglishName = existingGroup.EnglishName,
+                            Description = existingGroup.Description,
+                            IsRequired = existingGroup.IsRequired,
+                            MinSelect = existingGroup.MinSelect,
+                            MaxSelect = existingGroup.MaxSelect,
+                            DisplayOrder = 1,
+                            Options = existingGroup.Options.Select(o => new OptionItem
+                            {
+                                Name = o.Name,
+                                EnglishName = o.EnglishName,
+                                ExtraPrice = o.ExtraPrice,
+                                IsAvailable = true,
+                                DisplayOrder = o.DisplayOrder,
+                                Tag = o.Tag
+                            }).ToList()
+                        }
+                    };
+                }
+            }
 
             _context.MenuItems.Add(menuItem);
             await _context.SaveChangesAsync();
@@ -191,11 +225,14 @@ namespace GoldenCornOrder.Controllers
 
             item.CategoryId = dto.CategoryId;
             item.Name = dto.Name.Trim();
-            item.EnglishName = dto.EnglishName.Trim();
+            item.EnglishName = (dto.EnglishName ?? "").Trim();
             item.Description = dto.Description;
             item.Price = dto.Price;
-            item.ImageUrl = dto.ImageUrl;
-            item.Badge = dto.Badge;
+            if (!string.IsNullOrWhiteSpace(dto.ImageUrl))
+            {
+                item.ImageUrl = dto.ImageUrl.Trim();
+            }
+            item.Badge = string.IsNullOrWhiteSpace(dto.Badge) ? null : dto.Badge.Trim();
             item.IsAvailable = dto.IsAvailable;
             item.DisplayOrder = dto.DisplayOrder;
             item.RequiresPlateSides = dto.RequiresPlateSides || dto.CategoryId == 1;
@@ -209,7 +246,11 @@ namespace GoldenCornOrder.Controllers
         [HttpDelete("menu/{id}")]
         public async Task<IActionResult> DeleteMenuItem(int id)
         {
-            var item = await _context.MenuItems.FindAsync(id);
+            var item = await _context.MenuItems
+                .Include(m => m.OptionGroups)
+                    .ThenInclude(g => g.Options)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (item == null)
             {
                 return NotFound(new { message = "找不到該餐點" });
@@ -237,6 +278,83 @@ namespace GoldenCornOrder.Controllers
             return Ok(new { success = true, id = item.Id, isAvailable = item.IsAvailable });
         }
 
+        // GET: api/admin/categories
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetAdminCategories()
+        {
+            var categories = await _context.Categories
+                .OrderBy(c => c.DisplayOrder)
+                .ToListAsync();
+
+            return Ok(categories);
+        }
+
+        // POST: api/admin/categories
+        [HttpPost("categories")]
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryEditDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+            {
+                return BadRequest(new { message = "分類名稱不能為空" });
+            }
+
+            var cat = new Category
+            {
+                Name = dto.Name.Trim(),
+                EnglishName = (dto.EnglishName ?? "").Trim(),
+                Description = dto.Description,
+                DisplayOrder = dto.DisplayOrder,
+                IsActive = dto.IsActive
+            };
+
+            _context.Categories.Add(cat);
+            await _context.SaveChangesAsync();
+
+            return Ok(cat);
+        }
+
+        // PUT: api/admin/categories/{id}
+        [HttpPut("categories/{id}")]
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryEditDto dto)
+        {
+            var cat = await _context.Categories.FindAsync(id);
+            if (cat == null)
+            {
+                return NotFound(new { message = "找不到該分類" });
+            }
+
+            cat.Name = dto.Name.Trim();
+            cat.EnglishName = (dto.EnglishName ?? "").Trim();
+            cat.Description = dto.Description;
+            cat.DisplayOrder = dto.DisplayOrder;
+            cat.IsActive = dto.IsActive;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(cat);
+        }
+
+        // DELETE: api/admin/categories/{id}
+        [HttpDelete("categories/{id}")]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var cat = await _context.Categories.Include(c => c.MenuItems).FirstOrDefaultAsync(c => c.Id == id);
+            if (cat == null)
+            {
+                return NotFound(new { message = "找不到該分類" });
+            }
+
+            if (cat.MenuItems.Any())
+            {
+                return BadRequest(new { message = "此分類底下尚有菜單品項，請先移動或刪除品項後再刪除分類。" });
+            }
+
+            _context.Categories.Remove(cat);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "分類已刪除" });
+        }
+
         // POST: api/admin/options/{id}/toggle-availability
         [HttpPost("options/{id}/toggle-availability")]
         public async Task<IActionResult> ToggleOptionAvailability(int id)
@@ -257,7 +375,7 @@ namespace GoldenCornOrder.Controllers
         [HttpGet("stats")]
         public async Task<IActionResult> GetDashboardStats()
         {
-            var today = DateTime.Today;
+            var today = TaiwanTimeHelper.Today;
             var tomorrow = today.AddDays(1);
 
             var todayOrders = await _context.Orders
@@ -314,7 +432,7 @@ namespace GoldenCornOrder.Controllers
                 .ToListAsync();
 
             var sb = new StringBuilder();
-            sb.AppendLine("訂單編號,下單時間,顧客姓名,電話,用餐方式,桌號,預約時間,狀態,付款方式,付款狀態,轉帳後五碼,金額,品項明細,備註");
+            sb.AppendLine("訂單編號,下單時間(台灣時區),顧客姓名,電話,用餐方式,桌號,預約時間,狀態,付款方式,付款狀態,轉帳後五碼,金額,品項明細,備註");
 
             foreach (var o in orders)
             {
@@ -324,7 +442,7 @@ namespace GoldenCornOrder.Controllers
             }
 
             var bytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
-            return File(bytes, "text/csv; charset=utf-8", $"GoldenCorn_Orders_{DateTime.Now:yyyyMMdd_HHmm}.csv");
+            return File(bytes, "text/csv; charset=utf-8", $"GoldenCorn_Orders_{TaiwanTimeHelper.Now:yyyyMMdd_HHmm}.csv");
         }
     }
 }

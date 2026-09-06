@@ -86,8 +86,10 @@ app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
-// Fallback for Admin page and Customer page
+// Friendly URL routes
 app.MapGet("/admin", () => Results.Redirect("/admin.html"));
+app.MapGet("/menu", () => Results.Redirect("/menu.html"));
+app.MapGet("/party", () => Results.Redirect("/party.html"));
 app.MapFallbackToFile("index.html");
 
 app.Run();

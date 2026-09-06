@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace GoldenCornOrder.Models
@@ -115,5 +115,14 @@ namespace GoldenCornOrder.Models
         public string ItemName { get; set; } = string.Empty;
         public int TotalQuantity { get; set; }
         public decimal TotalSales { get; set; }
+    }
+
+    public class CategoryEditDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string EnglishName { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public int DisplayOrder { get; set; } = 1;
+        public bool IsActive { get; set; } = true;
     }
 }
