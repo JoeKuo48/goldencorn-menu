@@ -56,7 +56,7 @@ async function submitAdminAuth() {
             initAdminApp();
         } else {
             if (errorMsg) {
-                errorMsg.textContent = "PIN 碼錯誤，請重新輸入 (預設: 8888)";
+                errorMsg.textContent = "密碼錯誤，請重新輸入 (預設: Hawking)";
                 errorMsg.style.display = "block";
             }
             document.getElementById("inputAdminPin").value = "";
@@ -958,7 +958,7 @@ async function loadAdminSettings() {
         if (document.getElementById("settingBankCode")) document.getElementById("settingBankCode").value = settings.BankCode || "";
         if (document.getElementById("settingBankAccount")) document.getElementById("settingBankAccount").value = settings.BankAccount || "";
         if (document.getElementById("settingBankAccountName")) document.getElementById("settingBankAccountName").value = settings.BankAccountName || "";
-        if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "8888";
+        if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "Hawking";
     } catch (e) {
         console.error("Settings load failed:", e);
     }
@@ -977,7 +977,7 @@ async function saveAdminSettings() {
         BankCode: document.getElementById("settingBankCode")?.value || "",
         BankAccount: document.getElementById("settingBankAccount")?.value || "",
         BankAccountName: document.getElementById("settingBankAccountName")?.value || "",
-        AdminPin: document.getElementById("settingAdminPin")?.value || "8888"
+        AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking"
     };
 
     try {
