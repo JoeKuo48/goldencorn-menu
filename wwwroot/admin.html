@@ -282,9 +282,9 @@
 
                 <div class="form-group">
                     <label class="form-label" for="settingAdminPin">
-                        🔒 後台管理密碼 / PIN 碼 <span style="color:#b91c1c;">(預設: 8888)</span>
+                        🔒 後台管理密碼 <span style="color:#16a34a;">(預設: Hawking)</span>
                     </label>
-                    <input type="text" id="settingAdminPin" class="form-control" placeholder="請設定 4~8 位數字或密碼">
+                    <input type="text" id="settingAdminPin" class="form-control" placeholder="請設定管理密碼 (例如: Hawking)">
                 </div>
 
                 <button type="button" class="btn-primary-admin" onclick="saveAdminSettings()" style="padding:12px 28px; font-size:15px;">
@@ -743,10 +743,10 @@
             </div>
             <div class="modal-body" style="padding:28px 24px;">
                 <div class="form-group">
-                    <label class="form-label" style="text-align:center; margin-bottom:10px;">管理密碼 / PIN 碼 (預設: 8888)</label>
-                    <input type="password" id="inputAdminPin" class="form-control" placeholder="請輸入 4 位數 PIN 碼" style="text-align:center; font-size:24px; letter-spacing:6px; font-weight:900;" maxlength="8" onkeydown="if(event.key==='Enter') submitAdminAuth()">
+                    <label class="form-label" style="text-align:center; margin-bottom:10px;">管理密碼 (預設: Hawking)</label>
+                    <input type="password" id="inputAdminPin" class="form-control" placeholder="請輸入管理密碼" style="text-align:center; font-size:20px; letter-spacing:3px; font-weight:900;" maxlength="32" onkeydown="if(event.key==='Enter') submitAdminAuth()">
                 </div>
-                <div id="authErrorMsg" style="color:#dc2626; font-size:13px; font-weight:700; display:none; margin-top:8px;">PIN 碼錯誤，請重新輸入</div>
+                <div id="authErrorMsg" style="color:#dc2626; font-size:13px; font-weight:700; display:none; margin-top:8px;">密碼錯誤，請重新輸入</div>
             </div>
             <div class="modal-footer" style="justify-content:center; flex-direction:column; gap:10px;">
                 <button type="button" class="btn-primary-admin" style="width:100%; justify-content:center; padding:12px; font-size:15px;" onclick="submitAdminAuth()">
