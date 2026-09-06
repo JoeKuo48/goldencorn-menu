@@ -10,15 +10,23 @@
     <title>Golden Corn · 派對餐盒 & 團體外燴 | Party Box & Catering</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --gc-green-dark: #1b3523;
-            --gc-green-main: #203c29;
+            --gc-green-main: #244630;
             --gc-gold: #c69214;
-            --gc-cream: #f6f1e8;
-            --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
-            --font-serif: "Noto Serif TC", "Georgia", serif;
+            --gc-gold-hover: #d89e17;
+            --gc-gold-light: #fef8e7;
+            --gc-cream-bg: #f5ece3;
+            --gc-card-bg: #ffffff;
+            --gc-border: #dfd6c7;
+            --gc-text-dark: #1a291e;
+            --gc-espresso: #4f3524;
+            
+            --font-display: 'Fraunces', 'DM Serif Display', 'Noto Serif TC', serif;
+            --font-sans: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            --font-serif: 'Fraunces', 'Noto Serif TC', "Georgia", serif;
         }
 
         * {
@@ -30,8 +38,8 @@
 
         body {
             font-family: var(--font-sans);
-            background-color: var(--gc-cream);
-            color: #1a291e;
+            background-color: var(--gc-cream-bg);
+            color: var(--gc-text-dark);
             line-height: 1.5;
             min-height: 100vh;
         }
@@ -44,8 +52,8 @@
                 90deg,
                 #1b3523 0px,
                 #1b3523 16px,
-                #f6f1e8 16px,
-                #f6f1e8 32px
+                #f5ece3 16px,
+                #f5ece3 32px
             );
             border-bottom: 2px solid #14281a;
         }
@@ -76,15 +84,19 @@
         }
 
         .nav-brand-title {
-            font-size: 18px;
+            font-family: var(--font-display);
+            font-size: 20px;
             font-weight: 900;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .nav-brand-sub {
             font-size: 11px;
             color: var(--gc-gold);
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .party-nav-actions {
@@ -96,11 +108,13 @@
             background: rgba(255, 255, 255, 0.12);
             border: 1px solid rgba(255, 255, 255, 0.25);
             color: #fff;
-            padding: 7px 14px;
+            padding: 7px 16px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
             transition: all 0.2s;
         }
 
@@ -117,9 +131,9 @@
 
         /* Hero Banner */
         .party-hero-banner {
-            background: radial-gradient(circle at center, #254b33 0%, #172e1f 100%);
+            background: radial-gradient(circle at center, #244630 0%, #172e1f 100%);
             color: #fff;
-            padding: 36px 20px;
+            padding: 40px 20px 36px;
             text-align: center;
             border-bottom: 3px solid var(--gc-gold);
         }
@@ -128,209 +142,268 @@
             display: inline-block;
             background: rgba(198, 146, 20, 0.2);
             border: 1px solid var(--gc-gold);
-            color: #fce79a;
+            color: var(--gc-gold-light);
             font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 2.5px;
-            padding: 4px 14px;
-            border-radius: 20px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: 30px;
             margin-bottom: 12px;
         }
 
         .party-hero-title {
-            font-size: clamp(26px, 6vw, 36px);
+            font-family: var(--font-display);
+            font-size: clamp(28px, 6vw, 40px);
             font-weight: 900;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             margin-bottom: 8px;
         }
 
         .party-hero-subtitle {
             font-size: 14px;
             color: #d1dfd5;
-            max-width: 580px;
+            max-width: 620px;
             margin: 0 auto 16px;
+            line-height: 1.6;
         }
 
         .party-hero-tags {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .party-hero-tags span {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 5px 14px;
             border-radius: 20px;
+            color: #f5f0e6;
         }
 
         /* Container */
         .party-main-content {
-            max-width: 860px;
+            max-width: 880px;
             margin: 0 auto;
-            padding: 24px 16px 40px;
+            padding: 30px 16px 45px;
         }
 
         /* Notice Box */
         .party-notice-card {
-            background: #eff6ff;
-            border-left: 5px solid #3b82f6;
-            padding: 16px;
-            border-radius: 0 12px 12px 0;
-            display: flex;
-            gap: 12px;
-            margin-bottom: 28px;
-            font-size: 13px;
-            color: #1e3a8a;
-            line-height: 1.6;
+            background: #ffffff;
+            border-left: 5px solid var(--gc-gold);
+            border: 1px solid var(--gc-border);
+            border-left-width: 5px;
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            font-size: 13.5px;
+            color: #334155;
+            line-height: 1.7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .party-notice-card strong {
+            color: var(--gc-green-dark);
+            font-weight: 900;
         }
 
         .party-grid-title {
-            font-size: 22px;
+            font-family: var(--font-display);
+            font-size: 26px;
             font-weight: 900;
+            letter-spacing: 1px;
             color: var(--gc-green-dark);
             margin-bottom: 4px;
+            text-align: center;
         }
 
         .party-grid-subtitle {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #5c6f62;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            text-align: center;
         }
 
-        /* Sets Grid */
+        /* Party Sets Grid */
         .party-sets-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-            margin-bottom: 32px;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 36px;
         }
 
         .party-set-card {
             background: #ffffff;
+            border: 2px solid var(--gc-green-dark);
             border-radius: 18px;
             overflow: hidden;
-            border: 2px solid #e2dac9;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
             display: flex;
             flex-direction: column;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .party-set-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+            border-color: var(--gc-gold);
         }
 
-        .card-strip-checkered {
-            height: 12px;
-            width: 100%;
-        }
-
-        .card-strip-checkered.green {
-            background: repeating-linear-gradient(90deg, #1b3523 0px, #1b3523 12px, #ffffff 12px, #ffffff 24px);
-        }
-
-        .card-strip-checkered.gold {
-            background: repeating-linear-gradient(90deg, #c69214 0px, #c69214 12px, #ffffff 12px, #ffffff 24px);
+        .party-set-header {
+            background: var(--gc-green-dark);
+            color: #ffffff;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--gc-gold);
         }
 
         .set-badge-tag {
-            display: inline-block;
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
+            background: var(--gc-gold);
+            color: #1b3523;
             font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .set-portion-tag {
+            font-size: 12px;
+            color: var(--gc-gold-light);
             font-weight: 800;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 12px;
+            letter-spacing: 1px;
         }
 
         .party-set-body {
-            padding: 22px 20px;
+            padding: 24px 22px;
             display: flex;
             flex-direction: column;
             flex: 1;
         }
 
         .set-title-zh {
-            font-size: 19px;
+            font-family: var(--font-display);
+            font-size: 22px;
             font-weight: 900;
             color: var(--gc-green-dark);
             margin-bottom: 2px;
+            letter-spacing: 1px;
         }
 
         .set-title-en {
             font-size: 11px;
             font-weight: 800;
+            letter-spacing: 2px;
             color: var(--gc-gold);
-            letter-spacing: 1.5px;
+            text-transform: uppercase;
             margin-bottom: 12px;
         }
 
         .set-desc {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #475569;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             line-height: 1.6;
         }
 
-        .set-items-list {
-            font-size: 13px;
-            color: #334155;
-            line-height: 1.8;
-            padding-left: 18px;
+        .set-items-box {
+            background: #fbf9f5;
+            border: 1px solid var(--gc-border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+
+        .set-items-box-title {
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: var(--gc-espresso);
+            text-transform: uppercase;
             margin-bottom: 8px;
         }
 
-        /* Contact & Inquiry Box */
+        .set-items-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.8;
+        }
+
+        .set-items-list li {
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .set-items-list li::before {
+            content: "◆";
+            position: absolute;
+            left: 0;
+            color: var(--gc-gold);
+            font-size: 10px;
+        }
+
+        /* Inquiry Section */
         .party-inquiry-box {
             background: #ffffff;
-            border: 3px solid var(--gc-green-dark);
+            border: 2px solid var(--gc-gold);
             border-radius: 18px;
-            padding: 24px 20px;
+            padding: 30px 24px;
             text-align: center;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
         .inquiry-title {
-            font-size: 20px;
+            font-family: var(--font-display);
+            font-size: 22px;
             font-weight: 900;
             color: var(--gc-green-dark);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
         .inquiry-desc {
-            font-size: 13px;
-            color: #475569;
-            max-width: 600px;
-            margin: 0 auto 18px;
+            font-size: 13.5px;
+            color: #55675a;
+            max-width: 580px;
+            margin: 0 auto 20px;
+            line-height: 1.7;
         }
 
-        .inquiry-btn-row {
+        .inquiry-btns-row {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 14px;
             flex-wrap: wrap;
         }
 
         .btn-inquiry {
-            padding: 11px 20px;
+            padding: 12px 24px;
             border-radius: 10px;
             font-size: 14px;
             font-weight: 800;
+            letter-spacing: 1px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s;
         }
 
         .btn-inquiry.ig {
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            background: #e1306c;
             color: #fff;
         }
 
@@ -339,14 +412,9 @@
             color: #fff;
         }
 
-        .btn-inquiry.menu {
-            background: var(--gc-gold);
-            color: #1b3523;
-        }
-
         .btn-inquiry:hover {
+            opacity: 0.92;
             transform: translateY(-2px);
-            opacity: 0.95;
         }
 
         /* Footer */
@@ -357,6 +425,12 @@
             font-size: 12px;
             background: var(--gc-green-dark);
         }
+
+        .party-footer a {
+            color: var(--gc-gold);
+            text-decoration: none;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -364,132 +438,139 @@
     <!-- Top Checkered Border (🟩⬜🟩⬜) -->
     <div class="checkered-bar"></div>
 
-    <!-- Navigation -->
-    <header class="party-nav">
+    <!-- Navbar -->
+    <nav class="party-nav">
         <a href="/" class="party-nav-brand">
-            <span style="font-size:22px;">🌽</span>
             <div>
                 <div class="nav-brand-title">GOLDEN CORN</div>
-                <div class="nav-brand-sub">慢靈魂製造所 · 派對餐盒專案</div>
+                <div class="nav-brand-sub">慢靈魂製造所 · 派對餐盒</div>
             </div>
         </a>
         <div class="party-nav-actions">
-            <a href="/" class="btn-nav-action">🏠 返回首頁</a>
-            <a href="/menu.html" class="btn-nav-action highlight">🌽 門市菜單</a>
+            <a href="/" class="btn-nav-action">回首頁</a>
+            <a href="/menu.html" class="btn-nav-action highlight">門市線上點餐 ➔</a>
         </div>
-    </header>
+    </nav>
 
     <!-- Hero Banner -->
-    <section class="party-hero-banner">
-        <div class="party-hero-badge" id="partyHeroBadge">🎉 PARTY BOX & CATERING</div>
+    <header class="party-hero-banner">
+        <div class="party-hero-badge" id="partyHeroBadge">PARTY BOX &amp; CATERING</div>
         <h1 class="party-hero-title" id="partyHeroTitle">美式煙燻派對餐盒</h1>
         <p class="party-hero-subtitle" id="partyHeroSubtitle">
             露營野餐 · 朋友歡聚 · 企業團訂 · 生日派對的大份量美式靈魂盛宴！
         </p>
         <div class="party-hero-tags" id="partyHeroTags">
-            <span>🪵 16小時原木柴燒慢燻</span>
-            <span>🍗 現炸美式靈魂炸雞</span>
-            <span>🌽 招牌炭烤黃金玉米</span>
+            <span>16小時原木柴燒慢燻</span>
+            <span>現炸美式靈魂炸雞</span>
+            <span>招牌炭烤黃金玉米</span>
         </div>
-    </section>
+    </header>
 
     <!-- Main Content -->
     <main class="party-main-content">
 
-        <!-- Notice Box -->
+        <!-- Booking Notice Box -->
         <div class="party-notice-card">
-            <div style="font-size:24px;">💡</div>
             <div>
-                <strong id="partyNoticeTitle">【派對餐盒預訂須知】</strong>
-                <p style="margin-top:4px;" id="partyNoticeText">
-                    派對餐盒採<strong>大份量客製化低溫燻烤</strong>製作，需提前 <strong>2~3 天</strong> 預訂，讓主廚有充裕時間備料與長時間慢火煙燻。目前線上菜單自選功能籌備中，歡迎直接透過 IG 或電話與主廚預訂！
-                </p>
+                <strong id="partyNoticeTitle">【派對餐盒預訂須知】</strong><br>
+                <span id="partyNoticeText">
+                    派對餐盒採大份量客製化低溫燻烤製作，需提前 2~3 天預訂，讓主廚有充裕時間備料與長時間慢火煙燻。目前線上菜單自選功能籌備中，歡迎直接透過 IG 或電話與主廚預訂！
+                </span>
             </div>
         </div>
 
-        <!-- Section Title -->
-        <div>
-            <h2 class="party-grid-title" id="partyGridTitle">經典派對組合預覽</h2>
-            <p class="party-grid-subtitle" id="partyGridSubtitle">可依據您的聚會人數與預算進行客製搭配</p>
-        </div>
+        <h2 class="party-grid-title">經典派對組合方案</h2>
+        <p class="party-grid-subtitle">以下為熱門大份量分享組合，亦可依活動需求全客製化調整</p>
 
-        <!-- Sets Grid (No Food Images) -->
+        <!-- The 3 Package Sets (Pure Typographic Diner Cards) -->
         <div class="party-sets-grid">
 
-            <!-- Set 1: 德州狂歡煙燻肉拼盤 -->
+            <!-- SET 1 -->
             <div class="party-set-card">
-                <div class="card-strip-checkered green"></div>
+                <div class="party-set-header">
+                    <span class="set-badge-tag" id="partySet1Badge">人氣首選 4~6人</span>
+                    <span class="set-portion-tag">大份量肉品拼盤</span>
+                </div>
                 <div class="party-set-body">
-                    <div>
-                        <span class="set-badge-tag" id="partySet1Badge">人氣首選 4~6人</span>
-                    </div>
-                    <h3 class="set-title-zh" id="partySet1Title">🥩 德州慢燻狂歡肉品盛宴盒</h3>
+                    <h3 class="set-title-zh" id="partySet1Title">德州慢燻狂歡肉品盛宴盒</h3>
                     <div class="set-title-en" id="partySet1Subtitle">Texas Smoked BBQ Carnivore Feast</div>
-                    <p class="set-desc" id="partySet1Desc">肉食愛好者的終極救贖！一次品嚐三種經典低溫煙燻肉品。</p>
-                    <ul class="set-items-list" id="partySet1Items">
-                        <li>🔥 <strong>德州柴燒慢燻牛胸肉</strong> 400g</li>
-                        <li>🔥 <strong>經典焦糖煙燻豬肋排</strong> 半扇</li>
-                        <li>🔥 <strong>獨門香料手撕豬梅花</strong> 300g</li>
-                        <li>🥗 附贈：美式蘋果捲心菜、特製酸黃瓜、自製BBQ醬</li>
-                    </ul>
+                    <p class="set-desc" id="partySet1Desc">
+                        肉食愛好者的終極救贖！一次品嚐三種經典低溫煙燻肉品。
+                    </p>
+                    <div class="set-items-box">
+                        <div class="set-items-box-title">[ 包含內容與配菜 ]</div>
+                        <ul class="set-items-list" id="partySet1Items">
+                            <li>德州柴燒慢燻牛胸肉 400g</li>
+                            <li>經典焦糖煙燻豬肋排 半扇</li>
+                            <li>獨門香料手撕豬梅花 300g</li>
+                            <li>附贈：美式蘋果捲心菜、特製酸黃瓜、自製BBQ醬</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <!-- Set 2: 靈魂炸雞與黃金玉米雙饗桶 -->
+            <!-- SET 2 -->
             <div class="party-set-card">
-                <div class="card-strip-checkered gold"></div>
+                <div class="party-set-header">
+                    <span class="set-badge-tag" id="partySet2Badge">聚會必點 4~6人</span>
+                    <span class="set-portion-tag">美式炸物 &amp; 燒烤玉米</span>
+                </div>
                 <div class="party-set-body">
-                    <div>
-                        <span class="set-badge-tag" id="partySet2Badge">聚會必點 4~6人</span>
+                    <h3 class="set-title-zh" id="partySet2Title">靈魂炸雞 &amp; 黃金玉米歡聚組</h3>
+                    <div class="set-title-en" id="partySet2Subtitle">Soul Fried Chicken &amp; Corn Ribs Box</div>
+                    <p class="set-desc" id="partySet2Desc">
+                        外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。
+                    </p>
+                    <div class="set-items-box">
+                        <div class="set-items-box-title">[ 包含內容與配菜 ]</div>
+                        <ul class="set-items-list" id="partySet2Items">
+                            <li>美式酸奶酥脆炸雞柳條 12 塊</li>
+                            <li>楓糖水牛城微辣炸雞 8 塊</li>
+                            <li>美式燒烤黃金玉米肋排 8 支</li>
+                            <li>附贈：海鹽美式細薯、蒔蘿優格沾醬</li>
+                        </ul>
                     </div>
-                    <h3 class="set-title-zh" id="partySet2Title">🍗 靈魂炸雞 & 黃金玉米歡聚組</h3>
-                    <div class="set-title-en" id="partySet2Subtitle">Soul Fried Chicken & Corn Ribs Box</div>
-                    <p class="set-desc" id="partySet2Desc">外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。</p>
-                    <ul class="set-items-list" id="partySet2Items">
-                        <li>🍗 <strong>美式酸奶酥脆炸雞柳條</strong> 12 塊</li>
-                        <li>🍗 <strong>楓糖水牛城微辣炸雞</strong> 8 塊</li>
-                        <li>🌽 <strong>美式燒烤黃金玉米肋排</strong> 8 支</li>
-                        <li>🍟 附贈：海鹽美式細薯、蒔蘿優格沾醬</li>
-                    </ul>
                 </div>
             </div>
 
-            <!-- Set 3: 露營野餐真空料理包盛宴 -->
+            <!-- SET 3 -->
             <div class="party-set-card">
-                <div class="card-strip-checkered green"></div>
+                <div class="party-set-header">
+                    <span class="set-badge-tag" id="partySet3Badge">戶外露營神器</span>
+                    <span class="set-portion-tag">真空封裝 即開即享</span>
+                </div>
                 <div class="party-set-body">
-                    <div>
-                        <span class="set-badge-tag" id="partySet3Badge">戶外露營神器</span>
-                    </div>
-                    <h3 class="set-title-zh" id="partySet3Title">🏕️ 露營野餐低溫真空即享組</h3>
+                    <h3 class="set-title-zh" id="partySet3Title">露營野餐低溫真空即享組</h3>
                     <div class="set-title-en" id="partySet3Subtitle">Outdoor Camping Ready-to-Heat Pack</div>
-                    <p class="set-desc" id="partySet3Desc">主廚已煙燻熟成並低溫真空封裝。隔水加熱即可享受大師級烤肉！</p>
-                    <ul class="set-items-list" id="partySet3Items">
-                        <li>🏕️ <strong>熟成煙燻牛胸肉真空包</strong> 2 包</li>
-                        <li>🏕️ <strong>古巴風烤豬排真空包</strong> 2 包</li>
-                        <li>🏕️ <strong>雞汁小米飯 & 奶油玉米包</strong> 各 2 包</li>
-                        <li>✨ 附贈專用復熱教學卡與特調香料粉</li>
-                    </ul>
+                    <p class="set-desc" id="partySet3Desc">
+                        主廚已煙燻熟成並低溫真空封裝。隔水加熱即可享受大師級烤肉！
+                    </p>
+                    <div class="set-items-box">
+                        <div class="set-items-box-title">[ 包含內容與配菜 ]</div>
+                        <ul class="set-items-list" id="partySet3Items">
+                            <li>熟成煙燻牛胸肉真空包 2 包</li>
+                            <li>古巴風烤豬排真空包 2 包</li>
+                            <li>雞汁小米飯 &amp; 奶油玉米包 各 2 包</li>
+                            <li>附贈專用復熱教學卡與特調香料粉</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- Booking Box -->
+        <!-- Custom Order & Contact Inquiry Box -->
         <div class="party-inquiry-box">
-            <h3 class="inquiry-title" id="partyInquiryTitle">📞 預約與客製化洽詢</h3>
+            <h3 class="inquiry-title" id="partyInquiryTitle">預約與客製化洽詢</h3>
             <p class="inquiry-desc" id="partyInquiryDesc">
                 不論是家庭聚餐、朋友露營、公司慶生或大型活動外燴，主廚皆可為您量身規劃份量與菜色組合！
             </p>
-            <div class="inquiry-btn-row">
-                <a href="https://www.instagram.com/goldencorn_diner/" target="_blank" class="btn-inquiry ig" id="partyInquiryIgLink">
-                    <span id="partyInquiryIgText">📸 私訊 IG 預約：@goldencorn_diner</span>
+            <div class="inquiry-btns-row">
+                <a href="https://www.instagram.com/goldencorn_diner/" target="_blank" class="btn-inquiry ig" id="partyInquiryIgBtn">
+                    <span id="partyInquiryIgText">私訊 IG 預約：@goldencorn_diner</span>
                 </a>
-                <a href="tel:0910237105" class="btn-inquiry phone" id="partyInquiryPhoneLink">
-                    <span id="partyInquiryPhoneText">📞 電話洽詢：0910-237-105</span>
-                </a>
-                <a href="/menu.html" class="btn-inquiry menu">
-                    <span>🌽 先逛逛門市線上菜單 ➔</span>
+                <a href="tel:0910237105" class="btn-inquiry phone" id="partyInquiryPhoneBtn">
+                    <span id="partyInquiryPhoneText">電話洽詢：0910-237-105</span>
                 </a>
             </div>
         </div>
@@ -501,20 +582,23 @@
 
     <!-- Footer -->
     <footer class="party-footer">
-        <div>GOLDEN CORN · 慢靈魂製造所 · 派對餐盒</div>
-        <div style="margin: 4px 0;">後勁 Houjing · Texas Smoked BBQ & Soul Food</div>
+        <div style="font-family: var(--font-display); font-size: 14px; font-weight: 800; letter-spacing: 2px;">GOLDEN CORN · 慢靈魂製造所</div>
+        <div style="margin: 4px 0;">後勁 Houjing · Texas Smoked BBQ &amp; Soul Food</div>
         <div style="font-size: 11px; margin-top: 6px;">工作室地址：高雄市楠梓區金富街85-1號 · 0910237105</div>
+        <div style="margin-top: 10px;">
+            <a href="/admin.html">⚙️ 店家管理後台登入</a>
+        </div>
     </footer>
 
-    <!-- Logic Script for CMS Loading -->
+    <!-- Logic Script -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             loadPartySettings();
         });
 
-        function renderListItems(targetEl, text) {
+        function renderListLines(targetEl, text) {
             if (!targetEl || !text) return;
-            const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+            const lines = text.split("\n").map(l => l.trim().replace(/^✨\s*/, '').replace(/^◆\s*/, '').replace(/^[🔥🍗🥗🏕️🌽🍟]\s*/, '')).filter(l => l.length > 0);
             if (lines.length > 0) {
                 targetEl.innerHTML = lines.map(line => `<li>${line}</li>`).join("");
             }
@@ -526,53 +610,52 @@
                 if (!res.ok) return;
                 const s = await res.json();
 
+                // Banner
                 if (s.PartyHeroBadge && document.getElementById("partyHeroBadge")) document.getElementById("partyHeroBadge").textContent = s.PartyHeroBadge;
                 if (s.PartyHeroTitle && document.getElementById("partyHeroTitle")) document.getElementById("partyHeroTitle").textContent = s.PartyHeroTitle;
                 if (s.PartyHeroSubtitle && document.getElementById("partyHeroSubtitle")) document.getElementById("partyHeroSubtitle").textContent = s.PartyHeroSubtitle;
                 if (s.PartyHeroTags && document.getElementById("partyHeroTags")) {
-                    const tags = s.PartyHeroTags.split("|").map(t => t.trim()).filter(t => t.length > 0);
+                    const tags = s.PartyHeroTags.split("|").map(t => t.trim().replace(/^[🪵🍗🌽✨]\s*/, '')).filter(t => t.length > 0);
                     if (tags.length > 0) {
                         document.getElementById("partyHeroTags").innerHTML = tags.map(t => `<span>${t}</span>`).join("");
                     }
                 }
 
+                // Notice
                 if (s.PartyNoticeTitle && document.getElementById("partyNoticeTitle")) document.getElementById("partyNoticeTitle").textContent = s.PartyNoticeTitle;
-                if (s.PartyNoticeText && document.getElementById("partyNoticeText")) document.getElementById("partyNoticeText").innerHTML = s.PartyNoticeText.replace(/\n/g, '<br>');
-
-                if (s.PartyGridTitle && document.getElementById("partyGridTitle")) document.getElementById("partyGridTitle").textContent = s.PartyGridTitle;
-                if (s.PartyGridSubtitle && document.getElementById("partyGridSubtitle")) document.getElementById("partyGridSubtitle").textContent = s.PartyGridSubtitle;
+                if (s.PartyNoticeText && document.getElementById("partyNoticeText")) document.getElementById("partyNoticeText").textContent = s.PartyNoticeText;
 
                 // Set 1
                 if (s.PartySet1Badge && document.getElementById("partySet1Badge")) document.getElementById("partySet1Badge").textContent = s.PartySet1Badge;
-                if (s.PartySet1Title && document.getElementById("partySet1Title")) document.getElementById("partySet1Title").textContent = s.PartySet1Title;
+                if (s.PartySet1Title && document.getElementById("partySet1Title")) document.getElementById("partySet1Title").textContent = s.PartySet1Title.replace(/^[🥩🍗🏕️]\s*/, '');
                 if (s.PartySet1Subtitle && document.getElementById("partySet1Subtitle")) document.getElementById("partySet1Subtitle").textContent = s.PartySet1Subtitle;
                 if (s.PartySet1Desc && document.getElementById("partySet1Desc")) document.getElementById("partySet1Desc").textContent = s.PartySet1Desc;
-                if (s.PartySet1Items) renderListItems(document.getElementById("partySet1Items"), s.PartySet1Items);
+                if (s.PartySet1Items) renderListLines(document.getElementById("partySet1Items"), s.PartySet1Items);
 
                 // Set 2
                 if (s.PartySet2Badge && document.getElementById("partySet2Badge")) document.getElementById("partySet2Badge").textContent = s.PartySet2Badge;
-                if (s.PartySet2Title && document.getElementById("partySet2Title")) document.getElementById("partySet2Title").textContent = s.PartySet2Title;
+                if (s.PartySet2Title && document.getElementById("partySet2Title")) document.getElementById("partySet2Title").textContent = s.PartySet2Title.replace(/^[🥩🍗🏕️]\s*/, '');
                 if (s.PartySet2Subtitle && document.getElementById("partySet2Subtitle")) document.getElementById("partySet2Subtitle").textContent = s.PartySet2Subtitle;
                 if (s.PartySet2Desc && document.getElementById("partySet2Desc")) document.getElementById("partySet2Desc").textContent = s.PartySet2Desc;
-                if (s.PartySet2Items) renderListItems(document.getElementById("partySet2Items"), s.PartySet2Items);
+                if (s.PartySet2Items) renderListLines(document.getElementById("partySet2Items"), s.PartySet2Items);
 
                 // Set 3
                 if (s.PartySet3Badge && document.getElementById("partySet3Badge")) document.getElementById("partySet3Badge").textContent = s.PartySet3Badge;
-                if (s.PartySet3Title && document.getElementById("partySet3Title")) document.getElementById("partySet3Title").textContent = s.PartySet3Title;
+                if (s.PartySet3Title && document.getElementById("partySet3Title")) document.getElementById("partySet3Title").textContent = s.PartySet3Title.replace(/^[🥩🍗🏕️]\s*/, '');
                 if (s.PartySet3Subtitle && document.getElementById("partySet3Subtitle")) document.getElementById("partySet3Subtitle").textContent = s.PartySet3Subtitle;
                 if (s.PartySet3Desc && document.getElementById("partySet3Desc")) document.getElementById("partySet3Desc").textContent = s.PartySet3Desc;
-                if (s.PartySet3Items) renderListItems(document.getElementById("partySet3Items"), s.PartySet3Items);
+                if (s.PartySet3Items) renderListLines(document.getElementById("partySet3Items"), s.PartySet3Items);
 
                 // Inquiry
-                if (s.PartyInquiryTitle && document.getElementById("partyInquiryTitle")) document.getElementById("partyInquiryTitle").textContent = s.PartyInquiryTitle;
+                if (s.PartyInquiryTitle && document.getElementById("partyInquiryTitle")) document.getElementById("partyInquiryTitle").textContent = s.PartyInquiryTitle.replace(/^[📞💬]\s*/, '');
                 if (s.PartyInquiryDesc && document.getElementById("partyInquiryDesc")) document.getElementById("partyInquiryDesc").textContent = s.PartyInquiryDesc;
                 if (s.PartyInquiryIgText && document.getElementById("partyInquiryIgText")) document.getElementById("partyInquiryIgText").textContent = s.PartyInquiryIgText;
-                if (s.PartyInquiryIgLink && document.getElementById("partyInquiryIgLink")) document.getElementById("partyInquiryIgLink").href = s.PartyInquiryIgLink;
+                if (s.PartyInquiryIgLink && document.getElementById("partyInquiryIgBtn")) document.getElementById("partyInquiryIgBtn").href = s.PartyInquiryIgLink;
                 if (s.PartyInquiryPhoneText && document.getElementById("partyInquiryPhoneText")) document.getElementById("partyInquiryPhoneText").textContent = s.PartyInquiryPhoneText;
-                if (s.PartyInquiryPhoneLink && document.getElementById("partyInquiryPhoneLink")) document.getElementById("partyInquiryPhoneLink").href = s.PartyInquiryPhoneLink;
+                if (s.PartyInquiryPhoneLink && document.getElementById("partyInquiryPhoneBtn")) document.getElementById("partyInquiryPhoneBtn").href = s.PartyInquiryPhoneLink;
 
             } catch (e) {
-                console.error("Failed to load party settings:", e);
+                console.error("Party settings load failed:", e);
             }
         }
     </script>

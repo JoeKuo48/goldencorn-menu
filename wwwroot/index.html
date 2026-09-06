@@ -10,18 +10,23 @@
     <title>Golden Corn · 慢靈魂製造所 | 後勁 Houjing Texas BBQ & Soul Food</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gc-green-dark: #1e3927;
+            --gc-green-dark: #1b3523;
             --gc-green-main: #244630;
             --gc-gold: #c69214;
             --gc-gold-hover: #d89e17;
-            --gc-gold-light: #fef6dd;
-            --gc-cream-bg: #f5f0e6;
-            --gc-border: #e2dac9;
-            --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
-            --font-serif: "Noto Serif TC", "Georgia", serif;
+            --gc-gold-light: #fef8e7;
+            --gc-cream-bg: #f5ece3;
+            --gc-card-bg: #ffffff;
+            --gc-border: #dfd6c7;
+            --gc-text-dark: #1a291e;
+            --gc-espresso: #4f3524;
+            
+            --font-display: 'Fraunces', 'DM Serif Display', 'Noto Serif TC', serif;
+            --font-sans: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            --font-serif: 'Fraunces', 'Noto Serif TC', "Georgia", serif;
         }
 
         * {
@@ -38,7 +43,7 @@
         body {
             font-family: var(--font-sans);
             background-color: var(--gc-green-dark);
-            color: #1a291e;
+            color: var(--gc-text-dark);
             line-height: 1.5;
             min-height: 100vh;
             overflow-x: hidden;
@@ -50,10 +55,10 @@
             width: 100%;
             background: repeating-linear-gradient(
                 90deg,
-                #1e3927 0px,
-                #1e3927 16px,
-                #f5f0e6 16px,
-                #f5f0e6 32px
+                #1b3523 0px,
+                #1b3523 16px,
+                #f5ece3 16px,
+                #f5ece3 32px
             );
             border-bottom: 2px solid #14281a;
             position: relative;
@@ -74,12 +79,12 @@
             justify-content: center;
             align-items: center;
             background-color: var(--gc-green-dark);
-            padding: 16px 14px 30px;
+            padding: 24px 16px 36px;
             position: relative;
         }
 
         .poster-card-frame {
-            max-width: 460px;
+            max-width: 480px;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -88,10 +93,135 @@
             position: relative;
         }
 
+        /* Pure Typographic Retro Diner Poster (Mid-Century American Aesthetic) */
+        .retro-diner-poster {
+            width: 100%;
+            background: #fdfaf5;
+            border: 4px solid var(--gc-gold);
+            border-radius: 20px;
+            padding: 14px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .poster-inner-frame {
+            border: 2px solid var(--gc-green-dark);
+            border-radius: 14px;
+            padding: 32px 20px 28px;
+            position: relative;
+            background: #fcf8f0;
+        }
+
+        .poster-corner {
+            position: absolute;
+            font-size: 14px;
+            color: var(--gc-gold);
+            line-height: 1;
+        }
+        .poster-corner.top-left { top: 8px; left: 8px; }
+        .poster-corner.top-right { top: 8px; right: 8px; }
+        .poster-corner.bottom-left { bottom: 8px; left: 8px; }
+        .poster-corner.bottom-right { bottom: 8px; right: 8px; }
+
+        .poster-badge-arch {
+            display: inline-block;
+            font-family: var(--font-sans);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gc-gold);
+            margin-bottom: 6px;
+        }
+
+        .poster-est-tag {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #637568;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .poster-brand-en {
+            font-family: var(--font-display);
+            font-size: clamp(34px, 8vw, 46px);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: 3px;
+            color: var(--gc-green-dark);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .poster-brand-zh {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: var(--gc-gold);
+            margin-bottom: 20px;
+        }
+
+        .poster-ornament-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto 16px;
+            max-width: 90%;
+        }
+
+        .poster-ornament-row .line {
+            flex: 1;
+            height: 1px;
+            background: var(--gc-border);
+        }
+
+        .poster-ornament-row .diamond {
+            color: var(--gc-gold);
+            font-size: 10px;
+        }
+
+        .poster-ornament-row .text {
+            font-family: var(--font-sans);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gc-espresso);
+            white-space: nowrap;
+        }
+
+        .poster-craft-desc {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3b4e40;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .poster-bottom-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gc-green-dark);
+            color: var(--gc-gold-light);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Custom uploaded image support (hidden if not uploaded) */
         .poster-img-full {
             width: 100%;
             height: auto;
-            max-height: 68vh;
+            max-height: 65vh;
             object-fit: contain;
             border-radius: 18px;
             box-shadow: 0 16px 45px rgba(0, 0, 0, 0.5);
@@ -100,9 +230,9 @@
 
         /* Action Buttons Row on Green Page */
         .poster-actions-row {
-            margin-top: 20px;
+            margin-top: 24px;
             width: 100%;
-            max-width: 460px;
+            max-width: 480px;
             display: flex;
             gap: 12px;
             justify-content: center;
@@ -110,14 +240,14 @@
         }
 
         .btn-announcement-pill {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
             color: #ffffff;
             border: 2px solid var(--gc-gold);
             border-radius: 50px;
             padding: 12px 22px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -125,22 +255,23 @@
             backdrop-filter: blur(4px);
             transition: all 0.2s;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
         }
 
         .btn-announcement-pill:hover {
             background: var(--gc-gold);
-            color: #1e3927;
+            color: #1b3523;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(198, 146, 20, 0.4);
         }
 
         .btn-swipe-prompt {
             background: var(--gc-gold);
-            color: #1e3927;
+            color: #1b3523;
             border: 2px solid #ffffff;
             border-radius: 50px;
             padding: 12px 24px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900;
             letter-spacing: 1.5px;
             text-transform: uppercase;
@@ -166,21 +297,21 @@
             100% { box-shadow: 0 0 0 0 rgba(229, 169, 30, 0); }
         }
 
-        /* ================= Page 2: Dual Big Box Selection (綠白格子風格模板) ================= */
+        /* ================= Page 2: Dual Big Box Selection (Le Hut Dinette Style) ================= */
         .portal-section {
             background: var(--gc-cream-bg);
-            padding: 50px 20px 60px;
+            padding: 55px 20px 65px;
             border-top: 4px solid var(--gc-gold);
         }
 
         .portal-container {
-            max-width: 860px;
+            max-width: 880px;
             margin: 0 auto;
         }
 
         .portal-header {
             text-align: center;
-            margin-bottom: 34px;
+            margin-bottom: 38px;
         }
 
         .portal-pill-tag {
@@ -188,30 +319,34 @@
             background: var(--gc-green-dark);
             color: var(--gc-gold-light);
             font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 2.5px;
-            padding: 4px 14px;
-            border-radius: 20px;
-            margin-bottom: 10px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: 30px;
+            margin-bottom: 12px;
         }
 
         .portal-title {
-            font-size: clamp(24px, 5vw, 32px);
+            font-family: var(--font-display);
+            font-size: clamp(26px, 5vw, 36px);
             font-weight: 900;
+            letter-spacing: 1.5px;
             color: var(--gc-green-dark);
             margin-bottom: 6px;
         }
 
         .portal-subtitle {
             font-size: 14px;
-            color: #5f6f63;
+            color: #55675a;
+            font-weight: 500;
         }
 
         .portal-quick-btns {
             display: flex;
             justify-content: center;
             gap: 12px;
-            margin-top: 18px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
 
@@ -219,10 +354,11 @@
             background: #ffffff;
             border: 1.5px solid var(--gc-green-dark);
             color: var(--gc-green-dark);
-            padding: 8px 18px;
-            border-radius: 20px;
+            padding: 8px 20px;
+            border-radius: 30px;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: 1px;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
@@ -241,8 +377,8 @@
         .portal-grid-boxes {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 30px;
+            gap: 26px;
+            margin-bottom: 34px;
         }
 
         .portal-big-card {
@@ -270,7 +406,7 @@
         }
 
         .card-strip-checkered.green {
-            background: repeating-linear-gradient(90deg, #1e3927 0px, #1e3927 14px, #ffffff 14px, #ffffff 28px);
+            background: repeating-linear-gradient(90deg, #1b3523 0px, #1b3523 14px, #ffffff 14px, #ffffff 28px);
         }
 
         .card-strip-checkered.gold {
@@ -278,7 +414,7 @@
         }
 
         .portal-card-inner {
-            padding: 26px 20px;
+            padding: 28px 22px;
             display: flex;
             flex-direction: column;
             flex: 1;
@@ -288,66 +424,110 @@
         .card-badge {
             font-size: 11px;
             font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 12px;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 20px;
             display: inline-block;
-            margin: 0 auto 12px;
+            margin: 0 auto 14px;
         }
 
         .card-badge.party {
             background: #e0f2fe;
             color: #0369a1;
+            border: 1px solid #bae6fd;
         }
 
         .card-badge.menu {
             background: #fef3c7;
             color: #92400e;
+            border: 1px solid #fde68a;
         }
 
-        .card-emoji {
-            font-size: 46px;
-            margin-bottom: 8px;
+        /* Pure Typographic Monogram Tag (Replaces cartoon emojis) */
+        .card-monogram-tag {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 900;
+            border: 2px solid;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-monogram-tag.party {
+            background: #f0f9ff;
+            color: #0369a1;
+            border-color: #0284c7;
+        }
+
+        .card-monogram-tag.menu {
+            background: #fefce8;
+            color: #15803d;
+            border-color: #16a34a;
         }
 
         .card-title-chinese {
-            font-size: 24px;
+            font-family: var(--font-display);
+            font-size: 25px;
             font-weight: 900;
             color: var(--gc-green-dark);
             margin-bottom: 2px;
+            letter-spacing: 1px;
         }
 
         .card-title-english {
             font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
+            font-weight: 900;
+            letter-spacing: 2px;
             color: var(--gc-gold);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
         }
 
         .card-desc {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #475569;
-            line-height: 1.6;
-            margin-bottom: 16px;
+            line-height: 1.65;
+            margin-bottom: 18px;
             text-align: left;
         }
 
         .card-bullet-list {
             list-style: none;
             padding: 0;
-            margin: 0 0 22px 0;
+            margin: 0 0 24px 0;
             text-align: left;
             font-size: 13px;
             color: #334155;
-            line-height: 1.8;
+            line-height: 1.85;
+        }
+
+        .card-bullet-list li {
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .card-bullet-list li::before {
+            content: "◆";
+            position: absolute;
+            left: 0;
+            color: var(--gc-gold);
+            font-size: 10px;
         }
 
         .card-action-btn {
             margin-top: auto;
-            padding: 12px 20px;
+            padding: 13px 20px;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -374,23 +554,26 @@
         /* Story Note */
         .portal-story-note {
             text-align: center;
-            padding-top: 24px;
+            padding-top: 26px;
             border-top: 1px dashed var(--gc-border);
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .story-quote-text {
             font-family: var(--font-serif);
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--gc-green-dark);
-            font-style: italic;
+            letter-spacing: 1px;
         }
 
         .story-quote-author {
             font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             color: #5f6f63;
-            margin-top: 4px;
+            margin-top: 6px;
+            text-transform: uppercase;
         }
 
         /* ================= Modal: Clean 門市公告 ================= */
@@ -446,16 +629,19 @@
 
         .modal-top-bar .tag {
             font-size: 11px;
-            letter-spacing: 2px;
-            font-weight: 800;
+            letter-spacing: 2.5px;
+            font-weight: 900;
+            text-transform: uppercase;
             color: var(--gc-gold);
         }
 
         .modal-top-bar .title {
+            font-family: var(--font-display);
             font-size: 20px;
             font-weight: 900;
             color: #ffffff;
             margin-top: 2px;
+            letter-spacing: 1px;
         }
 
         .btn-modal-close-round {
@@ -485,21 +671,23 @@
         }
 
         .notice-section-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: #fbf9f5;
+            border: 1px solid var(--gc-border);
             border-radius: 14px;
             padding: 16px 18px;
             margin-bottom: 16px;
         }
 
         .notice-section-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
+            letter-spacing: 1px;
             color: var(--gc-green-dark);
             margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 6px;
+            text-transform: uppercase;
         }
 
         .notice-section-content {
@@ -515,8 +703,8 @@
 
         .modal-bottom-row {
             padding: 14px 22px;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
+            background: #fbf9f5;
+            border-top: 1px solid var(--gc-border);
             display: flex;
             justify-content: flex-end;
             gap: 10px;
@@ -529,6 +717,7 @@
             border-radius: 8px;
             font-size: 14px;
             font-weight: 800;
+            letter-spacing: 1px;
             cursor: pointer;
             border: none;
             transition: background 0.2s;
@@ -541,7 +730,7 @@
         /* Footer */
         .page-footer {
             text-align: center;
-            padding: 30px 16px 20px;
+            padding: 34px 16px 24px;
             color: #8da493;
             font-size: 12px;
             background: var(--gc-green-dark);
@@ -550,20 +739,25 @@
         .page-footer a {
             color: var(--gc-gold);
             text-decoration: none;
-            font-size: 11px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
         /* Mobile Responsive */
         @media (max-width: 650px) {
             .portal-grid-boxes {
                 grid-template-columns: 1fr;
-                gap: 18px;
+                gap: 20px;
             }
             .hero-poster-wrapper {
-                padding: 12px 10px 24px;
+                padding: 16px 12px 28px;
             }
-            .poster-img-full {
-                max-height: 65vh;
+            .poster-brand-en {
+                font-size: 32px;
+            }
+            .poster-brand-zh {
+                font-size: 19px;
             }
             .poster-actions-row {
                 flex-direction: column;
@@ -585,22 +779,57 @@
     <!-- ================= Section 1: Fullscreen Bespoke Green Poster Hero ================= -->
     <main class="hero-poster-wrapper">
         <div class="poster-card-frame">
-            <img id="posterImg" src="/img/cover_poster.png" alt="Golden Corn · 慢靈魂製造所" class="poster-img-full">
+            
+            <!-- Pure Typographic Retro Diner Poster (Default / No Cartoon) -->
+            <div id="retroTypoPoster" class="retro-diner-poster">
+                <div class="poster-inner-frame">
+                    <div class="poster-corner top-left">✦</div>
+                    <div class="poster-corner top-right">✦</div>
+                    <div class="poster-corner bottom-left">✦</div>
+                    <div class="poster-corner bottom-right">✦</div>
+                    
+                    <div class="poster-badge-arch">★ NEW WAVE AMERICAN EATS ★</div>
+                    <div class="poster-est-tag">EST. 2024 · HOUJING, KAOHSIUNG</div>
+                    
+                    <h1 class="poster-brand-en">GOLDEN CORN</h1>
+                    <div class="poster-brand-zh">慢 靈 魂 製 造 所</div>
+                    
+                    <div class="poster-ornament-row">
+                        <span class="line"></span>
+                        <span class="diamond">◆</span>
+                        <span class="text">TEXAS BBQ &amp; SOUL FOOD</span>
+                        <span class="diamond">◆</span>
+                        <span class="line"></span>
+                    </div>
+                    
+                    <p class="poster-craft-desc">外公的田間貨櫃工作室 · 柴火低溫慢燻</p>
+                    
+                    <div class="poster-bottom-pill">
+                        <span>SLOW SMOKED</span>
+                        <span>·</span>
+                        <span>REAL WOOD FIRE</span>
+                        <span>·</span>
+                        <span>HANDCRAFTED</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Uploaded Photo (Displayed dynamically if a custom real photo is uploaded in CMS) -->
+            <img id="posterImg" src="" alt="Golden Corn · 慢靈魂製造所" class="poster-img-full" style="display:none;">
         </div>
         
         <!-- Action Buttons Directly on this Green Page -->
         <div class="poster-actions-row">
             <button class="btn-announcement-pill" onclick="openAnnouncementModal()">
-                <span>📢</span>
-                <span id="coverAnnouncementBtnText">門市公告資訊</span>
+                <span id="coverAnnouncementBtnText">門市公告與營業資訊</span>
             </button>
             <a href="#orderSelection" class="btn-swipe-prompt" onclick="scrollToSelection(event)">
-                <span id="coverSwipeBtnText">SWIPE FOR MY STORY... →</span>
+                <span id="coverSwipeBtnText">SWIPE FOR MY STORY... ↓</span>
             </a>
         </div>
     </main>
 
-    <!-- ================= Section 2: Dual Big Box Selection (綠白格子風格模板) ================= -->
+    <!-- ================= Section 2: Dual Big Box Selection (Le Hut Dinette Style) ================= -->
     <section id="orderSelection" class="portal-section">
         <div class="portal-container">
 
@@ -611,10 +840,10 @@
                 
                 <div class="portal-quick-btns">
                     <button class="btn-quick-outline" onclick="openAnnouncementModal()">
-                        <span id="portalNoticeBtnText">📢 門市公告與營業資訊</span>
+                        <span id="portalNoticeBtnText">[ 門市公告與營業資訊 ]</span>
                     </button>
                     <a href="/menu.html?action=history" class="btn-quick-outline">
-                        <span id="portalHistoryBtnText">📱 查詢我的訂單</span>
+                        <span id="portalHistoryBtnText">[ 查詢我的訂單 ]</span>
                     </a>
                 </div>
             </div>
@@ -626,17 +855,17 @@
                 <a href="/party.html" class="portal-big-card" id="boxALink">
                     <div class="card-strip-checkered green"></div>
                     <div class="portal-card-inner">
-                        <span class="card-badge party" id="boxABadge">🎉 團體聚會 · 露營野餐 · 預約外燴</span>
-                        <div class="card-emoji" id="boxAIcon">🍱</div>
+                        <span class="card-badge party" id="boxABadge">[ 團體聚會 · 露營野餐 · 預約外燴 ]</span>
+                        <div class="card-monogram-tag party" id="boxAIcon">A</div>
                         <h3 class="card-title-chinese" id="boxATitle">A. 派對餐盒</h3>
-                        <div class="card-title-english" id="boxASubtitle">PARTY BOX & CATERING</div>
+                        <div class="card-title-english" id="boxASubtitle">PARTY BOX &amp; CATERING</div>
                         <p class="card-desc" id="boxADesc">
                             專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！
                         </p>
                         <ul class="card-bullet-list" id="boxABullets">
-                            <li>✨ 德州慢燻牛胸肉 / 焦糖豬肋排大拼盤</li>
-                            <li>✨ 美式靈魂炸雞派對桶</li>
-                            <li>✨ 炭烤黃金玉米 & 主廚特調雙醬</li>
+                            <li>德州慢燻牛胸肉 / 焦糖豬肋排大拼盤</li>
+                            <li>美式靈魂炸雞派對桶</li>
+                            <li>炭烤黃金玉米 &amp; 主廚特調雙醬</li>
                         </ul>
                         <div class="card-action-btn party">
                             <span id="boxABtnText">探索派對餐盒</span>
@@ -649,17 +878,17 @@
                 <a href="/menu.html" class="portal-big-card" id="boxBLink">
                     <div class="card-strip-checkered gold"></div>
                     <div class="portal-card-inner">
-                        <span class="card-badge menu" id="boxBBadge">🔥 現點現烤 · A+B+C 自由配 · 預約外帶</span>
-                        <div class="card-emoji" id="boxBIcon">🌽</div>
+                        <span class="card-badge menu" id="boxBBadge">[ 現點現烤 · A+B+C 自由配 · 預約外帶 ]</span>
+                        <div class="card-monogram-tag menu" id="boxBIcon">B</div>
                         <h3 class="card-title-chinese" id="boxBTitle">B. 門市菜單</h3>
-                        <div class="card-title-english" id="boxBSubtitle">DINER MENU & ORDERING</div>
+                        <div class="card-title-english" id="boxBSubtitle">DINER MENU &amp; ORDERING</div>
                         <p class="card-desc" id="boxBDesc">
                             個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。
                         </p>
                         <ul class="card-bullet-list" id="boxBBullets">
-                            <li>✨ 德州燻烤牛胸肉、豬梅花、古巴烤豬排</li>
-                            <li>✨ 招牌美式奶油玉米、蘋果捲心菜</li>
-                            <li>✨ 線上預約取餐時間、Line Pay 快速結帳</li>
+                            <li>德州燻烤牛胸肉、豬梅花、古巴烤豬排</li>
+                            <li>招牌美式奶油玉米、蘋果捲心菜</li>
+                            <li>線上預約取餐時間、Line Pay 快速結帳</li>
                         </ul>
                         <div class="card-action-btn menu">
                             <span id="boxBBtnText">進入線上點餐</span>
@@ -673,7 +902,7 @@
             <!-- Story Quote -->
             <div class="portal-story-note">
                 <div class="story-quote-text" id="storyQuote">「世界太快，我們在田裡為你製造一點慢靈魂。」</div>
-                <div class="story-quote-author" id="storyAuthor">Golden Corn · 慢靈魂製造所 🌽 柴火煙燻工作室</div>
+                <div class="story-quote-author" id="storyAuthor">GOLDEN CORN · 慢靈魂製造所 · 柴火煙燻工作室</div>
             </div>
 
         </div>
@@ -684,22 +913,22 @@
 
     <!-- Footer -->
     <footer class="page-footer">
-        <div>GOLDEN CORN · 慢靈魂製造所</div>
-        <div style="margin: 4px 0;">後勁 Houjing · Texas Smoked BBQ & Soul Food</div>
-        <div style="font-size: 11px; margin-top: 6px;">工作室地址：高雄市楠梓區金富街85-1號 · 0910237105</div>
-        <div style="margin-top: 10px;">
+        <div style="font-family: var(--font-display); font-size: 15px; letter-spacing: 2px; font-weight: 800;">GOLDEN CORN · 慢靈魂製造所</div>
+        <div style="margin: 4px 0; letter-spacing: 1px;">後勁 Houjing · Texas Smoked BBQ &amp; Soul Food</div>
+        <div style="font-size: 11px; margin-top: 6px; color: #78907e;">工作室地址：高雄市楠梓區金富街85-1號 · 0910237105</div>
+        <div style="margin-top: 12px;">
             <a href="/admin.html">⚙️ 店家管理後台登入</a>
         </div>
     </footer>
 
-    <!-- ================= Modal: 精美 門市公告彈窗 (點擊才打開，無日曆) ================= -->
+    <!-- ================= Modal: 精美 門市公告彈窗 (點擊才打開) ================= -->
     <div id="announcementModalBackdrop" class="modal-overlay" onclick="if(event.target===this) closeAnnouncementModal()">
         <div class="modal-card-box">
             
             <div class="modal-top-bar">
                 <div>
                     <div class="tag">STORE NOTICE</div>
-                    <div class="title">📢 門市公告與營業資訊</div>
+                    <div class="title">門市公告與營業資訊</div>
                 </div>
                 <button class="btn-modal-close-round" onclick="closeAnnouncementModal()">&times;</button>
             </div>
@@ -709,7 +938,7 @@
                 <!-- 營業時間 -->
                 <div class="notice-section-box">
                     <div class="notice-section-title">
-                        <span>⏰</span> 營業與預約時間
+                        [ 營業與預約時間 ]
                     </div>
                     <div class="notice-section-content" id="noticeHours">
                         <strong>週四至週六 16:30 - 22:30</strong><br>
@@ -720,7 +949,7 @@
                 <!-- 取餐地點與工作室 -->
                 <div class="notice-section-box">
                     <div class="notice-section-title">
-                        <span>📍</span> 工作室取餐地址
+                        [ 工作室取餐地址 ]
                     </div>
                     <div class="notice-section-content" id="noticeAddress">
                         高雄市楠梓區金富街85-1號（外公的田間貨櫃工作室）
@@ -730,7 +959,7 @@
                 <!-- 外送與優惠 -->
                 <div class="notice-section-box">
                     <div class="notice-section-title">
-                        <span>🛵</span> 外送與自取說明
+                        [ 外送與自取說明 ]
                     </div>
                     <div class="notice-section-content" id="noticeDelivery">
                         • 本店餐點皆為<strong>低溫慢火柴燻、現點現烤</strong>，建議提前預約以確保肉品庫存。<br>
@@ -742,7 +971,7 @@
                 <!-- 聯絡與專人服務 -->
                 <div class="notice-section-box">
                     <div class="notice-section-title">
-                        <span>💬</span> 企業團訂與客製諮詢
+                        [ 企業團訂與客製諮詢 ]
                     </div>
                     <div class="notice-section-content" id="noticeContact">
                         企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：<br>
@@ -755,7 +984,7 @@
 
             <div class="modal-bottom-row">
                 <button class="btn-modal-close-main" onclick="closeAnnouncementModal()">
-                    我知道了
+                    關閉公告
                 </button>
             </div>
 
@@ -786,11 +1015,15 @@
             if (m) m.classList.remove("show");
         }
 
-        function renderIconOrImage(targetEl, val) {
-            if (!targetEl || !val) return;
+        function renderIconOrImage(targetEl, val, fallbackLetter) {
+            if (!targetEl) return;
+            if (!val) {
+                targetEl.textContent = fallbackLetter;
+                return;
+            }
             const trimmed = val.trim();
-            if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/") || trimmed.startsWith("./")) {
-                targetEl.innerHTML = `<img src="${trimmed}" alt="Icon" style="max-height: 48px; max-width: 48px; object-fit: contain;">`;
+            if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/") || trimmed.startsWith("data:image")) {
+                targetEl.innerHTML = `<img src="${trimmed}" alt="Icon" style="max-height: 48px; max-width: 48px; object-fit: contain; border-radius: 50%;">`;
             } else {
                 targetEl.textContent = trimmed;
             }
@@ -798,7 +1031,7 @@
 
         function renderBullets(targetEl, bulletsText) {
             if (!targetEl || !bulletsText) return;
-            const lines = bulletsText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+            const lines = bulletsText.split("\n").map(l => l.trim().replace(/^✨\s*/, '').replace(/^◆\s*/, '')).filter(l => l.length > 0);
             if (lines.length > 0) {
                 targetEl.innerHTML = lines.map(line => `<li>${line}</li>`).join("");
             }
@@ -811,7 +1044,19 @@
                 const s = await res.json();
                 
                 // Section 1: Cover
-                if (s.CoverImageUrl && document.getElementById("posterImg")) document.getElementById("posterImg").src = s.CoverImageUrl;
+                const posterImg = document.getElementById("posterImg");
+                const typoPoster = document.getElementById("retroTypoPoster");
+                if (s.CoverImageUrl && s.CoverImageUrl !== "/img/cover_poster.png" && s.CoverImageUrl !== "") {
+                    if (posterImg) {
+                        posterImg.src = s.CoverImageUrl;
+                        posterImg.style.display = "block";
+                    }
+                    if (typoPoster) typoPoster.style.display = "none";
+                } else {
+                    if (posterImg) posterImg.style.display = "none";
+                    if (typoPoster) typoPoster.style.display = "block";
+                }
+
                 if (s.CoverAnnouncementBtnText && document.getElementById("coverAnnouncementBtnText")) document.getElementById("coverAnnouncementBtnText").textContent = s.CoverAnnouncementBtnText;
                 if (s.CoverSwipeBtnText && document.getElementById("coverSwipeBtnText")) document.getElementById("coverSwipeBtnText").textContent = s.CoverSwipeBtnText;
 
@@ -824,7 +1069,7 @@
 
                 // Box A: Party Box
                 if (s.BoxABadge && document.getElementById("boxABadge")) document.getElementById("boxABadge").textContent = s.BoxABadge;
-                if (s.BoxAIcon) renderIconOrImage(document.getElementById("boxAIcon"), s.BoxAIcon);
+                if (document.getElementById("boxAIcon")) renderIconOrImage(document.getElementById("boxAIcon"), s.BoxAIcon, "A");
                 if (s.BoxATitle && document.getElementById("boxATitle")) document.getElementById("boxATitle").textContent = s.BoxATitle;
                 if (s.BoxASubtitle && document.getElementById("boxASubtitle")) document.getElementById("boxASubtitle").textContent = s.BoxASubtitle;
                 if (s.BoxADesc && document.getElementById("boxADesc")) document.getElementById("boxADesc").textContent = s.BoxADesc;
@@ -834,7 +1079,7 @@
 
                 // Box B: Menu
                 if (s.BoxBBadge && document.getElementById("boxBBadge")) document.getElementById("boxBBadge").textContent = s.BoxBBadge;
-                if (s.BoxBIcon) renderIconOrImage(document.getElementById("boxBIcon"), s.BoxBIcon);
+                if (document.getElementById("boxBIcon")) renderIconOrImage(document.getElementById("boxBIcon"), s.BoxBIcon, "B");
                 if (s.BoxBTitle && document.getElementById("boxBTitle")) document.getElementById("boxBTitle").textContent = s.BoxBTitle;
                 if (s.BoxBSubtitle && document.getElementById("boxBSubtitle")) document.getElementById("boxBSubtitle").textContent = s.BoxBSubtitle;
                 if (s.BoxBDesc && document.getElementById("boxBDesc")) document.getElementById("boxBDesc").textContent = s.BoxBDesc;
