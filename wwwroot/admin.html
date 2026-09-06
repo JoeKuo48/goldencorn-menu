@@ -315,8 +315,19 @@
                     </h3>
 
                     <div class="form-group">
-                        <label class="form-label" for="cmsCoverImageUrl">封面海報圖片網址 (可填 /img/cover_poster.png 或外部圖片網址)</label>
-                        <input type="text" id="cmsCoverImageUrl" class="form-control" value="/img/cover_poster.png">
+                        <label class="form-label" for="cmsCoverImageUrl">
+                            🖼️ 封面海報圖片 (可填網址，或點右方按鈕直接從電腦/手機選照片)
+                        </label>
+                        <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+                            <input type="text" id="cmsCoverImageUrl" class="form-control" value="/img/cover_poster.png" oninput="updateImgPreview('cmsCoverImageUrl', 'coverImgPreview')">
+                            <label class="btn-primary-admin" style="cursor:pointer; white-space:nowrap; padding:8px 14px; font-size:13px; background:#0284c7; border-color:#0284c7; display:inline-flex; align-items:center; gap:4px;">
+                                <span>📁</span> 換照片
+                                <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsCoverImageUrl', 'coverImgPreview')">
+                            </label>
+                        </div>
+                        <div id="coverImgPreviewBox" style="text-align:center; background:#1e3927; padding:12px; border-radius:8px;">
+                            <img id="coverImgPreview" src="/img/cover_poster.png" style="max-height:140px; max-width:100%; object-fit:contain; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -374,10 +385,15 @@
                         <input type="text" id="cmsBoxABadge" class="form-control" value="🎉 團體聚會 · 露營野餐 · 預約外燴">
                     </div>
 
-                    <div style="display:grid; grid-template-columns:100px 1fr 1fr; gap:12px;">
+                    <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:12px;">
                         <div class="form-group">
-                            <label class="form-label" for="cmsBoxAIcon">圖示/Emoji或圖片</label>
-                            <input type="text" id="cmsBoxAIcon" class="form-control" value="🍱">
+                            <label class="form-label" for="cmsBoxAIcon">圖示/圖片</label>
+                            <input type="text" id="cmsBoxAIcon" class="form-control" value="🍱" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxAIcon', 'boxAIconPreview')">
+                            <label style="cursor:pointer; font-size:11px; color:#0284c7; font-weight:700; display:inline-block; margin-top:4px;">
+                                📁 上傳圖示
+                                <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsBoxAIcon', 'boxAIconPreview')">
+                            </label>
+                            <div id="boxAIconPreview" style="font-size:24px; margin-top:2px;">🍱</div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxATitle">中文標題</label>
@@ -424,10 +440,15 @@
                         <input type="text" id="cmsBoxBBadge" class="form-control" value="🔥 現點現烤 · A+B+C 自由配 · 預約外帶">
                     </div>
 
-                    <div style="display:grid; grid-template-columns:100px 1fr 1fr; gap:12px;">
+                    <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:12px;">
                         <div class="form-group">
-                            <label class="form-label" for="cmsBoxBIcon">圖示/Emoji或圖片</label>
-                            <input type="text" id="cmsBoxBIcon" class="form-control" value="🌽">
+                            <label class="form-label" for="cmsBoxBIcon">圖示/圖片</label>
+                            <input type="text" id="cmsBoxBIcon" class="form-control" value="🌽" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxBIcon', 'boxBIconPreview')">
+                            <label style="cursor:pointer; font-size:11px; color:#16a34a; font-weight:700; display:inline-block; margin-top:4px;">
+                                📁 上傳圖示
+                                <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsBoxBIcon', 'boxBIconPreview')">
+                            </label>
+                            <div id="boxBIconPreview" style="font-size:24px; margin-top:2px;">🌽</div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxBTitle">中文標題</label>
