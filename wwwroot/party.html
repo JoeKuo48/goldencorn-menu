@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 防瀏覽器快取設定：確保客人永遠抓取最新版本 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Golden Corn · 派對餐盒 & 團體外燴 | Party Box & Catering</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -212,67 +216,73 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .party-img-box {
-            position: relative;
-            height: 180px;
-            overflow: hidden;
-            background: #172e1f;
+        .party-set-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
         }
 
-        .party-img-box img {
+        .card-strip-checkered {
+            height: 12px;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+        }
+
+        .card-strip-checkered.green {
+            background: repeating-linear-gradient(90deg, #1b3523 0px, #1b3523 12px, #ffffff 12px, #ffffff 24px);
+        }
+
+        .card-strip-checkered.gold {
+            background: repeating-linear-gradient(90deg, #c69214 0px, #c69214 12px, #ffffff 12px, #ffffff 24px);
         }
 
         .set-badge-tag {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--gc-gold);
-            color: #1b3523;
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
             font-size: 11px;
             font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
         }
 
         .party-set-body {
-            padding: 18px 16px;
+            padding: 22px 20px;
             display: flex;
             flex-direction: column;
             flex: 1;
         }
 
         .set-title-zh {
-            font-size: 17px;
+            font-size: 19px;
             font-weight: 900;
             color: var(--gc-green-dark);
             margin-bottom: 2px;
         }
 
         .set-title-en {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
             color: var(--gc-gold);
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
         }
 
         .set-desc {
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 12px;
-            line-height: 1.5;
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 14px;
+            line-height: 1.6;
         }
 
         .set-items-list {
-            font-size: 12px;
+            font-size: 13px;
             color: #334155;
-            line-height: 1.7;
-            padding-left: 16px;
+            line-height: 1.8;
+            padding-left: 18px;
             margin-bottom: 8px;
         }
 
@@ -371,12 +381,12 @@
 
     <!-- Hero Banner -->
     <section class="party-hero-banner">
-        <div class="party-hero-badge">🎉 PARTY BOX & CATERING</div>
-        <h1 class="party-hero-title">美式煙燻派對餐盒</h1>
-        <p class="party-hero-subtitle">
+        <div class="party-hero-badge" id="partyHeroBadge">🎉 PARTY BOX & CATERING</div>
+        <h1 class="party-hero-title" id="partyHeroTitle">美式煙燻派對餐盒</h1>
+        <p class="party-hero-subtitle" id="partyHeroSubtitle">
             露營野餐 · 朋友歡聚 · 企業團訂 · 生日派對的大份量美式靈魂盛宴！
         </p>
-        <div class="party-hero-tags">
+        <div class="party-hero-tags" id="partyHeroTags">
             <span>🪵 16小時原木柴燒慢燻</span>
             <span>🍗 現炸美式靈魂炸雞</span>
             <span>🌽 招牌炭烤黃金玉米</span>
@@ -390,8 +400,8 @@
         <div class="party-notice-card">
             <div style="font-size:24px;">💡</div>
             <div>
-                <strong>【派對餐盒預訂須知】</strong>
-                <p style="margin-top:4px;">
+                <strong id="partyNoticeTitle">【派對餐盒預訂須知】</strong>
+                <p style="margin-top:4px;" id="partyNoticeText">
                     派對餐盒採<strong>大份量客製化低溫燻烤</strong>製作，需提前 <strong>2~3 天</strong> 預訂，讓主廚有充裕時間備料與長時間慢火煙燻。目前線上菜單自選功能籌備中，歡迎直接透過 IG 或電話與主廚預訂！
                 </p>
             </div>
@@ -399,24 +409,24 @@
 
         <!-- Section Title -->
         <div>
-            <h2 class="party-grid-title">經典派對組合預覽</h2>
-            <p class="party-grid-subtitle">可依據您的聚會人數與預算進行客製搭配</p>
+            <h2 class="party-grid-title" id="partyGridTitle">經典派對組合預覽</h2>
+            <p class="party-grid-subtitle" id="partyGridSubtitle">可依據您的聚會人數與預算進行客製搭配</p>
         </div>
 
-        <!-- Sets Grid -->
+        <!-- Sets Grid (No Food Images) -->
         <div class="party-sets-grid">
 
             <!-- Set 1: 德州狂歡煙燻肉拼盤 -->
             <div class="party-set-card">
-                <div class="party-img-box">
-                    <img src="/img/G15.jpg" alt="德州慢燻狂歡肉品盛宴盒">
-                    <span class="set-badge-tag">人氣首選 4~6人</span>
-                </div>
+                <div class="card-strip-checkered green"></div>
                 <div class="party-set-body">
-                    <h3 class="set-title-zh">🥩 德州慢燻狂歡肉品盛宴盒</h3>
-                    <div class="set-title-en">Texas Smoked BBQ Carnivore Feast</div>
-                    <p class="set-desc">肉食愛好者的終極救贖！一次品嚐三種經典低溫煙燻肉品。</p>
-                    <ul class="set-items-list">
+                    <div>
+                        <span class="set-badge-tag" id="partySet1Badge">人氣首選 4~6人</span>
+                    </div>
+                    <h3 class="set-title-zh" id="partySet1Title">🥩 德州慢燻狂歡肉品盛宴盒</h3>
+                    <div class="set-title-en" id="partySet1Subtitle">Texas Smoked BBQ Carnivore Feast</div>
+                    <p class="set-desc" id="partySet1Desc">肉食愛好者的終極救贖！一次品嚐三種經典低溫煙燻肉品。</p>
+                    <ul class="set-items-list" id="partySet1Items">
                         <li>🔥 <strong>德州柴燒慢燻牛胸肉</strong> 400g</li>
                         <li>🔥 <strong>經典焦糖煙燻豬肋排</strong> 半扇</li>
                         <li>🔥 <strong>獨門香料手撕豬梅花</strong> 300g</li>
@@ -427,15 +437,15 @@
 
             <!-- Set 2: 靈魂炸雞與黃金玉米雙饗桶 -->
             <div class="party-set-card">
-                <div class="party-img-box">
-                    <img src="/img/G4.jpg" alt="靈魂炸雞 & 黃金玉米歡聚組">
-                    <span class="set-badge-tag">聚會必點 4~6人</span>
-                </div>
+                <div class="card-strip-checkered gold"></div>
                 <div class="party-set-body">
-                    <h3 class="set-title-zh">🍗 靈魂炸雞 & 黃金玉米歡聚組</h3>
-                    <div class="set-title-en">Soul Fried Chicken & Corn Ribs Box</div>
-                    <p class="set-desc">外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。</p>
-                    <ul class="set-items-list">
+                    <div>
+                        <span class="set-badge-tag" id="partySet2Badge">聚會必點 4~6人</span>
+                    </div>
+                    <h3 class="set-title-zh" id="partySet2Title">🍗 靈魂炸雞 & 黃金玉米歡聚組</h3>
+                    <div class="set-title-en" id="partySet2Subtitle">Soul Fried Chicken & Corn Ribs Box</div>
+                    <p class="set-desc" id="partySet2Desc">外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。</p>
+                    <ul class="set-items-list" id="partySet2Items">
                         <li>🍗 <strong>美式酸奶酥脆炸雞柳條</strong> 12 塊</li>
                         <li>🍗 <strong>楓糖水牛城微辣炸雞</strong> 8 塊</li>
                         <li>🌽 <strong>美式燒烤黃金玉米肋排</strong> 8 支</li>
@@ -446,15 +456,15 @@
 
             <!-- Set 3: 露營野餐真空料理包盛宴 -->
             <div class="party-set-card">
-                <div class="party-img-box">
-                    <img src="/img/brisket.jpg" alt="露營野餐低溫真空即享組">
-                    <span class="set-badge-tag">戶外露營神器</span>
-                </div>
+                <div class="card-strip-checkered green"></div>
                 <div class="party-set-body">
-                    <h3 class="set-title-zh">🏕️ 露營野餐低溫真空即享組</h3>
-                    <div class="set-title-en">Outdoor Camping Ready-to-Heat Pack</div>
-                    <p class="set-desc">主廚已煙燻熟成並低溫真空封裝。隔水加熱即可享受大師級烤肉！</p>
-                    <ul class="set-items-list">
+                    <div>
+                        <span class="set-badge-tag" id="partySet3Badge">戶外露營神器</span>
+                    </div>
+                    <h3 class="set-title-zh" id="partySet3Title">🏕️ 露營野餐低溫真空即享組</h3>
+                    <div class="set-title-en" id="partySet3Subtitle">Outdoor Camping Ready-to-Heat Pack</div>
+                    <p class="set-desc" id="partySet3Desc">主廚已煙燻熟成並低溫真空封裝。隔水加熱即可享受大師級烤肉！</p>
+                    <ul class="set-items-list" id="partySet3Items">
                         <li>🏕️ <strong>熟成煙燻牛胸肉真空包</strong> 2 包</li>
                         <li>🏕️ <strong>古巴風烤豬排真空包</strong> 2 包</li>
                         <li>🏕️ <strong>雞汁小米飯 & 奶油玉米包</strong> 各 2 包</li>
@@ -467,16 +477,16 @@
 
         <!-- Booking Box -->
         <div class="party-inquiry-box">
-            <h3 class="inquiry-title">📞 預約與客製化洽詢</h3>
-            <p class="inquiry-desc">
+            <h3 class="inquiry-title" id="partyInquiryTitle">📞 預約與客製化洽詢</h3>
+            <p class="inquiry-desc" id="partyInquiryDesc">
                 不論是家庭聚餐、朋友露營、公司慶生或大型活動外燴，主廚皆可為您量身規劃份量與菜色組合！
             </p>
             <div class="inquiry-btn-row">
-                <a href="https://www.instagram.com/goldencorn_diner/" target="_blank" class="btn-inquiry ig">
-                    <span>📸 私訊 IG 預約：@goldencorn_diner</span>
+                <a href="https://www.instagram.com/goldencorn_diner/" target="_blank" class="btn-inquiry ig" id="partyInquiryIgLink">
+                    <span id="partyInquiryIgText">📸 私訊 IG 預約：@goldencorn_diner</span>
                 </a>
-                <a href="tel:0910237105" class="btn-inquiry phone">
-                    <span>📞 電話洽詢：0910-237-105</span>
+                <a href="tel:0910237105" class="btn-inquiry phone" id="partyInquiryPhoneLink">
+                    <span id="partyInquiryPhoneText">📞 電話洽詢：0910-237-105</span>
                 </a>
                 <a href="/menu.html" class="btn-inquiry menu">
                     <span>🌽 先逛逛門市線上菜單 ➔</span>
@@ -496,5 +506,75 @@
         <div style="font-size: 11px; margin-top: 6px;">工作室地址：高雄市楠梓區金富街85-1號 · 0910237105</div>
     </footer>
 
+    <!-- Logic Script for CMS Loading -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            loadPartySettings();
+        });
+
+        function renderListItems(targetEl, text) {
+            if (!targetEl || !text) return;
+            const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length > 0) {
+                targetEl.innerHTML = lines.map(line => `<li>${line}</li>`).join("");
+            }
+        }
+
+        async function loadPartySettings() {
+            try {
+                const res = await fetch("/api/settings");
+                if (!res.ok) return;
+                const s = await res.json();
+
+                if (s.PartyHeroBadge && document.getElementById("partyHeroBadge")) document.getElementById("partyHeroBadge").textContent = s.PartyHeroBadge;
+                if (s.PartyHeroTitle && document.getElementById("partyHeroTitle")) document.getElementById("partyHeroTitle").textContent = s.PartyHeroTitle;
+                if (s.PartyHeroSubtitle && document.getElementById("partyHeroSubtitle")) document.getElementById("partyHeroSubtitle").textContent = s.PartyHeroSubtitle;
+                if (s.PartyHeroTags && document.getElementById("partyHeroTags")) {
+                    const tags = s.PartyHeroTags.split("|").map(t => t.trim()).filter(t => t.length > 0);
+                    if (tags.length > 0) {
+                        document.getElementById("partyHeroTags").innerHTML = tags.map(t => `<span>${t}</span>`).join("");
+                    }
+                }
+
+                if (s.PartyNoticeTitle && document.getElementById("partyNoticeTitle")) document.getElementById("partyNoticeTitle").textContent = s.PartyNoticeTitle;
+                if (s.PartyNoticeText && document.getElementById("partyNoticeText")) document.getElementById("partyNoticeText").innerHTML = s.PartyNoticeText.replace(/\n/g, '<br>');
+
+                if (s.PartyGridTitle && document.getElementById("partyGridTitle")) document.getElementById("partyGridTitle").textContent = s.PartyGridTitle;
+                if (s.PartyGridSubtitle && document.getElementById("partyGridSubtitle")) document.getElementById("partyGridSubtitle").textContent = s.PartyGridSubtitle;
+
+                // Set 1
+                if (s.PartySet1Badge && document.getElementById("partySet1Badge")) document.getElementById("partySet1Badge").textContent = s.PartySet1Badge;
+                if (s.PartySet1Title && document.getElementById("partySet1Title")) document.getElementById("partySet1Title").textContent = s.PartySet1Title;
+                if (s.PartySet1Subtitle && document.getElementById("partySet1Subtitle")) document.getElementById("partySet1Subtitle").textContent = s.PartySet1Subtitle;
+                if (s.PartySet1Desc && document.getElementById("partySet1Desc")) document.getElementById("partySet1Desc").textContent = s.PartySet1Desc;
+                if (s.PartySet1Items) renderListItems(document.getElementById("partySet1Items"), s.PartySet1Items);
+
+                // Set 2
+                if (s.PartySet2Badge && document.getElementById("partySet2Badge")) document.getElementById("partySet2Badge").textContent = s.PartySet2Badge;
+                if (s.PartySet2Title && document.getElementById("partySet2Title")) document.getElementById("partySet2Title").textContent = s.PartySet2Title;
+                if (s.PartySet2Subtitle && document.getElementById("partySet2Subtitle")) document.getElementById("partySet2Subtitle").textContent = s.PartySet2Subtitle;
+                if (s.PartySet2Desc && document.getElementById("partySet2Desc")) document.getElementById("partySet2Desc").textContent = s.PartySet2Desc;
+                if (s.PartySet2Items) renderListItems(document.getElementById("partySet2Items"), s.PartySet2Items);
+
+                // Set 3
+                if (s.PartySet3Badge && document.getElementById("partySet3Badge")) document.getElementById("partySet3Badge").textContent = s.PartySet3Badge;
+                if (s.PartySet3Title && document.getElementById("partySet3Title")) document.getElementById("partySet3Title").textContent = s.PartySet3Title;
+                if (s.PartySet3Subtitle && document.getElementById("partySet3Subtitle")) document.getElementById("partySet3Subtitle").textContent = s.PartySet3Subtitle;
+                if (s.PartySet3Desc && document.getElementById("partySet3Desc")) document.getElementById("partySet3Desc").textContent = s.PartySet3Desc;
+                if (s.PartySet3Items) renderListItems(document.getElementById("partySet3Items"), s.PartySet3Items);
+
+                // Inquiry
+                if (s.PartyInquiryTitle && document.getElementById("partyInquiryTitle")) document.getElementById("partyInquiryTitle").textContent = s.PartyInquiryTitle;
+                if (s.PartyInquiryDesc && document.getElementById("partyInquiryDesc")) document.getElementById("partyInquiryDesc").textContent = s.PartyInquiryDesc;
+                if (s.PartyInquiryIgText && document.getElementById("partyInquiryIgText")) document.getElementById("partyInquiryIgText").textContent = s.PartyInquiryIgText;
+                if (s.PartyInquiryIgLink && document.getElementById("partyInquiryIgLink")) document.getElementById("partyInquiryIgLink").href = s.PartyInquiryIgLink;
+                if (s.PartyInquiryPhoneText && document.getElementById("partyInquiryPhoneText")) document.getElementById("partyInquiryPhoneText").textContent = s.PartyInquiryPhoneText;
+                if (s.PartyInquiryPhoneLink && document.getElementById("partyInquiryPhoneLink")) document.getElementById("partyInquiryPhoneLink").href = s.PartyInquiryPhoneLink;
+
+            } catch (e) {
+                console.error("Failed to load party settings:", e);
+            }
+        }
+    </script>
 </body>
 </html>

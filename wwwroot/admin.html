@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 防瀏覽器快取設定：確保後台永遠載入最新版 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Golden Corn · 店家管理後台 & 廚房出單系統 (KDS)</title>
-    <link rel="stylesheet" href="/css/admin.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css?v=2.0">
+    <link rel="stylesheet" href="/css/style.css?v=2.0">
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="/js/admin.js?v=2.0"></script>
 </head>
 <body>
 
@@ -27,6 +32,9 @@
             <button class="nav-link-btn active" data-tab="tabKds">
                 <span>📋</span> 廚房即時出單
                 <span id="activeOrdersBadge" style="background:#dc2626; color:#fff; font-size:11px; padding:1px 6px; border-radius:10px; margin-left:2px;">0</span>
+            </button>
+            <button class="nav-link-btn" data-tab="tabHomepageCMS">
+                <span>🏡</span> 首頁內容與文案
             </button>
             <button class="nav-link-btn" data-tab="tabMenu">
                 <span>🍲</span> 菜單與庫存
@@ -278,6 +286,421 @@
 
                 <button type="button" class="btn-primary-admin" onclick="saveAdminSettings()" style="padding:12px 28px; font-size:15px;">
                     儲存全部門市與收款設定
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: Homepage & Portals CMS ================= -->
+        <section id="tabHomepageCMS" class="tab-pane">
+            <div class="kds-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                    <h2 class="kds-title">首頁視覺與導引頁面文案管理 (CMS)</h2>
+                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">
+                        可自由修改「綠色海報封面頁」、「雙大框引導卡片 (派對餐盒/門市菜單)」、「文字重點與圖片」以及「門市公告彈窗內容」
+                    </p>
+                </div>
+                <div>
+                    <button type="button" class="btn-primary-admin" onclick="saveAdminHomepageSettings()" style="background:#16a34a; border-color:#16a34a; padding:10px 24px;">
+                        <span>💾</span> 儲存首頁所有設定
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; max-width: 1200px; margin-bottom: 30px;">
+                
+                <!-- CARD 1: 首頁第 1 頁（綠色海報封面） -->
+                <div style="background:#fff; border-radius:12px; border:1px solid var(--admin-border); padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:var(--gc-green); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>🌲</span> 第 1 頁：綠色海報封面頁
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsCoverImageUrl">封面海報圖片網址 (可填 /img/cover_poster.png 或外部圖片網址)</label>
+                        <input type="text" id="cmsCoverImageUrl" class="form-control" value="/img/cover_poster.png">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsCoverAnnouncementBtnText">公告按鈕文字</label>
+                        <input type="text" id="cmsCoverAnnouncementBtnText" class="form-control" value="門市公告資訊">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsCoverSwipeBtnText">滑動引導按鈕文字</label>
+                        <input type="text" id="cmsCoverSwipeBtnText" class="form-control" value="SWIPE FOR MY STORY... →">
+                    </div>
+                </div>
+
+                <!-- CARD 2: 首頁第 2 頁 頂部標題與按鈕 -->
+                <div style="background:#fff; border-radius:12px; border:1px solid var(--admin-border); padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:var(--gc-green); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>✨</span> 第 2 頁：模式選擇區頂部與按鈕
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPortalPillTag">頂部小標籤 (Pill Tag)</label>
+                        <input type="text" id="cmsPortalPillTag" class="form-control" value="CHOOSE YOUR ORDER TYPE">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPortalTitle">主標題</label>
+                        <input type="text" id="cmsPortalTitle" class="form-control" value="選擇您的美味模式">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPortalSubtitle">副標題</label>
+                        <input type="text" id="cmsPortalSubtitle" class="form-control" value="外公的田間貨櫃工作室 · 柴火低溫慢燻 · 慢靈魂料理">
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsPortalNoticeBtnText">公告按鈕文字</label>
+                            <input type="text" id="cmsPortalNoticeBtnText" class="form-control" value="📢 門市公告與營業資訊">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsPortalHistoryBtnText">查單按鈕文字</label>
+                            <input type="text" id="cmsPortalHistoryBtnText" class="form-control" value="📱 查詢我的訂單">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: A 框【派對餐盒】卡片自訂 -->
+                <div style="background:#fff; border-radius:12px; border:2px solid #0284c7; padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:#0369a1; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>🍱</span> A 框：派對餐盒 (Party Box)
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxABadge">頂部徽章文字</label>
+                        <input type="text" id="cmsBoxABadge" class="form-control" value="🎉 團體聚會 · 露營野餐 · 預約外燴">
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:100px 1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxAIcon">圖示/Emoji或圖片</label>
+                            <input type="text" id="cmsBoxAIcon" class="form-control" value="🍱">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxATitle">中文標題</label>
+                            <input type="text" id="cmsBoxATitle" class="form-control" value="A. 派對餐盒">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxASubtitle">英文副標</label>
+                            <input type="text" id="cmsBoxASubtitle" class="form-control" value="PARTY BOX & CATERING">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxADesc">描述說明文字</label>
+                        <textarea id="cmsBoxADesc" class="form-control" rows="2">專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxABullets">特色條列重點 (每行一條)</label>
+                        <textarea id="cmsBoxABullets" class="form-control" rows="3">✨ 德州慢燻牛胸肉 / 焦糖豬肋排大拼盤
+✨ 美式靈魂炸雞派對桶
+✨ 炭烤黃金玉米 & 主廚特調雙醬</textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxABtnText">按鈕文字</label>
+                            <input type="text" id="cmsBoxABtnText" class="form-control" value="探索派對餐盒">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxALink">點擊跳轉網址</label>
+                            <input type="text" id="cmsBoxALink" class="form-control" value="/party.html">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: B 框【門市菜單】卡片自訂 -->
+                <div style="background:#fff; border-radius:12px; border:2px solid #16a34a; padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:#15803d; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>🌽</span> B 框：門市菜單 (Diner Menu)
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxBBadge">頂部徽章文字</label>
+                        <input type="text" id="cmsBoxBBadge" class="form-control" value="🔥 現點現烤 · A+B+C 自由配 · 預約外帶">
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:100px 1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBIcon">圖示/Emoji或圖片</label>
+                            <input type="text" id="cmsBoxBIcon" class="form-control" value="🌽">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBTitle">中文標題</label>
+                            <input type="text" id="cmsBoxBTitle" class="form-control" value="B. 門市菜單">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBSubtitle">英文副標</label>
+                            <input type="text" id="cmsBoxBSubtitle" class="form-control" value="DINER MENU & ORDERING">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxBDesc">描述說明文字</label>
+                        <textarea id="cmsBoxBDesc" class="form-control" rows="2">個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxBBullets">特色條列重點 (每行一條)</label>
+                        <textarea id="cmsBoxBBullets" class="form-control" rows="3">✨ 德州燻烤牛胸肉、豬梅花、古巴烤豬排
+✨ 招牌美式奶油玉米、蘋果捲心菜
+✨ 線上預約取餐時間、Line Pay 快速結帳</textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBBtnText">按鈕文字</label>
+                            <input type="text" id="cmsBoxBBtnText" class="form-control" value="進入線上點餐">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBLink">點擊跳轉網址</label>
+                            <input type="text" id="cmsBoxBLink" class="form-control" value="/menu.html">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 5: 底部金句與品牌資訊 -->
+                <div style="background:#fff; border-radius:12px; border:1px solid var(--admin-border); padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:var(--gc-green); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>📜</span> 底部品牌名言金句 (Story Note)
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsStoryQuote">名言金句</label>
+                        <input type="text" id="cmsStoryQuote" class="form-control" value="「世界太快，我們在田裡為你製造一點慢靈魂。」">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsStoryAuthor">名言署名</label>
+                        <input type="text" id="cmsStoryAuthor" class="form-control" value="Golden Corn · 慢靈魂製造所 🌽 柴火煙燻工作室">
+                    </div>
+                </div>
+
+                <!-- CARD 6: 門市公告彈窗完整文案 -->
+                <div style="background:#fff; border-radius:12px; border:1px solid var(--admin-border); padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:var(--gc-green); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>📢</span> 門市公告彈窗詳細內容
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsNoticeDelivery">外送與試營運優惠說明</label>
+                        <textarea id="cmsNoticeDelivery" class="form-control" rows="3">• 本店餐點皆為低溫慢火柴燻、現點現烤，建議提前預約以確保肉品庫存。
+• 外送服務：以 LALAMOVE 平台配送（例如 7.5 公里機車外送約 140 元）。
+• 試營運優惠：消費滿 $600 免運！再送美式燒烤玉米肋排乙份！</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsNoticeContact">企業團訂與聯絡資訊說明</label>
+                        <textarea id="cmsNoticeContact" class="form-control" rows="3">企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：
+📸 IG: @goldencorn_diner
+📞 電話: 0910-237-105</textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ================= Party Box CMS Section ================= -->
+            <div class="kds-header" style="margin-top:20px; border-top:2px dashed var(--admin-border); padding-top:20px;">
+                <div>
+                    <h2 class="kds-title">🍱 派對餐盒頁面 (party.html) 全文案管理</h2>
+                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">
+                        可修改派對餐盒頁面的「橫幅標題」、「預訂須知提示」、「3 大經典派對組合內容 (無食物圖、全文字客製)」與「預約洽詢按鈕」
+                    </p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; max-width: 1200px; margin-bottom: 30px;">
+
+                <!-- PARTY CARD 1: 頂部橫幅與預訂須知 -->
+                <div style="background:#fff; border-radius:12px; border:1px solid var(--admin-border); padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:var(--gc-green); margin-bottom:16px;">
+                        🏷️ 橫幅標題與預訂須知
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyHeroBadge">頂部小標籤</label>
+                        <input type="text" id="cmsPartyHeroBadge" class="form-control" value="🎉 PARTY BOX & CATERING">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyHeroTitle">大標題</label>
+                        <input type="text" id="cmsPartyHeroTitle" class="form-control" value="美式煙燻派對餐盒">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyHeroSubtitle">副標題說明</label>
+                        <input type="text" id="cmsPartyHeroSubtitle" class="form-control" value="露營野餐 · 朋友歡聚 · 企業團訂 · 生日派對的大份量美式靈魂盛宴！">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyHeroTags">特色標籤 (以 | 隔開)</label>
+                        <input type="text" id="cmsPartyHeroTags" class="form-control" value="🪵 16小時原木柴燒慢燻 | 🍗 現炸美式靈魂炸雞 | 🌽 招牌炭烤黃金玉米">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyNoticeTitle">預訂須知標題</label>
+                        <input type="text" id="cmsPartyNoticeTitle" class="form-control" value="【派對餐盒預訂須知】">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyNoticeText">預訂須知內容</label>
+                        <textarea id="cmsPartyNoticeText" class="form-control" rows="3">派對餐盒採大份量客製化低溫燻烤製作，需提前 2~3 天 預訂，讓主廚有充裕時間備料與長時間慢火煙燻。目前線上菜單自選功能籌備中，歡迎直接透過 IG 或電話與主廚預訂！</textarea>
+                    </div>
+                </div>
+
+                <!-- PARTY CARD 2: 組合 1 -->
+                <div style="background:#fff; border-radius:12px; border:2px solid #0284c7; padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:#0369a1; margin-bottom:16px;">
+                        🥩 組合 1：德州慢燻狂歡肉品盛宴盒
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet1Badge">人數標籤</label>
+                        <input type="text" id="cmsPartySet1Badge" class="form-control" value="人氣首選 4~6人">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet1Title">組合品名</label>
+                        <input type="text" id="cmsPartySet1Title" class="form-control" value="🥩 德州慢燻狂歡肉品盛宴盒">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet1Subtitle">英文品名</label>
+                        <input type="text" id="cmsPartySet1Subtitle" class="form-control" value="Texas Smoked BBQ Carnivore Feast">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet1Desc">簡介說明</label>
+                        <textarea id="cmsPartySet1Desc" class="form-control" rows="2">肉食愛好者的終極救贖！一次品嚐三種經典低溫煙燻肉品。</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet1Items">餐點內容清單 (每行一條)</label>
+                        <textarea id="cmsPartySet1Items" class="form-control" rows="4">🔥 德州柴燒慢燻牛胸肉 400g
+🔥 經典焦糖煙燻豬肋排 半扇
+🔥 獨門香料手撕豬梅花 300g
+🥗 附贈：美式蘋果捲心菜、特製酸黃瓜、自製BBQ醬</textarea>
+                    </div>
+                </div>
+
+                <!-- PARTY CARD 3: 組合 2 -->
+                <div style="background:#fff; border-radius:12px; border:2px solid #eab308; padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:#a16207; margin-bottom:16px;">
+                        🍗 組合 2：靈魂炸雞 & 黃金玉米歡聚組
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet2Badge">人數標籤</label>
+                        <input type="text" id="cmsPartySet2Badge" class="form-control" value="聚會必點 4~6人">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet2Title">組合品名</label>
+                        <input type="text" id="cmsPartySet2Title" class="form-control" value="🍗 靈魂炸雞 & 黃金玉米歡聚組">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet2Subtitle">英文品名</label>
+                        <input type="text" id="cmsPartySet2Subtitle" class="form-control" value="Soul Fried Chicken & Corn Ribs Box">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet2Desc">簡介說明</label>
+                        <textarea id="cmsPartySet2Desc" class="form-control" rows="2">外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet2Items">餐點內容清單 (每行一條)</label>
+                        <textarea id="cmsPartySet2Items" class="form-control" rows="4">🍗 美式酸奶酥脆炸雞柳條 12 塊
+🍗 楓糖水牛城微辣炸雞 8 塊
+🌽 美式燒烤黃金玉米肋排 8 支
+🍟 附贈：海鹽美式細薯、蒔蘿優格沾醬</textarea>
+                    </div>
+                </div>
+
+                <!-- PARTY CARD 4: 組合 3 -->
+                <div style="background:#fff; border-radius:12px; border:2px solid #16a34a; padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:#15803d; margin-bottom:16px;">
+                        🏕️ 組合 3：露營野餐低溫真空即享組
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet3Badge">人數標籤</label>
+                        <input type="text" id="cmsPartySet3Badge" class="form-control" value="戶外露營神器">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet3Title">組合品名</label>
+                        <input type="text" id="cmsPartySet3Title" class="form-control" value="🏕️ 露營野餐低溫真空即享組">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet3Subtitle">英文品名</label>
+                        <input type="text" id="cmsPartySet3Subtitle" class="form-control" value="Outdoor Camping Ready-to-Heat Pack">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet3Desc">簡介說明</label>
+                        <textarea id="cmsPartySet3Desc" class="form-control" rows="2">主廚已煙燻熟成並低溫真空封裝。隔水加熱即可享受大師級烤肉！</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartySet3Items">餐點內容清單 (每行一條)</label>
+                        <textarea id="cmsPartySet3Items" class="form-control" rows="4">🏕️ 熟成煙燻牛胸肉真空包 2 包
+🏕️ 古巴風烤豬排真空包 2 包
+🏕️ 雞汁小米飯 & 奶油玉米包 各 2 包
+✨ 附贈專用復熱教學卡與特調香料粉</textarea>
+                    </div>
+                </div>
+
+                <!-- PARTY CARD 5: 預約與洽詢按鈕 -->
+                <div style="background:#fff; border-radius:12px; border:1px solid var(--admin-border); padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:var(--gc-green); margin-bottom:16px;">
+                        📞 預約洽詢區塊設定
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyInquiryTitle">區塊標題</label>
+                        <input type="text" id="cmsPartyInquiryTitle" class="form-control" value="📞 預約與客製化洽詢">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsPartyInquiryDesc">說明文案</label>
+                        <textarea id="cmsPartyInquiryDesc" class="form-control" rows="2">不論是家庭聚餐、朋友露營、公司慶生或大型活動外燴，主廚皆可為您量身規劃份量與菜色組合！</textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsPartyInquiryIgText">IG 按鈕文字</label>
+                            <input type="text" id="cmsPartyInquiryIgText" class="form-control" value="📸 私訊 IG 預約：@goldencorn_diner">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsPartyInquiryIgLink">IG 連結網址</label>
+                            <input type="text" id="cmsPartyInquiryIgLink" class="form-control" value="https://www.instagram.com/goldencorn_diner/">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsPartyInquiryPhoneText">電話按鈕文字</label>
+                            <input type="text" id="cmsPartyInquiryPhoneText" class="form-control" value="📞 電話洽詢：0910-237-105">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsPartyInquiryPhoneLink">電話撥號 (例 tel:0910237105)</label>
+                            <input type="text" id="cmsPartyInquiryPhoneLink" class="form-control" value="tel:0910237105">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="text-align:center; padding-bottom:40px;">
+                <button type="button" class="btn-primary-admin" onclick="saveAdminHomepageSettings()" style="background:#16a34a; border-color:#16a34a; padding:14px 40px; font-size:16px;">
+                    <span>💾</span> 儲存首頁與派對餐盒全部文案設定
                 </button>
             </div>
         </section>

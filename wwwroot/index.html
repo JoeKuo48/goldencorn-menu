@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 防瀏覽器快取設定：確保每位客人點進來永遠抓取最新版本 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Golden Corn · 慢靈魂製造所 | 後勁 Houjing Texas BBQ & Soul Food</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -581,17 +585,17 @@
     <!-- ================= Section 1: Fullscreen Bespoke Green Poster Hero ================= -->
     <main class="hero-poster-wrapper">
         <div class="poster-card-frame">
-            <img src="/img/cover_poster.png" alt="Golden Corn · 慢靈魂製造所" class="poster-img-full">
+            <img id="posterImg" src="/img/cover_poster.png" alt="Golden Corn · 慢靈魂製造所" class="poster-img-full">
         </div>
         
         <!-- Action Buttons Directly on this Green Page -->
         <div class="poster-actions-row">
             <button class="btn-announcement-pill" onclick="openAnnouncementModal()">
                 <span>📢</span>
-                <span>門市公告資訊</span>
+                <span id="coverAnnouncementBtnText">門市公告資訊</span>
             </button>
             <a href="#orderSelection" class="btn-swipe-prompt" onclick="scrollToSelection(event)">
-                <span>SWIPE FOR MY STORY... →</span>
+                <span id="coverSwipeBtnText">SWIPE FOR MY STORY... →</span>
             </a>
         </div>
     </main>
@@ -601,16 +605,16 @@
         <div class="portal-container">
 
             <div class="portal-header">
-                <div class="portal-pill-tag">CHOOSE YOUR ORDER TYPE</div>
-                <h2 class="portal-title">選擇您的美味模式</h2>
-                <p class="portal-subtitle">外公的田間貨櫃工作室 · 柴火低溫慢燻 · 慢靈魂料理</p>
+                <div class="portal-pill-tag" id="portalPillTag">CHOOSE YOUR ORDER TYPE</div>
+                <h2 class="portal-title" id="portalTitle">選擇您的美味模式</h2>
+                <p class="portal-subtitle" id="portalSubtitle">外公的田間貨櫃工作室 · 柴火低溫慢燻 · 慢靈魂料理</p>
                 
                 <div class="portal-quick-btns">
                     <button class="btn-quick-outline" onclick="openAnnouncementModal()">
-                        📢 門市公告與營業資訊
+                        <span id="portalNoticeBtnText">📢 門市公告與營業資訊</span>
                     </button>
                     <a href="/menu.html?action=history" class="btn-quick-outline">
-                        📱 查詢我的訂單
+                        <span id="portalHistoryBtnText">📱 查詢我的訂單</span>
                     </a>
                 </div>
             </div>
@@ -619,46 +623,46 @@
             <div class="portal-grid-boxes">
                 
                 <!-- BOX A: 派對餐盒 (Party Box) -->
-                <a href="/party.html" class="portal-big-card">
+                <a href="/party.html" class="portal-big-card" id="boxALink">
                     <div class="card-strip-checkered green"></div>
                     <div class="portal-card-inner">
-                        <span class="card-badge party">🎉 團體聚會 · 露營野餐 · 預約外燴</span>
-                        <div class="card-emoji">🍱</div>
-                        <h3 class="card-title-chinese">A. 派對餐盒</h3>
-                        <div class="card-title-english">PARTY BOX & CATERING</div>
-                        <p class="card-desc">
+                        <span class="card-badge party" id="boxABadge">🎉 團體聚會 · 露營野餐 · 預約外燴</span>
+                        <div class="card-emoji" id="boxAIcon">🍱</div>
+                        <h3 class="card-title-chinese" id="boxATitle">A. 派對餐盒</h3>
+                        <div class="card-title-english" id="boxASubtitle">PARTY BOX & CATERING</div>
+                        <p class="card-desc" id="boxADesc">
                             專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！
                         </p>
-                        <ul class="card-bullet-list">
+                        <ul class="card-bullet-list" id="boxABullets">
                             <li>✨ 德州慢燻牛胸肉 / 焦糖豬肋排大拼盤</li>
                             <li>✨ 美式靈魂炸雞派對桶</li>
                             <li>✨ 炭烤黃金玉米 & 主廚特調雙醬</li>
                         </ul>
                         <div class="card-action-btn party">
-                            <span>探索派對餐盒</span>
+                            <span id="boxABtnText">探索派對餐盒</span>
                             <span>➔</span>
                         </div>
                     </div>
                 </a>
 
                 <!-- BOX B: 門市菜單 (Diner Menu) -->
-                <a href="/menu.html" class="portal-big-card">
+                <a href="/menu.html" class="portal-big-card" id="boxBLink">
                     <div class="card-strip-checkered gold"></div>
                     <div class="portal-card-inner">
-                        <span class="card-badge menu">🔥 現點現烤 · A+B+C 自由配 · 預約外帶</span>
-                        <div class="card-emoji">🌽</div>
-                        <h3 class="card-title-chinese">B. 門市菜單</h3>
-                        <div class="card-title-english">DINER MENU & ORDERING</div>
-                        <p class="card-desc">
+                        <span class="card-badge menu" id="boxBBadge">🔥 現點現烤 · A+B+C 自由配 · 預約外帶</span>
+                        <div class="card-emoji" id="boxBIcon">🌽</div>
+                        <h3 class="card-title-chinese" id="boxBTitle">B. 門市菜單</h3>
+                        <div class="card-title-english" id="boxBSubtitle">DINER MENU & ORDERING</div>
+                        <p class="card-desc" id="boxBDesc">
                             個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。
                         </p>
-                        <ul class="card-bullet-list">
+                        <ul class="card-bullet-list" id="boxBBullets">
                             <li>✨ 德州燻烤牛胸肉、豬梅花、古巴烤豬排</li>
                             <li>✨ 招牌美式奶油玉米、蘋果捲心菜</li>
                             <li>✨ 線上預約取餐時間、Line Pay 快速結帳</li>
                         </ul>
                         <div class="card-action-btn menu">
-                            <span>進入線上點餐</span>
+                            <span id="boxBBtnText">進入線上點餐</span>
                             <span>➔</span>
                         </div>
                     </div>
@@ -668,8 +672,8 @@
 
             <!-- Story Quote -->
             <div class="portal-story-note">
-                <div class="story-quote-text">「世界太快，我們在田裡為你製造一點慢靈魂。」</div>
-                <div class="story-quote-author">Golden Corn · 慢靈魂製造所 🌽 柴燒煙燻工作室</div>
+                <div class="story-quote-text" id="storyQuote">「世界太快，我們在田裡為你製造一點慢靈魂。」</div>
+                <div class="story-quote-author" id="storyAuthor">Golden Corn · 慢靈魂製造所 🌽 柴火煙燻工作室</div>
             </div>
 
         </div>
@@ -728,7 +732,7 @@
                     <div class="notice-section-title">
                         <span>🛵</span> 外送與自取說明
                     </div>
-                    <div class="notice-section-content">
+                    <div class="notice-section-content" id="noticeDelivery">
                         • 本店餐點皆為<strong>低溫慢火柴燻、現點現烤</strong>，建議提前預約以確保肉品庫存。<br>
                         • <strong>外送服務</strong>：以 LALAMOVE 平台配送（例如 7.5 公里機車外送約 140 元）。<br>
                         • <strong>試營運優惠</strong>：消費滿 <strong>$600</strong> 免運！再送<strong>美式燒烤玉米肋排</strong>乙份！
@@ -740,7 +744,7 @@
                     <div class="notice-section-title">
                         <span>💬</span> 企業團訂與客製諮詢
                     </div>
-                    <div class="notice-section-content">
+                    <div class="notice-section-content" id="noticeContact">
                         企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：<br>
                         📸 <strong>IG: @goldencorn_diner</strong><br>
                         📞 <strong>電話: 0910-237-105</strong>
@@ -762,7 +766,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             loadStoreInfo();
-            // NOTE: No automatic popup on load! User stays cleanly on the green page.
         });
 
         function scrollToSelection(e) {
@@ -783,17 +786,78 @@
             if (m) m.classList.remove("show");
         }
 
+        function renderIconOrImage(targetEl, val) {
+            if (!targetEl || !val) return;
+            const trimmed = val.trim();
+            if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/") || trimmed.startsWith("./")) {
+                targetEl.innerHTML = `<img src="${trimmed}" alt="Icon" style="max-height: 48px; max-width: 48px; object-fit: contain;">`;
+            } else {
+                targetEl.textContent = trimmed;
+            }
+        }
+
+        function renderBullets(targetEl, bulletsText) {
+            if (!targetEl || !bulletsText) return;
+            const lines = bulletsText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length > 0) {
+                targetEl.innerHTML = lines.map(line => `<li>${line}</li>`).join("");
+            }
+        }
+
         async function loadStoreInfo() {
             try {
                 const res = await fetch("/api/settings");
                 if (!res.ok) return;
-                const settings = await res.json();
+                const s = await res.json();
                 
-                if (settings.BusinessHours && document.getElementById("noticeHours")) {
-                    document.getElementById("noticeHours").innerHTML = `<strong>${settings.BusinessHours}</strong>`;
+                // Section 1: Cover
+                if (s.CoverImageUrl && document.getElementById("posterImg")) document.getElementById("posterImg").src = s.CoverImageUrl;
+                if (s.CoverAnnouncementBtnText && document.getElementById("coverAnnouncementBtnText")) document.getElementById("coverAnnouncementBtnText").textContent = s.CoverAnnouncementBtnText;
+                if (s.CoverSwipeBtnText && document.getElementById("coverSwipeBtnText")) document.getElementById("coverSwipeBtnText").textContent = s.CoverSwipeBtnText;
+
+                // Section 2: Header
+                if (s.PortalPillTag && document.getElementById("portalPillTag")) document.getElementById("portalPillTag").textContent = s.PortalPillTag;
+                if (s.PortalTitle && document.getElementById("portalTitle")) document.getElementById("portalTitle").textContent = s.PortalTitle;
+                if (s.PortalSubtitle && document.getElementById("portalSubtitle")) document.getElementById("portalSubtitle").textContent = s.PortalSubtitle;
+                if (s.PortalNoticeBtnText && document.getElementById("portalNoticeBtnText")) document.getElementById("portalNoticeBtnText").textContent = s.PortalNoticeBtnText;
+                if (s.PortalHistoryBtnText && document.getElementById("portalHistoryBtnText")) document.getElementById("portalHistoryBtnText").textContent = s.PortalHistoryBtnText;
+
+                // Box A: Party Box
+                if (s.BoxABadge && document.getElementById("boxABadge")) document.getElementById("boxABadge").textContent = s.BoxABadge;
+                if (s.BoxAIcon) renderIconOrImage(document.getElementById("boxAIcon"), s.BoxAIcon);
+                if (s.BoxATitle && document.getElementById("boxATitle")) document.getElementById("boxATitle").textContent = s.BoxATitle;
+                if (s.BoxASubtitle && document.getElementById("boxASubtitle")) document.getElementById("boxASubtitle").textContent = s.BoxASubtitle;
+                if (s.BoxADesc && document.getElementById("boxADesc")) document.getElementById("boxADesc").textContent = s.BoxADesc;
+                if (s.BoxABullets) renderBullets(document.getElementById("boxABullets"), s.BoxABullets);
+                if (s.BoxABtnText && document.getElementById("boxABtnText")) document.getElementById("boxABtnText").textContent = s.BoxABtnText;
+                if (s.BoxALink && document.getElementById("boxALink")) document.getElementById("boxALink").href = s.BoxALink;
+
+                // Box B: Menu
+                if (s.BoxBBadge && document.getElementById("boxBBadge")) document.getElementById("boxBBadge").textContent = s.BoxBBadge;
+                if (s.BoxBIcon) renderIconOrImage(document.getElementById("boxBIcon"), s.BoxBIcon);
+                if (s.BoxBTitle && document.getElementById("boxBTitle")) document.getElementById("boxBTitle").textContent = s.BoxBTitle;
+                if (s.BoxBSubtitle && document.getElementById("boxBSubtitle")) document.getElementById("boxBSubtitle").textContent = s.BoxBSubtitle;
+                if (s.BoxBDesc && document.getElementById("boxBDesc")) document.getElementById("boxBDesc").textContent = s.BoxBDesc;
+                if (s.BoxBBullets) renderBullets(document.getElementById("boxBBullets"), s.BoxBBullets);
+                if (s.BoxBBtnText && document.getElementById("boxBBtnText")) document.getElementById("boxBBtnText").textContent = s.BoxBBtnText;
+                if (s.BoxBLink && document.getElementById("boxBLink")) document.getElementById("boxBLink").href = s.BoxBLink;
+
+                // Bottom Story
+                if (s.StoryQuote && document.getElementById("storyQuote")) document.getElementById("storyQuote").textContent = s.StoryQuote;
+                if (s.StoryAuthor && document.getElementById("storyAuthor")) document.getElementById("storyAuthor").textContent = s.StoryAuthor;
+
+                // Announcement Modal
+                if (s.BusinessHours && document.getElementById("noticeHours")) {
+                    document.getElementById("noticeHours").innerHTML = `<strong>${s.BusinessHours.replace(/\n/g, '<br>')}</strong>`;
                 }
-                if (settings.Address && document.getElementById("noticeAddress")) {
-                    document.getElementById("noticeAddress").textContent = settings.Address;
+                if (s.Address && document.getElementById("noticeAddress")) {
+                    document.getElementById("noticeAddress").textContent = s.Address;
+                }
+                if (s.NoticeDelivery && document.getElementById("noticeDelivery")) {
+                    document.getElementById("noticeDelivery").innerHTML = s.NoticeDelivery.replace(/\n/g, '<br>');
+                }
+                if (s.NoticeContact && document.getElementById("noticeContact")) {
+                    document.getElementById("noticeContact").innerHTML = s.NoticeContact.replace(/\n/g, '<br>');
                 }
             } catch (e) {
                 console.error("Failed to load settings:", e);
