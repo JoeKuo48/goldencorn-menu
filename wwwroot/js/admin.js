@@ -1077,8 +1077,51 @@ async function loadAdminHomepageSettings() {
         if (document.getElementById("cmsPartyInquiryPhoneText")) document.getElementById("cmsPartyInquiryPhoneText").value = s.PartyInquiryPhoneText || "📞 電話洽詢：0910-237-105";
         if (document.getElementById("cmsPartyInquiryPhoneLink")) document.getElementById("cmsPartyInquiryPhoneLink").value = s.PartyInquiryPhoneLink || "tel:0910237105";
 
+        updateImgPreview('cmsCoverImageUrl', 'coverImgPreview');
+        updateIconPreview('cmsBoxAIcon', 'boxAIconPreview');
+        updateIconPreview('cmsBoxBIcon', 'boxBIconPreview');
+
     } catch (e) {
         console.error("Homepage settings load failed:", e);
+    }
+}
+
+function handleImageUpload(e, targetInputId, previewId) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        const base64 = evt.target.result;
+        const input = document.getElementById(targetInputId);
+        if (input) input.value = base64;
+        const preview = document.getElementById(previewId);
+        if (preview) {
+            if (preview.tagName === 'IMG') {
+                preview.src = base64;
+                preview.style.display = "inline-block";
+            } else {
+                preview.innerHTML = `<img src="${base64}" style="max-height:48px; border-radius:6px;">`;
+            }
+        }
+        showAdminToast("📷 照片已選取！請記得點擊最下方【儲存設定】按鈕");
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateImgPreview(inputId, previewImgId) {
+    const val = document.getElementById(inputId)?.value || "/img/cover_poster.png";
+    const p = document.getElementById(previewImgId);
+    if (p) p.src = val;
+}
+
+function updateIconPreview(inputId, previewId) {
+    const val = (document.getElementById(inputId)?.value || "").trim();
+    const p = document.getElementById(previewId);
+    if (!p) return;
+    if (val.startsWith("http://") || val.startsWith("https://") || val.startsWith("/") || val.startsWith("data:image")) {
+        p.innerHTML = `<img src="${val}" style="max-height:48px; border-radius:6px;">`;
+    } else {
+        p.textContent = val || "🍱";
     }
 }
 
