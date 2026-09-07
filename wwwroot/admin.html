@@ -243,7 +243,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="settingHours">營業時間與預訂說明</label>
-                    <textarea id="settingHours" class="form-control" rows="3">週四至週六 16:30-22:30 [週日至週三僅接受線上提前預點] ----- *有任何問題，如企業商務套餐、下午茶點心團購等等，請私訊IG粉專，由主廚一對一服務 IG: goldencorn_diner</textarea>
+                    <textarea id="settingHours" class="form-control" rows="3">週四至週六 16:30-22:30 《週日至週三僅接受線上提前預點》</textarea>
                 </div>
 
                 <!-- Store Tip (The Lightbulb notice) -->
@@ -251,7 +251,11 @@
                     <label class="form-label" for="settingStoreTip">
                         💡 門市資訊底部溫馨提醒 (有燈泡處敘述)
                     </label>
-                    <textarea id="settingStoreTip" class="form-control" rows="2">💡 美式慢火柴燻牛胸肉、豬梅花每日限量供應，餐點現點現烤，建議提前線上預約取餐！</textarea>
+                    <textarea id="settingStoreTip" class="form-control" rows="5">💡現階段為主廚一人工作室，建議提前預約，部分燻肉品項才不會缺貨唷！
+💡如需外送，皆以LALAMOVE平台試算運費。EX.7.5公里機車外送約140元
+💡試營運期間，消費滿600元外送直接免運！再送美式燒烤玉米肋排乙份！
+💡有任何問題，如企業商務套餐、下午茶點心團購等等，請私訊IG粉專，由主廚一對一服務。
+💡IG: goldencorn_diner</textarea>
                 </div>
 
                 <div class="form-group">
@@ -335,12 +339,12 @@
 
                     <div class="form-group">
                         <label class="form-label" for="cmsCoverAnnouncementBtnText">公告按鈕文字</label>
-                        <input type="text" id="cmsCoverAnnouncementBtnText" class="form-control" value="門市公告資訊">
+                        <input type="text" id="cmsCoverAnnouncementBtnText" class="form-control" value="門市公告與營業資訊">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="cmsCoverSwipeBtnText">滑動引導按鈕文字</label>
-                        <input type="text" id="cmsCoverSwipeBtnText" class="form-control" value="SWIPE FOR MY STORY... →">
+                        <input type="text" id="cmsCoverSwipeBtnText" class="form-control" value="SWIPE FOR MY STORY... ↓">
                     </div>
                 </div>
 
@@ -368,11 +372,11 @@
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group">
                             <label class="form-label" for="cmsPortalNoticeBtnText">公告按鈕文字</label>
-                            <input type="text" id="cmsPortalNoticeBtnText" class="form-control" value="📢 門市公告與營業資訊">
+                            <input type="text" id="cmsPortalNoticeBtnText" class="form-control" value="[ 門市公告與營業資訊 ]">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsPortalHistoryBtnText">查單按鈕文字</label>
-                            <input type="text" id="cmsPortalHistoryBtnText" class="form-control" value="📱 查詢我的訂單">
+                            <input type="text" id="cmsPortalHistoryBtnText" class="form-control" value="[ 查詢我的訂單 ]">
                         </div>
                     </div>
                 </div>
@@ -385,18 +389,18 @@
 
                     <div class="form-group">
                         <label class="form-label" for="cmsBoxABadge">頂部徽章文字</label>
-                        <input type="text" id="cmsBoxABadge" class="form-control" value="🎉 團體聚會 · 露營野餐 · 預約外燴">
+                        <input type="text" id="cmsBoxABadge" class="form-control" value="[ 團體聚會 · 露營野餐 · 預約外燴 ]">
                     </div>
 
                     <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:12px;">
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxAIcon">圖示/圖片</label>
-                            <input type="text" id="cmsBoxAIcon" class="form-control" value="🍱" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxAIcon', 'boxAIconPreview')">
+                            <input type="text" id="cmsBoxAIcon" class="form-control" value="/img/box_a_icon.jpg" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxAIcon', 'boxAIconPreview')">
                             <label style="cursor:pointer; font-size:11px; color:#0284c7; font-weight:700; display:inline-block; margin-top:4px;">
                                 📁 上傳圖示
                                 <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsBoxAIcon', 'boxAIconPreview')">
                             </label>
-                            <div id="boxAIconPreview" style="font-size:24px; margin-top:2px;">🍱</div>
+                            <div id="boxAIconPreview" style="font-size:24px; margin-top:2px;"><img src="/img/box_a_icon.jpg" style="max-height:48px; border-radius:6px;"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxATitle">中文標題</label>
@@ -415,9 +419,11 @@
 
                     <div class="form-group">
                         <label class="form-label" for="cmsBoxABullets">特色條列重點 (每行一條)</label>
-                        <textarea id="cmsBoxABullets" class="form-control" rows="3">✨ 德州慢燻牛胸肉 / 焦糖豬肋排大拼盤
-✨ 美式靈魂炸雞派對桶
-✨ 炭烤黃金玉米 & 主廚特調雙醬</textarea>
+                        <textarea id="cmsBoxABullets" class="form-control" rows="5">燻烤肉拼盤/美式炸物
+黃金玉米肋條/嫩葉沙拉
+玉米布丁麵包/布朗尼
+手工獨門醬料
+*一對一客製化諮詢100%享受</textarea>
                     </div>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
@@ -440,18 +446,18 @@
 
                     <div class="form-group">
                         <label class="form-label" for="cmsBoxBBadge">頂部徽章文字</label>
-                        <input type="text" id="cmsBoxBBadge" class="form-control" value="🔥 現點現烤 · A+B+C 自由配 · 預約外帶">
+                        <input type="text" id="cmsBoxBBadge" class="form-control" value="[ 靈魂美式餐點 · 預約外帶 ]">
                     </div>
 
                     <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:12px;">
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxBIcon">圖示/圖片</label>
-                            <input type="text" id="cmsBoxBIcon" class="form-control" value="🌽" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxBIcon', 'boxBIconPreview')">
+                            <input type="text" id="cmsBoxBIcon" class="form-control" value="/img/box_b_icon.jpg" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxBIcon', 'boxBIconPreview')">
                             <label style="cursor:pointer; font-size:11px; color:#16a34a; font-weight:700; display:inline-block; margin-top:4px;">
                                 📁 上傳圖示
                                 <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsBoxBIcon', 'boxBIconPreview')">
                             </label>
-                            <div id="boxBIconPreview" style="font-size:24px; margin-top:2px;">🌽</div>
+                            <div id="boxBIconPreview" style="font-size:24px; margin-top:2px;"><img src="/img/box_b_icon.jpg" style="max-height:48px; border-radius:6px;"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxBTitle">中文標題</label>
@@ -470,9 +476,9 @@
 
                     <div class="form-group">
                         <label class="form-label" for="cmsBoxBBullets">特色條列重點 (每行一條)</label>
-                        <textarea id="cmsBoxBBullets" class="form-control" rows="3">✨ 德州燻烤牛胸肉、豬梅花、古巴烤豬排
-✨ 招牌美式奶油玉米、蘋果捲心菜
-✨ 線上預約取餐時間、Line Pay 快速結帳</textarea>
+                        <textarea id="cmsBoxBBullets" class="form-control" rows="4">德州燻烤牛胸肉/克里奧雞
+美式奶油玉米/蘋果捲心菜
+*線上預約取餐時間、Line Pay快速結帳</textarea>
                     </div>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
@@ -500,7 +506,7 @@
 
                     <div class="form-group">
                         <label class="form-label" for="cmsStoryAuthor">名言署名</label>
-                        <input type="text" id="cmsStoryAuthor" class="form-control" value="Golden Corn · 慢靈魂製造所 🌽 柴火煙燻工作室">
+                        <input type="text" id="cmsStoryAuthor" class="form-control" value="STAY GOLDEN · 慢靈魂製造所 · STAY HUNGRY">
                     </div>
                 </div>
 
@@ -512,14 +518,14 @@
 
                     <div class="form-group">
                         <label class="form-label" for="cmsNoticeDelivery">外送與試營運優惠說明</label>
-                        <textarea id="cmsNoticeDelivery" class="form-control" rows="3">• 本店餐點皆為低溫慢火柴燻、現點現烤，建議提前預約以確保肉品庫存。
+                        <textarea id="cmsNoticeDelivery" class="form-control" rows="4">• 本店餐點皆為低溫慢火柴燻，建議提前預約以確保肉品庫存。
 • 外送服務：以 LALAMOVE 平台配送（例如 7.5 公里機車外送約 140 元）。
-• 試營運優惠：消費滿 $600 免運！再送美式燒烤玉米肋排乙份！</textarea>
+• 試營運優惠：消費滿 $600 免運！</textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="cmsNoticeContact">企業團訂與聯絡資訊說明</label>
-                        <textarea id="cmsNoticeContact" class="form-control" rows="3">企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：
+                        <textarea id="cmsNoticeContact" class="form-control" rows="4">企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：
 📸 IG: @goldencorn_diner
 📞 電話: 0910-237-105</textarea>
                     </div>

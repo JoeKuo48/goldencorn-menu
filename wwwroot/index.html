@@ -780,8 +780,8 @@
     <main class="hero-poster-wrapper">
         <div class="poster-card-frame">
             
-            <!-- Pure Typographic Retro Diner Poster (Default / No Cartoon) -->
-            <div id="retroTypoPoster" class="retro-diner-poster">
+            <!-- Pure Typographic Retro Diner Poster (Fallback / No Cartoon) -->
+            <div id="retroTypoPoster" class="retro-diner-poster" style="display:none;">
                 <div class="poster-inner-frame">
                     <div class="poster-corner top-left">✦</div>
                     <div class="poster-corner top-right">✦</div>
@@ -814,8 +814,8 @@
                 </div>
             </div>
 
-            <!-- Custom Uploaded Photo (Displayed dynamically if a custom real photo is uploaded in CMS) -->
-            <img id="posterImg" src="" alt="Golden Corn · 慢靈魂製造所" class="poster-img-full" style="display:none;">
+            <!-- Custom Uploaded Photo (Default: /img/cover_poster.png) -->
+            <img id="posterImg" src="/img/cover_poster.png" alt="Golden Corn · 慢靈魂製造所" class="poster-img-full">
         </div>
         
         <!-- Action Buttons Directly on this Green Page -->
@@ -856,16 +856,18 @@
                     <div class="card-strip-checkered green"></div>
                     <div class="portal-card-inner">
                         <span class="card-badge party" id="boxABadge">[ 團體聚會 · 露營野餐 · 預約外燴 ]</span>
-                        <div class="card-monogram-tag party" id="boxAIcon">A</div>
+                        <div class="card-monogram-tag party" id="boxAIcon"><img src="/img/box_a_icon.jpg" alt="Icon" style="max-height: 48px; max-width: 48px; object-fit: contain; border-radius: 50%;"></div>
                         <h3 class="card-title-chinese" id="boxATitle">A. 派對餐盒</h3>
                         <div class="card-title-english" id="boxASubtitle">PARTY BOX &amp; CATERING</div>
                         <p class="card-desc" id="boxADesc">
                             專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！
                         </p>
                         <ul class="card-bullet-list" id="boxABullets">
-                            <li>德州慢燻牛胸肉 / 焦糖豬肋排大拼盤</li>
-                            <li>美式靈魂炸雞派對桶</li>
-                            <li>炭烤黃金玉米 &amp; 主廚特調雙醬</li>
+                            <li>燻烤肉拼盤/美式炸物</li>
+                            <li>黃金玉米肋條/嫩葉沙拉</li>
+                            <li>玉米布丁麵包/布朗尼</li>
+                            <li>手工獨門醬料</li>
+                            <li>*一對一客製化諮詢100%享受</li>
                         </ul>
                         <div class="card-action-btn party">
                             <span id="boxABtnText">探索派對餐盒</span>
@@ -878,17 +880,17 @@
                 <a href="/menu.html" class="portal-big-card" id="boxBLink">
                     <div class="card-strip-checkered gold"></div>
                     <div class="portal-card-inner">
-                        <span class="card-badge menu" id="boxBBadge">[ 現點現烤 · A+B+C 自由配 · 預約外帶 ]</span>
-                        <div class="card-monogram-tag menu" id="boxBIcon">B</div>
+                        <span class="card-badge menu" id="boxBBadge">[ 靈魂美式餐點 · 預約外帶 ]</span>
+                        <div class="card-monogram-tag menu" id="boxBIcon"><img src="/img/box_b_icon.jpg" alt="Icon" style="max-height: 48px; max-width: 48px; object-fit: contain; border-radius: 50%;"></div>
                         <h3 class="card-title-chinese" id="boxBTitle">B. 門市菜單</h3>
                         <div class="card-title-english" id="boxBSubtitle">DINER MENU &amp; ORDERING</div>
                         <p class="card-desc" id="boxBDesc">
                             個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。
                         </p>
                         <ul class="card-bullet-list" id="boxBBullets">
-                            <li>德州燻烤牛胸肉、豬梅花、古巴烤豬排</li>
-                            <li>招牌美式奶油玉米、蘋果捲心菜</li>
-                            <li>線上預約取餐時間、Line Pay 快速結帳</li>
+                            <li>德州燻烤牛胸肉/克里奧雞</li>
+                            <li>美式奶油玉米/蘋果捲心菜</li>
+                            <li>*線上預約取餐時間、Line Pay快速結帳</li>
                         </ul>
                         <div class="card-action-btn menu">
                             <span id="boxBBtnText">進入線上點餐</span>
@@ -902,7 +904,7 @@
             <!-- Story Quote -->
             <div class="portal-story-note">
                 <div class="story-quote-text" id="storyQuote">「世界太快，我們在田裡為你製造一點慢靈魂。」</div>
-                <div class="story-quote-author" id="storyAuthor">GOLDEN CORN · 慢靈魂製造所 · 柴火煙燻工作室</div>
+                <div class="story-quote-author" id="storyAuthor">STAY GOLDEN · 慢靈魂製造所 · STAY HUNGRY</div>
             </div>
 
         </div>
@@ -1046,9 +1048,10 @@
                 // Section 1: Cover
                 const posterImg = document.getElementById("posterImg");
                 const typoPoster = document.getElementById("retroTypoPoster");
-                if (s.CoverImageUrl && s.CoverImageUrl !== "/img/cover_poster.png" && s.CoverImageUrl !== "") {
+                const coverUrl = (s.CoverImageUrl || "/img/cover_poster.png").trim();
+                if (coverUrl && coverUrl !== "none" && coverUrl !== "retro") {
                     if (posterImg) {
-                        posterImg.src = s.CoverImageUrl;
+                        posterImg.src = coverUrl;
                         posterImg.style.display = "block";
                     }
                     if (typoPoster) typoPoster.style.display = "none";
@@ -1069,7 +1072,7 @@
 
                 // Box A: Party Box
                 if (s.BoxABadge && document.getElementById("boxABadge")) document.getElementById("boxABadge").textContent = s.BoxABadge;
-                if (document.getElementById("boxAIcon")) renderIconOrImage(document.getElementById("boxAIcon"), s.BoxAIcon, "A");
+                if (document.getElementById("boxAIcon")) renderIconOrImage(document.getElementById("boxAIcon"), s.BoxAIcon || "/img/box_a_icon.jpg", "A");
                 if (s.BoxATitle && document.getElementById("boxATitle")) document.getElementById("boxATitle").textContent = s.BoxATitle;
                 if (s.BoxASubtitle && document.getElementById("boxASubtitle")) document.getElementById("boxASubtitle").textContent = s.BoxASubtitle;
                 if (s.BoxADesc && document.getElementById("boxADesc")) document.getElementById("boxADesc").textContent = s.BoxADesc;
@@ -1079,7 +1082,7 @@
 
                 // Box B: Menu
                 if (s.BoxBBadge && document.getElementById("boxBBadge")) document.getElementById("boxBBadge").textContent = s.BoxBBadge;
-                if (document.getElementById("boxBIcon")) renderIconOrImage(document.getElementById("boxBIcon"), s.BoxBIcon, "B");
+                if (document.getElementById("boxBIcon")) renderIconOrImage(document.getElementById("boxBIcon"), s.BoxBIcon || "/img/box_b_icon.jpg", "B");
                 if (s.BoxBTitle && document.getElementById("boxBTitle")) document.getElementById("boxBTitle").textContent = s.BoxBTitle;
                 if (s.BoxBSubtitle && document.getElementById("boxBSubtitle")) document.getElementById("boxBSubtitle").textContent = s.BoxBSubtitle;
                 if (s.BoxBDesc && document.getElementById("boxBDesc")) document.getElementById("boxBDesc").textContent = s.BoxBDesc;
