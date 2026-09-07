@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
 WORKDIR /src
 COPY ["GoldenCornOrder.csproj", "./"]
 RUN dotnet restore "GoldenCornOrder.csproj"
@@ -9,8 +9,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENV DOTNET_EnableWriteXorExecute=0
-ENV ASPNETCORE_URLS=http://+:10000;http://+:80
+ENV ASPNETCORE_URLS=http://0.0.0.0:10000
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV PORT=10000
 EXPOSE 10000
-EXPOSE 80
+ENTRYPOINT ["dotnet", "GoldenCornOrder.dll"]
