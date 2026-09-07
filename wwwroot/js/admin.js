@@ -1006,42 +1006,42 @@ async function loadAdminHomepageSettings() {
 
         // Card 1: Cover
         if (document.getElementById("cmsCoverImageUrl")) document.getElementById("cmsCoverImageUrl").value = s.CoverImageUrl || "/img/cover_poster.png";
-        if (document.getElementById("cmsCoverAnnouncementBtnText")) document.getElementById("cmsCoverAnnouncementBtnText").value = s.CoverAnnouncementBtnText || "門市公告資訊";
-        if (document.getElementById("cmsCoverSwipeBtnText")) document.getElementById("cmsCoverSwipeBtnText").value = s.CoverSwipeBtnText || "SWIPE FOR MY STORY... →";
+        if (document.getElementById("cmsCoverAnnouncementBtnText")) document.getElementById("cmsCoverAnnouncementBtnText").value = s.CoverAnnouncementBtnText || "門市公告與營業資訊";
+        if (document.getElementById("cmsCoverSwipeBtnText")) document.getElementById("cmsCoverSwipeBtnText").value = s.CoverSwipeBtnText || "SWIPE FOR MY STORY... ↓";
 
         // Card 2: Header
         if (document.getElementById("cmsPortalPillTag")) document.getElementById("cmsPortalPillTag").value = s.PortalPillTag || "CHOOSE YOUR ORDER TYPE";
         if (document.getElementById("cmsPortalTitle")) document.getElementById("cmsPortalTitle").value = s.PortalTitle || "選擇您的美味模式";
         if (document.getElementById("cmsPortalSubtitle")) document.getElementById("cmsPortalSubtitle").value = s.PortalSubtitle || "外公的田間貨櫃工作室 · 柴火低溫慢燻 · 慢靈魂料理";
-        if (document.getElementById("cmsPortalNoticeBtnText")) document.getElementById("cmsPortalNoticeBtnText").value = s.PortalNoticeBtnText || "📢 門市公告與營業資訊";
-        if (document.getElementById("cmsPortalHistoryBtnText")) document.getElementById("cmsPortalHistoryBtnText").value = s.PortalHistoryBtnText || "📱 查詢我的訂單";
+        if (document.getElementById("cmsPortalNoticeBtnText")) document.getElementById("cmsPortalNoticeBtnText").value = s.PortalNoticeBtnText || "[ 門市公告與營業資訊 ]";
+        if (document.getElementById("cmsPortalHistoryBtnText")) document.getElementById("cmsPortalHistoryBtnText").value = s.PortalHistoryBtnText || "[ 查詢我的訂單 ]";
 
         // Card 3: Box A
         if (document.getElementById("cmsBoxABadge")) document.getElementById("cmsBoxABadge").value = s.BoxABadge || "[ 團體聚會 · 露營野餐 · 預約外燴 ]";
-        if (document.getElementById("cmsBoxAIcon")) document.getElementById("cmsBoxAIcon").value = s.BoxAIcon || "A";
+        if (document.getElementById("cmsBoxAIcon")) document.getElementById("cmsBoxAIcon").value = s.BoxAIcon || "/img/box_a_icon.jpg";
         if (document.getElementById("cmsBoxATitle")) document.getElementById("cmsBoxATitle").value = s.BoxATitle || "A. 派對餐盒";
         if (document.getElementById("cmsBoxASubtitle")) document.getElementById("cmsBoxASubtitle").value = s.BoxASubtitle || "PARTY BOX & CATERING";
         if (document.getElementById("cmsBoxADesc")) document.getElementById("cmsBoxADesc").value = s.BoxADesc || "專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！";
-        if (document.getElementById("cmsBoxABullets")) document.getElementById("cmsBoxABullets").value = s.BoxABullets || "德州慢燻牛胸肉 / 焦糖豬肋排大拼盤\n美式靈魂炸雞派對桶\n炭烤黃金玉米 & 主廚特調雙醬";
+        if (document.getElementById("cmsBoxABullets")) document.getElementById("cmsBoxABullets").value = s.BoxABullets || "燻烤肉拼盤/美式炸物\n黃金玉米肋條/嫩葉沙拉\n玉米布丁麵包/布朗尼\n手工獨門醬料\n*一對一客製化諮詢100%享受";
         if (document.getElementById("cmsBoxABtnText")) document.getElementById("cmsBoxABtnText").value = s.BoxABtnText || "探索派對餐盒";
         if (document.getElementById("cmsBoxALink")) document.getElementById("cmsBoxALink").value = s.BoxALink || "/party.html";
 
         // Card 4: Box B
-        if (document.getElementById("cmsBoxBBadge")) document.getElementById("cmsBoxBBadge").value = s.BoxBBadge || "[ 現點現烤 · A+B+C 自由配 · 預約外帶 ]";
-        if (document.getElementById("cmsBoxBIcon")) document.getElementById("cmsBoxBIcon").value = s.BoxBIcon || "B";
+        if (document.getElementById("cmsBoxBBadge")) document.getElementById("cmsBoxBBadge").value = s.BoxBBadge || "[ 靈魂美式餐點 · 預約外帶 ]";
+        if (document.getElementById("cmsBoxBIcon")) document.getElementById("cmsBoxBIcon").value = s.BoxBIcon || "/img/box_b_icon.jpg";
         if (document.getElementById("cmsBoxBTitle")) document.getElementById("cmsBoxBTitle").value = s.BoxBTitle || "B. 門市菜單";
         if (document.getElementById("cmsBoxBSubtitle")) document.getElementById("cmsBoxBSubtitle").value = s.BoxBSubtitle || "DINER MENU & ORDERING";
         if (document.getElementById("cmsBoxBDesc")) document.getElementById("cmsBoxBDesc").value = s.BoxBDesc || "個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。";
-        if (document.getElementById("cmsBoxBBullets")) document.getElementById("cmsBoxBBullets").value = s.BoxBBullets || "德州燻烤牛胸肉、豬梅花、古巴烤豬排\n招牌美式奶油玉米、蘋果捲心菜\n線上預約取餐時間、Line Pay 快速結帳";
+        if (document.getElementById("cmsBoxBBullets")) document.getElementById("cmsBoxBBullets").value = s.BoxBBullets || "德州燻烤牛胸肉/克里奧雞\n美式奶油玉米/蘋果捲心菜\n*線上預約取餐時間、Line Pay快速結帳";
         if (document.getElementById("cmsBoxBBtnText")) document.getElementById("cmsBoxBBtnText").value = s.BoxBBtnText || "進入線上點餐";
         if (document.getElementById("cmsBoxBLink")) document.getElementById("cmsBoxBLink").value = s.BoxBLink || "/menu.html";
 
         // Card 5: Story
         if (document.getElementById("cmsStoryQuote")) document.getElementById("cmsStoryQuote").value = s.StoryQuote || "「世界太快，我們在田裡為你製造一點慢靈魂。」";
-        if (document.getElementById("cmsStoryAuthor")) document.getElementById("cmsStoryAuthor").value = s.StoryAuthor || "GOLDEN CORN · 慢靈魂製造所 · 柴火煙燻工作室";
+        if (document.getElementById("cmsStoryAuthor")) document.getElementById("cmsStoryAuthor").value = s.StoryAuthor || "STAY GOLDEN · 慢靈魂製造所 · STAY HUNGRY";
 
         // Card 6: Notice Modal
-        if (document.getElementById("cmsNoticeDelivery")) document.getElementById("cmsNoticeDelivery").value = s.NoticeDelivery || "• 本店餐點皆為低溫慢火柴燻、現點現烤，建議提前預約以確保肉品庫存。\n• 外送服務：以 LALAMOVE 平台配送（例如 7.5 公里機車外送約 140 元）。\n• 試營運優惠：消費滿 $600 免運！再送美式燒烤玉米肋排乙份！";
+        if (document.getElementById("cmsNoticeDelivery")) document.getElementById("cmsNoticeDelivery").value = s.NoticeDelivery || "• 本店餐點皆為低溫慢火柴燻，建議提前預約以確保肉品庫存。\n• 外送服務：以 LALAMOVE 平台配送（例如 7.5 公里機車外送約 140 元）。\n• 試營運優惠：消費滿 $600 免運！";
         if (document.getElementById("cmsNoticeContact")) document.getElementById("cmsNoticeContact").value = s.NoticeContact || "企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專由主廚一對一服務：\n📸 IG: @goldencorn_diner\n📞 電話: 0910-237-105";
 
         // Party Box (party.html)
