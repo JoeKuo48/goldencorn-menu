@@ -300,10 +300,21 @@ namespace GoldenCornOrder.Data
                         Description = kvp.Value.Desc
                     });
                 }
-                else if (kvp.Key == "AdminPin" && existing.Value == "8888")
+                else
                 {
-                    // 自動將舊預設密碼 8888 遷移至 Hawking
-                    existing.Value = "Hawking";
+                    existing.Description = kvp.Value.Desc;
+                    if (kvp.Key == "AdminPin")
+                    {
+                        if (existing.Value == "8888" || string.IsNullOrEmpty(existing.Value))
+                        {
+                            existing.Value = "Hawking";
+                        }
+                    }
+                    else
+                    {
+                        // 自動將資料庫內的舊預設值同步為最新固定文案
+                        existing.Value = kvp.Value.Value;
+                    }
                 }
             }
 
