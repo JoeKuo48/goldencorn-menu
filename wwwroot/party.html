@@ -264,6 +264,19 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--gc-gold);
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .set-label-tag {
+            background: #ffffff;
+            color: var(--gc-green-dark);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
         }
 
         .set-badge-tag {
@@ -272,7 +285,7 @@
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 1px;
-            padding: 3px 10px;
+            padding: 4px 10px;
             border-radius: 12px;
             text-transform: uppercase;
         }
@@ -282,6 +295,7 @@
             color: var(--gc-gold-light);
             font-weight: 800;
             letter-spacing: 1px;
+            margin-left: auto;
         }
 
         .party-set-body {
@@ -488,8 +502,9 @@
             <!-- SET 1 -->
             <div class="party-set-card">
                 <div class="party-set-header">
-                    <span class="set-badge-tag" id="partySet1Badge">人氣首選 4~6人</span>
-                    <span class="set-portion-tag">大份量肉品拼盤</span>
+                    <span class="set-label-tag" id="partySet1Label">組合 1</span>
+                    <span class="set-badge-tag" id="partySet1Badge">BBQ COMBO人氣首選 4~6人</span>
+                    <span class="set-portion-tag" id="partySet1Portion">大份量肉品拼盤</span>
                 </div>
                 <div class="party-set-body">
                     <h3 class="set-title-zh" id="partySet1Title">德州慢燻狂歡肉品盛宴盒</h3>
@@ -500,10 +515,7 @@
                     <div class="set-items-box">
                         <div class="set-items-box-title">[ 包含內容與配菜 ]</div>
                         <ul class="set-items-list" id="partySet1Items">
-                            <li>德州柴燒慢燻牛胸肉 400g</li>
-                            <li>經典焦糖煙燻豬肋排 半扇</li>
-                            <li>獨門香料手撕豬梅花 300g</li>
-                            <li>附贈：美式蘋果捲心菜、特製酸黃瓜、自製BBQ醬</li>
+                            <li>待建製</li>
                         </ul>
                     </div>
                 </div>
@@ -512,22 +524,20 @@
             <!-- SET 2 -->
             <div class="party-set-card">
                 <div class="party-set-header">
-                    <span class="set-badge-tag" id="partySet2Badge">聚會必點 4~6人</span>
-                    <span class="set-portion-tag">美式炸物 &amp; 燒烤玉米</span>
+                    <span class="set-label-tag" id="partySet2Label">組合 2</span>
+                    <span class="set-badge-tag" id="partySet2Badge">HIGH PARTY聚會必點 6~12人</span>
+                    <span class="set-portion-tag" id="partySet2Portion">美式炸物 &amp; 燒烤玉米</span>
                 </div>
                 <div class="party-set-body">
-                    <h3 class="set-title-zh" id="partySet2Title">靈魂炸雞 &amp; 黃金玉米歡聚組</h3>
+                    <h3 class="set-title-zh" id="partySet2Title">美式靈魂 &amp; 黃金玉米歡聚組</h3>
                     <div class="set-title-en" id="partySet2Subtitle">Soul Fried Chicken &amp; Corn Ribs Box</div>
                     <p class="set-desc" id="partySet2Desc">
-                        外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。
+                        美式靈魂炸物，搭配超人氣炭烤玉米肋排。
                     </p>
                     <div class="set-items-box">
                         <div class="set-items-box-title">[ 包含內容與配菜 ]</div>
                         <ul class="set-items-list" id="partySet2Items">
-                            <li>美式酸奶酥脆炸雞柳條 12 塊</li>
-                            <li>楓糖水牛城微辣炸雞 8 塊</li>
-                            <li>美式燒烤黃金玉米肋排 8 支</li>
-                            <li>附贈：海鹽美式細薯、蒔蘿優格沾醬</li>
+                            <li>待建製</li>
                         </ul>
                     </div>
                 </div>
@@ -536,8 +546,9 @@
             <!-- SET 3 -->
             <div class="party-set-card">
                 <div class="party-set-header">
+                    <span class="set-label-tag" id="partySet3Label">組合 3</span>
                     <span class="set-badge-tag" id="partySet3Badge">戶外露營神器</span>
-                    <span class="set-portion-tag">真空封裝 即開即享</span>
+                    <span class="set-portion-tag" id="partySet3Portion">真空封裝 即開即享</span>
                 </div>
                 <div class="party-set-body">
                     <h3 class="set-title-zh" id="partySet3Title">露營野餐低溫真空即享組</h3>
@@ -548,10 +559,7 @@
                     <div class="set-items-box">
                         <div class="set-items-box-title">[ 包含內容與配菜 ]</div>
                         <ul class="set-items-list" id="partySet3Items">
-                            <li>熟成煙燻牛胸肉真空包 2 包</li>
-                            <li>古巴風烤豬排真空包 2 包</li>
-                            <li>雞汁小米飯 &amp; 奶油玉米包 各 2 包</li>
-                            <li>附贈專用復熱教學卡與特調香料粉</li>
+                            <li>待建製</li>
                         </ul>
                     </div>
                 </div>
@@ -626,21 +634,27 @@
                 if (s.PartyNoticeText && document.getElementById("partyNoticeText")) document.getElementById("partyNoticeText").textContent = s.PartyNoticeText;
 
                 // Set 1
+                if (s.PartySet1Label && document.getElementById("partySet1Label")) document.getElementById("partySet1Label").textContent = s.PartySet1Label;
                 if (s.PartySet1Badge && document.getElementById("partySet1Badge")) document.getElementById("partySet1Badge").textContent = s.PartySet1Badge;
+                if (s.PartySet1Portion && document.getElementById("partySet1Portion")) document.getElementById("partySet1Portion").textContent = s.PartySet1Portion;
                 if (s.PartySet1Title && document.getElementById("partySet1Title")) document.getElementById("partySet1Title").textContent = s.PartySet1Title.replace(/^[🥩🍗🏕️]\s*/, '');
                 if (s.PartySet1Subtitle && document.getElementById("partySet1Subtitle")) document.getElementById("partySet1Subtitle").textContent = s.PartySet1Subtitle;
                 if (s.PartySet1Desc && document.getElementById("partySet1Desc")) document.getElementById("partySet1Desc").textContent = s.PartySet1Desc;
                 if (s.PartySet1Items) renderListLines(document.getElementById("partySet1Items"), s.PartySet1Items);
 
                 // Set 2
+                if (s.PartySet2Label && document.getElementById("partySet2Label")) document.getElementById("partySet2Label").textContent = s.PartySet2Label;
                 if (s.PartySet2Badge && document.getElementById("partySet2Badge")) document.getElementById("partySet2Badge").textContent = s.PartySet2Badge;
+                if (s.PartySet2Portion && document.getElementById("partySet2Portion")) document.getElementById("partySet2Portion").textContent = s.PartySet2Portion;
                 if (s.PartySet2Title && document.getElementById("partySet2Title")) document.getElementById("partySet2Title").textContent = s.PartySet2Title.replace(/^[🥩🍗🏕️]\s*/, '');
                 if (s.PartySet2Subtitle && document.getElementById("partySet2Subtitle")) document.getElementById("partySet2Subtitle").textContent = s.PartySet2Subtitle;
                 if (s.PartySet2Desc && document.getElementById("partySet2Desc")) document.getElementById("partySet2Desc").textContent = s.PartySet2Desc;
                 if (s.PartySet2Items) renderListLines(document.getElementById("partySet2Items"), s.PartySet2Items);
 
                 // Set 3
+                if (s.PartySet3Label && document.getElementById("partySet3Label")) document.getElementById("partySet3Label").textContent = s.PartySet3Label;
                 if (s.PartySet3Badge && document.getElementById("partySet3Badge")) document.getElementById("partySet3Badge").textContent = s.PartySet3Badge;
+                if (s.PartySet3Portion && document.getElementById("partySet3Portion")) document.getElementById("partySet3Portion").textContent = s.PartySet3Portion;
                 if (s.PartySet3Title && document.getElementById("partySet3Title")) document.getElementById("partySet3Title").textContent = s.PartySet3Title.replace(/^[🥩🍗🏕️]\s*/, '');
                 if (s.PartySet3Subtitle && document.getElementById("partySet3Subtitle")) document.getElementById("partySet3Subtitle").textContent = s.PartySet3Subtitle;
                 if (s.PartySet3Desc && document.getElementById("partySet3Desc")) document.getElementById("partySet3Desc").textContent = s.PartySet3Desc;
