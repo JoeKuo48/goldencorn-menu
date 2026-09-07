@@ -1048,27 +1048,33 @@ async function loadAdminHomepageSettings() {
         if (document.getElementById("cmsPartyHeroBadge")) document.getElementById("cmsPartyHeroBadge").value = s.PartyHeroBadge || "PARTY BOX & CATERING";
         if (document.getElementById("cmsPartyHeroTitle")) document.getElementById("cmsPartyHeroTitle").value = s.PartyHeroTitle || "美式煙燻派對餐盒";
         if (document.getElementById("cmsPartyHeroSubtitle")) document.getElementById("cmsPartyHeroSubtitle").value = s.PartyHeroSubtitle || "露營野餐 · 朋友歡聚 · 企業團訂 · 生日派對的大份量美式靈魂盛宴！";
-        if (document.getElementById("cmsPartyHeroTags")) document.getElementById("cmsPartyHeroTags").value = s.PartyHeroTags || "16小時原木柴燒慢燻 | 現炸美式靈魂炸雞 | 招牌炭烤黃金玉米";
+        if (document.getElementById("cmsPartyHeroTags")) document.getElementById("cmsPartyHeroTags").value = s.PartyHeroTags || "原木柴燒慢燻 | 美式靈魂炸物 | 招牌黃金玉米";
         if (document.getElementById("cmsPartyNoticeTitle")) document.getElementById("cmsPartyNoticeTitle").value = s.PartyNoticeTitle || "【派對餐盒預訂須知】";
-        if (document.getElementById("cmsPartyNoticeText")) document.getElementById("cmsPartyNoticeText").value = s.PartyNoticeText || "派對餐盒採大份量客製化低溫燻烤製作，需提前 2~3 天 預訂，讓主廚有充裕時間備料與長時間慢火煙燻。目前線上菜單自選功能籌備中，歡迎直接透過 IG 或電話與主廚預訂！";
+        if (document.getElementById("cmsPartyNoticeText")) document.getElementById("cmsPartyNoticeText").value = s.PartyNoticeText || "前 2~3 天 預訂，讓主廚有充裕時間備料與長時間慢火煙燻。目前線上菜單自選功能籌備中，歡迎直接透過 IG 或電話與主廚預訂！";
 
-        if (document.getElementById("cmsPartySet1Badge")) document.getElementById("cmsPartySet1Badge").value = s.PartySet1Badge || "人氣首選 4~6人";
+        if (document.getElementById("cmsPartySet1Label")) document.getElementById("cmsPartySet1Label").value = s.PartySet1Label || "組合 1";
+        if (document.getElementById("cmsPartySet1Badge")) document.getElementById("cmsPartySet1Badge").value = s.PartySet1Badge || "BBQ COMBO人氣首選 4~6人";
+        if (document.getElementById("cmsPartySet1Portion")) document.getElementById("cmsPartySet1Portion").value = s.PartySet1Portion || "大份量肉品拼盤";
         if (document.getElementById("cmsPartySet1Title")) document.getElementById("cmsPartySet1Title").value = s.PartySet1Title || "德州慢燻狂歡肉品盛宴盒";
         if (document.getElementById("cmsPartySet1Subtitle")) document.getElementById("cmsPartySet1Subtitle").value = s.PartySet1Subtitle || "Texas Smoked BBQ Carnivore Feast";
         if (document.getElementById("cmsPartySet1Desc")) document.getElementById("cmsPartySet1Desc").value = s.PartySet1Desc || "肉食愛好者的終極救贖！一次品嚐三種經典低溫煙燻肉品。";
-        if (document.getElementById("cmsPartySet1Items")) document.getElementById("cmsPartySet1Items").value = s.PartySet1Items || "德州柴燒慢燻牛胸肉 400g\n經典焦糖煙燻豬肋排 半扇\n獨門香料手撕豬梅花 300g\n附贈：美式蘋果捲心菜、特製酸黃瓜、自製BBQ醬";
+        if (document.getElementById("cmsPartySet1Items")) document.getElementById("cmsPartySet1Items").value = s.PartySet1Items || "待建製";
 
-        if (document.getElementById("cmsPartySet2Badge")) document.getElementById("cmsPartySet2Badge").value = s.PartySet2Badge || "聚會必點 4~6人";
-        if (document.getElementById("cmsPartySet2Title")) document.getElementById("cmsPartySet2Title").value = s.PartySet2Title || "靈魂炸雞 & 黃金玉米歡聚組";
+        if (document.getElementById("cmsPartySet2Label")) document.getElementById("cmsPartySet2Label").value = s.PartySet2Label || "組合 2";
+        if (document.getElementById("cmsPartySet2Badge")) document.getElementById("cmsPartySet2Badge").value = s.PartySet2Badge || "HIGH PARTY聚會必點 6~12人";
+        if (document.getElementById("cmsPartySet2Portion")) document.getElementById("cmsPartySet2Portion").value = s.PartySet2Portion || "美式炸物 & 燒烤玉米";
+        if (document.getElementById("cmsPartySet2Title")) document.getElementById("cmsPartySet2Title").value = s.PartySet2Title || "美式靈魂 & 黃金玉米歡聚組";
         if (document.getElementById("cmsPartySet2Subtitle")) document.getElementById("cmsPartySet2Subtitle").value = s.PartySet2Subtitle || "Soul Fried Chicken & Corn Ribs Box";
-        if (document.getElementById("cmsPartySet2Desc")) document.getElementById("cmsPartySet2Desc").value = s.PartySet2Desc || "外酥內嫩的南方靈魂炸雞，搭配超人氣炭烤玉米肋排。";
-        if (document.getElementById("cmsPartySet2Items")) document.getElementById("cmsPartySet2Items").value = s.PartySet2Items || "美式酸奶酥脆炸雞柳條 12 塊\n楓糖水牛城微辣炸雞 8 塊\n美式燒烤黃金玉米肋排 8 支\n附贈：海鹽美式細薯、蒔蘿優格沾醬";
+        if (document.getElementById("cmsPartySet2Desc")) document.getElementById("cmsPartySet2Desc").value = s.PartySet2Desc || "美式靈魂炸物，搭配超人氣炭烤玉米肋排。";
+        if (document.getElementById("cmsPartySet2Items")) document.getElementById("cmsPartySet2Items").value = s.PartySet2Items || "待建製";
 
+        if (document.getElementById("cmsPartySet3Label")) document.getElementById("cmsPartySet3Label").value = s.PartySet3Label || "組合 3";
         if (document.getElementById("cmsPartySet3Badge")) document.getElementById("cmsPartySet3Badge").value = s.PartySet3Badge || "戶外露營神器";
+        if (document.getElementById("cmsPartySet3Portion")) document.getElementById("cmsPartySet3Portion").value = s.PartySet3Portion || "真空封裝 即開即享";
         if (document.getElementById("cmsPartySet3Title")) document.getElementById("cmsPartySet3Title").value = s.PartySet3Title || "露營野餐低溫真空即享組";
         if (document.getElementById("cmsPartySet3Subtitle")) document.getElementById("cmsPartySet3Subtitle").value = s.PartySet3Subtitle || "Outdoor Camping Ready-to-Heat Pack";
         if (document.getElementById("cmsPartySet3Desc")) document.getElementById("cmsPartySet3Desc").value = s.PartySet3Desc || "主廚已煙燻熟成並低溫真空封裝。隔水加熱即可享受大師級烤肉！";
-        if (document.getElementById("cmsPartySet3Items")) document.getElementById("cmsPartySet3Items").value = s.PartySet3Items || "熟成煙燻牛胸肉真空包 2 包\n古巴風烤豬排真空包 2 包\n雞汁小米飯 & 奶油玉米包 各 2 包\n附贈專用復熱教學卡與特調香料粉";
+        if (document.getElementById("cmsPartySet3Items")) document.getElementById("cmsPartySet3Items").value = s.PartySet3Items || "待建製";
 
         if (document.getElementById("cmsPartyInquiryTitle")) document.getElementById("cmsPartyInquiryTitle").value = s.PartyInquiryTitle || "預約與客製化洽詢";
         if (document.getElementById("cmsPartyInquiryDesc")) document.getElementById("cmsPartyInquiryDesc").value = s.PartyInquiryDesc || "不論是家庭聚餐、朋友露營、公司慶生或大型活動外燴，主廚皆可為您量身規劃份量與菜色組合！";
@@ -1169,19 +1175,25 @@ async function saveAdminHomepageSettings() {
         PartyNoticeTitle: document.getElementById("cmsPartyNoticeTitle")?.value || "",
         PartyNoticeText: document.getElementById("cmsPartyNoticeText")?.value || "",
 
+        PartySet1Label: document.getElementById("cmsPartySet1Label")?.value || "",
         PartySet1Badge: document.getElementById("cmsPartySet1Badge")?.value || "",
+        PartySet1Portion: document.getElementById("cmsPartySet1Portion")?.value || "",
         PartySet1Title: document.getElementById("cmsPartySet1Title")?.value || "",
         PartySet1Subtitle: document.getElementById("cmsPartySet1Subtitle")?.value || "",
         PartySet1Desc: document.getElementById("cmsPartySet1Desc")?.value || "",
         PartySet1Items: document.getElementById("cmsPartySet1Items")?.value || "",
 
+        PartySet2Label: document.getElementById("cmsPartySet2Label")?.value || "",
         PartySet2Badge: document.getElementById("cmsPartySet2Badge")?.value || "",
+        PartySet2Portion: document.getElementById("cmsPartySet2Portion")?.value || "",
         PartySet2Title: document.getElementById("cmsPartySet2Title")?.value || "",
         PartySet2Subtitle: document.getElementById("cmsPartySet2Subtitle")?.value || "",
         PartySet2Desc: document.getElementById("cmsPartySet2Desc")?.value || "",
         PartySet2Items: document.getElementById("cmsPartySet2Items")?.value || "",
 
+        PartySet3Label: document.getElementById("cmsPartySet3Label")?.value || "",
         PartySet3Badge: document.getElementById("cmsPartySet3Badge")?.value || "",
+        PartySet3Portion: document.getElementById("cmsPartySet3Portion")?.value || "",
         PartySet3Title: document.getElementById("cmsPartySet3Title")?.value || "",
         PartySet3Subtitle: document.getElementById("cmsPartySet3Subtitle")?.value || "",
         PartySet3Desc: document.getElementById("cmsPartySet3Desc")?.value || "",
