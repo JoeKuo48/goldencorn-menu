@@ -159,10 +159,13 @@ function setupTabNavigation() {
     });
 }
 
-// 2. Audio Alert
-function playOrderChime() {
+// 2. Audio Alert & Voice Broadcast
+function playOrderChime(orderInfo = null) {
     if (!isAudioAlertEnabled) return;
+
+    // 1. Web Audio API (Loud Diner Ding-Dong-Ding)
     try {
+        unlockAudio();
         if (!globalAudioCtx) {
             globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
@@ -171,7 +174,7 @@ function playOrderChime() {
         }
 
         const audioCtx = globalAudioCtx;
-        function playTone(freq, startTime, duration, vol = 0.5) {
+        function playTone(freq, startTime, duration, vol = 0.8) {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = "sine";
@@ -185,15 +188,48 @@ function playOrderChime() {
         }
 
         // Distinctive 2-round diner order bell chime: Ding - Dong - Ding!
-        playTone(587.33, 0.00, 0.22, 0.6); // D5
-        playTone(880.00, 0.15, 0.28, 0.7); // A5
-        playTone(1174.66, 0.32, 0.45, 0.8); // D6
+        playTone(587.33, 0.00, 0.25, 0.9); // D5
+        playTone(880.00, 0.18, 0.32, 1.0); // A5
+        playTone(1174.66, 0.38, 0.55, 1.0); // D6
         // Echo chime
-        playTone(880.00, 0.70, 0.20, 0.5);
-        playTone(1174.66, 0.85, 0.45, 0.6);
+        playTone(880.00, 0.85, 0.25, 0.7);
+        playTone(1174.66, 1.05, 0.55, 0.8);
     } catch (e) {
-        console.warn("Audio chime failed:", e);
+        console.warn("Web Audio chime failed:", e);
     }
+
+    // 2. Chinese Voice Broadcast via Web Speech API
+    try {
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel(); // Stop any pending speech
+            let text = "叮咚！Golden Corn 收到新訂單！";
+            if (orderInfo) {
+                const typeText = orderInfo.diningType === "DineIn" ? `內用桌號 ${orderInfo.tableNumber || "未填"}` : "外帶自取";
+                text = `叮咚！收到新訂單，${typeText}，金額 ${orderInfo.totalAmount} 元`;
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "zh-TW";
+            utterance.rate = 1.05;
+            utterance.pitch = 1.1;
+            utterance.volume = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+    } catch (e) {
+        console.warn("Speech synthesis failed:", e);
+    }
+
+    // 3. Mobile Device Vibration
+    try {
+        if ("vibrate" in navigator) {
+            navigator.vibrate([300, 150, 300, 150, 400]);
+        }
+    } catch (e) {}
+}
+
+function testOrderAudio() {
+    unlockAudio();
+    showAdminToast("🔊 正在播放測試鈴聲與語音播報...");
+    playOrderChime({ diningType: "Takeout", totalAmount: 380 });
 }
 
 function toggleAudioAlert() {
@@ -204,7 +240,7 @@ function toggleAudioAlert() {
         if (isAudioAlertEnabled) {
             btn.className = "btn-audio-toggle";
             btn.innerHTML = "🔔 提示音：開";
-            playOrderChime();
+            testOrderAudio();
         } else {
             btn.className = "btn-audio-toggle muted";
             btn.innerHTML = "🔕 提示音：靜音";
@@ -215,37 +251,56 @@ function toggleAudioAlert() {
 // 3. KDS Orders Loading & Rendering
 async function loadKdsOrders() {
     try {
-        const res = await fetch(`/api/admin/orders?status=${currentFilterStatus}`);
-        if (!res.ok) return;
+        // Always fetch active orders to detect any new Pending orders regardless of current tab/filter
+        const activeRes = await fetch(`/api/admin/orders?status=active`);
+        if (!activeRes.ok) return;
 
-        const orders = await res.json();
-        allOrders = orders;
-
-        let hasNewPending = false;
+        const activeOrders = await activeRes.json();
+        let newPendingOrders = [];
 
         if (isKdsFirstLoad) {
-            // First time loading backend: record all existing orders without playing alarm
-            orders.forEach(o => knownOrderIds.add(o.id));
+            // On first load, check if there are any fresh pending orders (within last 5 minutes)
+            const now = new Date();
+            activeOrders.forEach(o => {
+                knownOrderIds.add(o.id);
+                if (o.orderStatus === "Pending") {
+                    const orderTime = new Date(o.createdAt);
+                    if ((now - orderTime) < 5 * 60 * 1000) {
+                        newPendingOrders.push(o);
+                    }
+                }
+            });
             isKdsFirstLoad = false;
         } else {
             // Subsequent polls: detect any new order that arrives with Pending status
-            orders.forEach(o => {
+            activeOrders.forEach(o => {
                 if (!knownOrderIds.has(o.id)) {
                     if (o.orderStatus === "Pending") {
-                        hasNewPending = true;
+                        newPendingOrders.push(o);
                     }
                     knownOrderIds.add(o.id);
                 }
             });
+        }
 
-            if (hasNewPending) {
-                playOrderChime();
-                showAdminToast("🔔 收到新訂單！請確認出單");
-                flashAdminTitle("🔔【新訂單到達！】Golden Corn 管理後台");
+        if (newPendingOrders.length > 0) {
+            const latestOrder = newPendingOrders[0];
+            playOrderChime(latestOrder);
+            showAdminToast(`🔔 收到 ${newPendingOrders.length} 筆新訂單！請確認出單`);
+            flashAdminTitle(`🔔【新訂單到達！】Golden Corn 管理後台`);
+        }
+
+        // Load filtered orders for display if current filter is not 'active'
+        let displayOrders = activeOrders;
+        if (currentFilterStatus !== "active") {
+            const filterRes = await fetch(`/api/admin/orders?status=${currentFilterStatus}`);
+            if (filterRes.ok) {
+                displayOrders = await filterRes.json();
             }
         }
 
-        renderKdsCards(orders);
+        allOrders = displayOrders;
+        renderKdsCards(displayOrders);
         updateKdsBadgeCounts();
 
     } catch (err) {
