@@ -1016,7 +1016,7 @@ async function loadAdminSettings() {
         if (document.getElementById("settingBankAccount")) document.getElementById("settingBankAccount").value = settings.BankAccount || "";
         if (document.getElementById("settingBankAccountName")) document.getElementById("settingBankAccountName").value = settings.BankAccountName || "";
         if (document.getElementById("settingLinePayUrl")) document.getElementById("settingLinePayUrl").value = settings.LinePayUrl || "line://nv/cameraRoll/single";
-        if (document.getElementById("settingLineServiceUrl")) document.getElementById("settingLineServiceUrl").value = settings.LineServiceUrl || "https://line.me/R/ti/p/@goldencorn_diner";
+        if (document.getElementById("settingLineServiceUrl")) document.getElementById("settingLineServiceUrl").value = settings.LineServiceUrl || "https://line.me/R/ti/p/@260nqbpr";
         if (document.getElementById("settingIgServiceUrl")) document.getElementById("settingIgServiceUrl").value = settings.IgServiceUrl || "https://www.instagram.com/goldencorn_diner/";
         if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "Hawking";
     } catch (e) {
@@ -1038,7 +1038,7 @@ async function saveAdminSettings() {
         BankAccount: document.getElementById("settingBankAccount")?.value || "",
         BankAccountName: document.getElementById("settingBankAccountName")?.value || "",
         LinePayUrl: document.getElementById("settingLinePayUrl")?.value || "line://nv/cameraRoll/single",
-        LineServiceUrl: document.getElementById("settingLineServiceUrl")?.value || "https://line.me/R/ti/p/@goldencorn_diner",
+        LineServiceUrl: document.getElementById("settingLineServiceUrl")?.value || "https://line.me/R/ti/p/@260nqbpr",
         IgServiceUrl: document.getElementById("settingIgServiceUrl")?.value || "https://www.instagram.com/goldencorn_diner/",
         AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking"
     };

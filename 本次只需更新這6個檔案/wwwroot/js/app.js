@@ -929,7 +929,7 @@ function renderOrderTrackerData(order) {
     // Update Contact Chef Buttons in Tracker Modal
     const trackerLineBtn = document.getElementById("btnTrackerContactLine");
     if (trackerLineBtn) {
-        trackerLineBtn.href = storeSettings.LineServiceUrl || "https://line.me/R/ti/p/@goldencorn_diner";
+        trackerLineBtn.href = storeSettings.LineServiceUrl || "https://line.me/R/ti/p/@260nqbpr";
     }
     const trackerIgBtn = document.getElementById("btnTrackerContactIg");
     if (trackerIgBtn) {

@@ -201,7 +201,7 @@ namespace GoldenCornOrder.Data
                 ["BankAccount"] = ("129540943647", "銀行帳號"),
                 ["BankAccountName"] = ("Golden Corn 後勁店", "銀行戶名"),
                 ["LinePayUrl"] = ("line://nv/cameraRoll/single", "LINE Pay一鍵開啟/掃碼連結"),
-                ["LineServiceUrl"] = ("https://line.me/R/ti/p/@goldencorn_diner", "店家LINE客服連結 (一對一私訊)"),
+                ["LineServiceUrl"] = ("https://line.me/R/ti/p/@260nqbpr", "店家LINE客服連結 (一對一私訊)"),
                 ["IgServiceUrl"] = ("https://www.instagram.com/goldencorn_diner/", "店家IG客服連結"),
                 ["IsOpen"] = ("true", "是否營業中 (true/false)"),
                 ["AdminPin"] = ("Hawking", "店家管理密碼"),
