@@ -298,10 +298,12 @@
         }
 
         /* ================= Page 2: Dual Big Box Selection (Le Hut Dinette Style) ================= */
+        /* ================= Page 2: Dual Big Box Selection (Le Hut Dinette Style - Forest Green Theme) ================= */
         .portal-section {
-            background: var(--gc-cream-bg);
+            background: linear-gradient(180deg, #183522 0%, #122518 100%);
             padding: 55px 20px 65px;
             border-top: 4px solid var(--gc-gold);
+            color: #ffffff;
         }
 
         .portal-container {
@@ -316,8 +318,9 @@
 
         .portal-pill-tag {
             display: inline-block;
-            background: var(--gc-green-dark);
-            color: var(--gc-gold-light);
+            background: rgba(198, 146, 20, 0.22);
+            color: #f7d268;
+            border: 1px solid var(--gc-gold);
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 3px;
@@ -332,13 +335,14 @@
             font-size: clamp(26px, 5vw, 36px);
             font-weight: 900;
             letter-spacing: 1.5px;
-            color: var(--gc-green-dark);
+            color: #ffffff;
             margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .portal-subtitle {
             font-size: 14px;
-            color: #55675a;
+            color: #b7cebf;
             font-weight: 500;
         }
 
@@ -351,9 +355,9 @@
         }
 
         .btn-quick-outline {
-            background: #ffffff;
-            border: 1.5px solid var(--gc-green-dark);
-            color: var(--gc-green-dark);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid var(--gc-gold);
+            color: #ffffff;
             padding: 8px 20px;
             border-radius: 30px;
             font-size: 13px;
@@ -364,13 +368,16 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
             transition: all 0.2s;
         }
 
         .btn-quick-outline:hover {
-            background: var(--gc-green-dark);
-            color: #ffffff;
+            background: var(--gc-gold);
+            color: #122518;
+            box-shadow: 0 6px 18px rgba(198, 146, 20, 0.4);
+            transform: translateY(-2px);
         }
 
         /* Dual Big Boxes Grid */
@@ -382,22 +389,23 @@
         }
 
         .portal-big-card {
-            background: #ffffff;
-            border: 3px solid var(--gc-green-dark);
+            background: #1c3825;
+            border: 2px solid rgba(198, 146, 20, 0.55);
             border-radius: 20px;
             overflow: hidden;
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 8px 24px rgba(30, 57, 39, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
             transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
         }
 
         .portal-big-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 16px 36px rgba(30, 57, 39, 0.16);
+            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.55);
             border-color: var(--gc-gold);
+            background: #20402b;
         }
 
         .card-strip-checkered {
@@ -406,11 +414,11 @@
         }
 
         .card-strip-checkered.green {
-            background: repeating-linear-gradient(90deg, #1b3523 0px, #1b3523 14px, #ffffff 14px, #ffffff 28px);
+            background: repeating-linear-gradient(90deg, #102416 0px, #102416 14px, #f5ece3 14px, #f5ece3 28px);
         }
 
         .card-strip-checkered.gold {
-            background: repeating-linear-gradient(90deg, #c69214 0px, #c69214 14px, #ffffff 14px, #ffffff 28px);
+            background: repeating-linear-gradient(90deg, #c69214 0px, #c69214 14px, #102416 14px, #102416 28px);
         }
 
         .portal-card-inner {
@@ -432,18 +440,18 @@
         }
 
         .card-badge.party {
-            background: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
+            background: rgba(56, 189, 248, 0.15);
+            color: #7dd3fc;
+            border: 1px solid rgba(56, 189, 248, 0.35);
         }
 
         .card-badge.menu {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
+            background: rgba(245, 194, 66, 0.15);
+            color: #fbd36b;
+            border: 1px solid rgba(245, 194, 66, 0.35);
         }
 
-        /* Pure Typographic Monogram Tag (Replaces cartoon emojis) */
+        /* Pure Typographic Monogram Tag */
         .card-monogram-tag {
             width: 52px;
             height: 52px;
@@ -456,26 +464,26 @@
             font-size: 24px;
             font-weight: 900;
             border: 2px solid;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
         }
 
         .card-monogram-tag.party {
-            background: #f0f9ff;
-            color: #0369a1;
+            background: #142f40;
+            color: #38bdf8;
             border-color: #0284c7;
         }
 
         .card-monogram-tag.menu {
-            background: #fefce8;
-            color: #15803d;
-            border-color: #16a34a;
+            background: #254b32;
+            color: #4ade80;
+            border-color: #22c55e;
         }
 
         .card-title-chinese {
             font-family: var(--font-display);
             font-size: 25px;
             font-weight: 900;
-            color: var(--gc-green-dark);
+            color: #ffffff;
             margin-bottom: 2px;
             letter-spacing: 1px;
         }
@@ -484,14 +492,14 @@
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 2px;
-            color: var(--gc-gold);
+            color: #f7d268;
             margin-bottom: 14px;
             text-transform: uppercase;
         }
 
         .card-desc {
             font-size: 13.5px;
-            color: #475569;
+            color: #c9d8ce;
             line-height: 1.65;
             margin-bottom: 18px;
             text-align: left;
@@ -503,7 +511,7 @@
             margin: 0 0 24px 0;
             text-align: left;
             font-size: 13px;
-            color: #334155;
+            color: #e2ece5;
             line-height: 1.85;
         }
 
@@ -532,30 +540,35 @@
             justify-content: space-between;
             align-items: center;
             color: #ffffff;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
         .card-action-btn.party {
             background: #0284c7;
+            color: #ffffff;
         }
 
         .card-action-btn.menu {
-            background: #16a34a;
+            background: var(--gc-gold);
+            color: #122518;
         }
 
         .portal-big-card:hover .card-action-btn.party {
             background: #0369a1;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
         }
 
         .portal-big-card:hover .card-action-btn.menu {
-            background: #15803d;
+            background: var(--gc-gold-hover);
+            box-shadow: 0 6px 18px rgba(198, 146, 20, 0.5);
         }
 
         /* Story Note */
         .portal-story-note {
             text-align: center;
             padding-top: 26px;
-            border-top: 1px dashed var(--gc-border);
+            border-top: 1px dashed rgba(198, 146, 20, 0.4);
             margin-top: 12px;
         }
 
@@ -563,7 +576,7 @@
             font-family: var(--font-serif);
             font-size: 16px;
             font-weight: 700;
-            color: var(--gc-green-dark);
+            color: #fef8e7;
             letter-spacing: 1px;
         }
 
@@ -571,7 +584,7 @@
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 1.5px;
-            color: #5f6f63;
+            color: #f7d268;
             margin-top: 6px;
             text-transform: uppercase;
         }
