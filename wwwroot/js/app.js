@@ -926,6 +926,20 @@ function renderOrderTrackerData(order) {
     const totalEl = document.getElementById("trackerTotalAmount");
     if (totalEl) totalEl.textContent = `NT$ ${order.totalAmount}`;
 
+    // Update Contact Chef Buttons in Tracker Modal
+    const trackerLineBtn = document.getElementById("btnTrackerContactLine");
+    if (trackerLineBtn) {
+        trackerLineBtn.href = storeSettings.LineServiceUrl || "https://line.me/R/ti/p/@goldencorn_diner";
+    }
+    const trackerIgBtn = document.getElementById("btnTrackerContactIg");
+    if (trackerIgBtn) {
+        trackerIgBtn.href = storeSettings.IgServiceUrl || "https://www.instagram.com/goldencorn_diner/";
+    }
+    const trackerPhoneBtn = document.getElementById("btnTrackerContactPhone");
+    if (trackerPhoneBtn && storeSettings.Phone) {
+        trackerPhoneBtn.href = `tel:${storeSettings.Phone.replace(/[^0-9]/g, '')}`;
+    }
+
     updateTrackerStatusBadge(order.orderStatus);
 
     const itemsList = document.getElementById("trackerItemsList");
@@ -1102,4 +1116,29 @@ function setupEventListeners() {
         const phoneInput = document.getElementById("orderCustomerPhone");
         if (phoneInput) phoneInput.value = lastPhone;
     }
+}
+
+// 11. Chef Chat Support Modal
+function openChefChatModal() {
+    const backdrop = document.getElementById("chefChatModalBackdrop");
+    if (backdrop) backdrop.classList.add("show");
+
+    const lineBtn = document.getElementById("btnModalLineChat");
+    if (lineBtn && storeSettings.LineServiceUrl) {
+        lineBtn.href = storeSettings.LineServiceUrl;
+    }
+    const igBtn = document.getElementById("btnModalIgChat");
+    if (igBtn && storeSettings.IgServiceUrl) {
+        igBtn.href = storeSettings.IgServiceUrl;
+    }
+    const phoneBtn = document.getElementById("btnModalPhoneChat");
+    if (phoneBtn && storeSettings.Phone) {
+        phoneBtn.href = `tel:${storeSettings.Phone.replace(/[^0-9]/g, '')}`;
+        phoneBtn.innerHTML = `<span>📞 直接撥打電話 (${storeSettings.Phone})</span>`;
+    }
+}
+
+function closeChefChatModal() {
+    const backdrop = document.getElementById("chefChatModalBackdrop");
+    if (backdrop) backdrop.classList.remove("show");
 }

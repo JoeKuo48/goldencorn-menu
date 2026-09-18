@@ -4,15 +4,33 @@
 
 let allOrders = [];
 let knownOrderIds = new Set();
+let isKdsFirstLoad = true;
 let isAudioAlertEnabled = true;
 let kdsInterval = null;
 let currentFilterStatus = "active";
 let allMenuItems = [];
+let globalAudioCtx = null;
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
     checkAdminAuth();
+    // Unlock AudioContext on first user interaction anywhere
+    document.addEventListener("click", unlockAudio, { passive: true });
+    document.addEventListener("touchstart", unlockAudio, { passive: true });
 });
+
+function unlockAudio() {
+    try {
+        if (!globalAudioCtx) {
+            globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (globalAudioCtx.state === "suspended") {
+            globalAudioCtx.resume();
+        }
+    } catch (e) {
+        console.warn("AudioContext unlock failed:", e);
+    }
+}
 
 // 0. Security PIN Lock
 function checkAdminAuth() {
@@ -145,22 +163,34 @@ function setupTabNavigation() {
 function playOrderChime() {
     if (!isAudioAlertEnabled) return;
     try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTone(freq, startTime, duration) {
+        if (!globalAudioCtx) {
+            globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (globalAudioCtx.state === "suspended") {
+            globalAudioCtx.resume();
+        }
+
+        const audioCtx = globalAudioCtx;
+        function playTone(freq, startTime, duration, vol = 0.5) {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = "sine";
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTime);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime + startTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + startTime + duration);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime + startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + startTime + duration);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start(audioCtx.currentTime + startTime);
             osc.stop(audioCtx.currentTime + startTime + duration);
         }
-        playTone(523.25, 0, 0.2);     // C5
-        playTone(659.25, 0.15, 0.2);  // E5
-        playTone(783.99, 0.3, 0.35);  // G5
+
+        // Distinctive 2-round diner order bell chime: Ding - Dong - Ding!
+        playTone(587.33, 0.00, 0.22, 0.6); // D5
+        playTone(880.00, 0.15, 0.28, 0.7); // A5
+        playTone(1174.66, 0.32, 0.45, 0.8); // D6
+        // Echo chime
+        playTone(880.00, 0.70, 0.20, 0.5);
+        playTone(1174.66, 0.85, 0.45, 0.6);
     } catch (e) {
         console.warn("Audio chime failed:", e);
     }
@@ -168,6 +198,7 @@ function playOrderChime() {
 
 function toggleAudioAlert() {
     isAudioAlertEnabled = !isAudioAlertEnabled;
+    unlockAudio();
     const btn = document.getElementById("btnAudioToggle");
     if (btn) {
         if (isAudioAlertEnabled) {
@@ -191,16 +222,27 @@ async function loadKdsOrders() {
         allOrders = orders;
 
         let hasNewPending = false;
-        orders.forEach(o => {
-            if (!knownOrderIds.has(o.id) && o.orderStatus === "Pending") {
-                hasNewPending = true;
-            }
-            knownOrderIds.add(o.id);
-        });
 
-        if (hasNewPending && knownOrderIds.size > orders.length) {
-            playOrderChime();
-            showAdminToast("🔔 收到新訂單！請確認出單");
+        if (isKdsFirstLoad) {
+            // First time loading backend: record all existing orders without playing alarm
+            orders.forEach(o => knownOrderIds.add(o.id));
+            isKdsFirstLoad = false;
+        } else {
+            // Subsequent polls: detect any new order that arrives with Pending status
+            orders.forEach(o => {
+                if (!knownOrderIds.has(o.id)) {
+                    if (o.orderStatus === "Pending") {
+                        hasNewPending = true;
+                    }
+                    knownOrderIds.add(o.id);
+                }
+            });
+
+            if (hasNewPending) {
+                playOrderChime();
+                showAdminToast("🔔 收到新訂單！請確認出單");
+                flashAdminTitle("🔔【新訂單到達！】Golden Corn 管理後台");
+            }
         }
 
         renderKdsCards(orders);
@@ -209,6 +251,21 @@ async function loadKdsOrders() {
     } catch (err) {
         console.error("Failed to load KDS orders:", err);
     }
+}
+
+let originalTitle = document.title;
+let titleFlashTimer = null;
+function flashAdminTitle(newText) {
+    if (titleFlashTimer) clearInterval(titleFlashTimer);
+    let count = 0;
+    titleFlashTimer = setInterval(() => {
+        document.title = (count % 2 === 0) ? newText : originalTitle;
+        count++;
+        if (count > 10) {
+            clearInterval(titleFlashTimer);
+            document.title = originalTitle;
+        }
+    }, 800);
 }
 
 function setKdsFilter(status, btnEl) {
@@ -959,6 +1016,8 @@ async function loadAdminSettings() {
         if (document.getElementById("settingBankAccount")) document.getElementById("settingBankAccount").value = settings.BankAccount || "";
         if (document.getElementById("settingBankAccountName")) document.getElementById("settingBankAccountName").value = settings.BankAccountName || "";
         if (document.getElementById("settingLinePayUrl")) document.getElementById("settingLinePayUrl").value = settings.LinePayUrl || "line://nv/cameraRoll/single";
+        if (document.getElementById("settingLineServiceUrl")) document.getElementById("settingLineServiceUrl").value = settings.LineServiceUrl || "https://line.me/R/ti/p/@goldencorn_diner";
+        if (document.getElementById("settingIgServiceUrl")) document.getElementById("settingIgServiceUrl").value = settings.IgServiceUrl || "https://www.instagram.com/goldencorn_diner/";
         if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "Hawking";
     } catch (e) {
         console.error("Settings load failed:", e);
@@ -979,6 +1038,8 @@ async function saveAdminSettings() {
         BankAccount: document.getElementById("settingBankAccount")?.value || "",
         BankAccountName: document.getElementById("settingBankAccountName")?.value || "",
         LinePayUrl: document.getElementById("settingLinePayUrl")?.value || "line://nv/cameraRoll/single",
+        LineServiceUrl: document.getElementById("settingLineServiceUrl")?.value || "https://line.me/R/ti/p/@goldencorn_diner",
+        IgServiceUrl: document.getElementById("settingIgServiceUrl")?.value || "https://www.instagram.com/goldencorn_diner/",
         AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking"
     };
 
