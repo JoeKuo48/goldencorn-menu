@@ -958,6 +958,7 @@ async function loadAdminSettings() {
         if (document.getElementById("settingBankCode")) document.getElementById("settingBankCode").value = settings.BankCode || "";
         if (document.getElementById("settingBankAccount")) document.getElementById("settingBankAccount").value = settings.BankAccount || "";
         if (document.getElementById("settingBankAccountName")) document.getElementById("settingBankAccountName").value = settings.BankAccountName || "";
+        if (document.getElementById("settingLinePayUrl")) document.getElementById("settingLinePayUrl").value = settings.LinePayUrl || "line://nv/cameraRoll/single";
         if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "Hawking";
     } catch (e) {
         console.error("Settings load failed:", e);
@@ -977,6 +978,7 @@ async function saveAdminSettings() {
         BankCode: document.getElementById("settingBankCode")?.value || "",
         BankAccount: document.getElementById("settingBankAccount")?.value || "",
         BankAccountName: document.getElementById("settingBankAccountName")?.value || "",
+        LinePayUrl: document.getElementById("settingLinePayUrl")?.value || "line://nv/cameraRoll/single",
         AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking"
     };
 
@@ -1016,25 +1018,25 @@ async function loadAdminHomepageSettings() {
         if (document.getElementById("cmsPortalNoticeBtnText")) document.getElementById("cmsPortalNoticeBtnText").value = s.PortalNoticeBtnText || "[ 門市公告與營業資訊 ]";
         if (document.getElementById("cmsPortalHistoryBtnText")) document.getElementById("cmsPortalHistoryBtnText").value = s.PortalHistoryBtnText || "[ 查詢我的訂單 ]";
 
-        // Card 3: Box A
-        if (document.getElementById("cmsBoxABadge")) document.getElementById("cmsBoxABadge").value = s.BoxABadge || "[ 團體聚會 · 露營野餐 · 預約外燴 ]";
-        if (document.getElementById("cmsBoxAIcon")) document.getElementById("cmsBoxAIcon").value = s.BoxAIcon || "/img/box_a_icon.jpg";
-        if (document.getElementById("cmsBoxATitle")) document.getElementById("cmsBoxATitle").value = s.BoxATitle || "A. 派對餐盒";
-        if (document.getElementById("cmsBoxASubtitle")) document.getElementById("cmsBoxASubtitle").value = s.BoxASubtitle || "PARTY BOX & CATERING";
-        if (document.getElementById("cmsBoxADesc")) document.getElementById("cmsBoxADesc").value = s.BoxADesc || "專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！";
-        if (document.getElementById("cmsBoxABullets")) document.getElementById("cmsBoxABullets").value = s.BoxABullets || "燻烤肉拼盤/美式炸物\n黃金玉米肋條/嫩葉沙拉\n玉米布丁麵包/布朗尼\n手工獨門醬料\n*一對一客製化諮詢100%享受";
-        if (document.getElementById("cmsBoxABtnText")) document.getElementById("cmsBoxABtnText").value = s.BoxABtnText || "探索派對餐盒";
-        if (document.getElementById("cmsBoxALink")) document.getElementById("cmsBoxALink").value = s.BoxALink || "/party.html";
+        // Card 3: Box A (Menu)
+        if (document.getElementById("cmsBoxABadge")) document.getElementById("cmsBoxABadge").value = s.BoxABadge || "[ 靈魂美式餐點 · 預約外帶 ]";
+        if (document.getElementById("cmsBoxAIcon")) document.getElementById("cmsBoxAIcon").value = s.BoxAIcon || "/img/box_b_icon.jpg";
+        if (document.getElementById("cmsBoxATitle")) document.getElementById("cmsBoxATitle").value = s.BoxATitle || "A. 門市菜單";
+        if (document.getElementById("cmsBoxASubtitle")) document.getElementById("cmsBoxASubtitle").value = s.BoxASubtitle || "DINER MENU & ORDERING";
+        if (document.getElementById("cmsBoxADesc")) document.getElementById("cmsBoxADesc").value = s.BoxADesc || "個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。";
+        if (document.getElementById("cmsBoxABullets")) document.getElementById("cmsBoxABullets").value = s.BoxABullets || "德州燻烤牛胸肉/克里奧雞\n美式奶油玉米/蘋果捲心菜\n*線上預約取餐時間、Line Pay快速結帳";
+        if (document.getElementById("cmsBoxABtnText")) document.getElementById("cmsBoxABtnText").value = s.BoxABtnText || "進入線上點餐";
+        if (document.getElementById("cmsBoxALink")) document.getElementById("cmsBoxALink").value = s.BoxALink || "/menu.html";
 
-        // Card 4: Box B
-        if (document.getElementById("cmsBoxBBadge")) document.getElementById("cmsBoxBBadge").value = s.BoxBBadge || "[ 靈魂美式餐點 · 預約外帶 ]";
-        if (document.getElementById("cmsBoxBIcon")) document.getElementById("cmsBoxBIcon").value = s.BoxBIcon || "/img/box_b_icon.jpg";
-        if (document.getElementById("cmsBoxBTitle")) document.getElementById("cmsBoxBTitle").value = s.BoxBTitle || "B. 門市菜單";
-        if (document.getElementById("cmsBoxBSubtitle")) document.getElementById("cmsBoxBSubtitle").value = s.BoxBSubtitle || "DINER MENU & ORDERING";
-        if (document.getElementById("cmsBoxBDesc")) document.getElementById("cmsBoxBDesc").value = s.BoxBDesc || "個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。";
-        if (document.getElementById("cmsBoxBBullets")) document.getElementById("cmsBoxBBullets").value = s.BoxBBullets || "德州燻烤牛胸肉/克里奧雞\n美式奶油玉米/蘋果捲心菜\n*線上預約取餐時間、Line Pay快速結帳";
-        if (document.getElementById("cmsBoxBBtnText")) document.getElementById("cmsBoxBBtnText").value = s.BoxBBtnText || "進入線上點餐";
-        if (document.getElementById("cmsBoxBLink")) document.getElementById("cmsBoxBLink").value = s.BoxBLink || "/menu.html";
+        // Card 4: Box B (Party Box)
+        if (document.getElementById("cmsBoxBBadge")) document.getElementById("cmsBoxBBadge").value = s.BoxBBadge || "[ 團體聚會 · 露營野餐 · 預約外燴 ]";
+        if (document.getElementById("cmsBoxBIcon")) document.getElementById("cmsBoxBIcon").value = s.BoxBIcon || "/img/box_a_icon.jpg";
+        if (document.getElementById("cmsBoxBTitle")) document.getElementById("cmsBoxBTitle").value = s.BoxBTitle || "B. 派對餐盒";
+        if (document.getElementById("cmsBoxBSubtitle")) document.getElementById("cmsBoxBSubtitle").value = s.BoxBSubtitle || "PARTY BOX & CATERING";
+        if (document.getElementById("cmsBoxBDesc")) document.getElementById("cmsBoxBDesc").value = s.BoxBDesc || "專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！";
+        if (document.getElementById("cmsBoxBBullets")) document.getElementById("cmsBoxBBullets").value = s.BoxBBullets || "燻烤肉拼盤/美式炸物\n黃金玉米肋條/嫩葉沙拉\n玉米布丁麵包/布朗尼\n手工獨門醬料\n*一對一客製化諮詢100%享受";
+        if (document.getElementById("cmsBoxBBtnText")) document.getElementById("cmsBoxBBtnText").value = s.BoxBBtnText || "探索派對餐盒";
+        if (document.getElementById("cmsBoxBLink")) document.getElementById("cmsBoxBLink").value = s.BoxBLink || "/party.html";
 
         // Card 5: Story
         if (document.getElementById("cmsStoryQuote")) document.getElementById("cmsStoryQuote").value = s.StoryQuote || "「世界太快，我們在田裡為你製造一點慢靈魂。」";
@@ -1144,22 +1146,22 @@ async function saveAdminHomepageSettings() {
         PortalHistoryBtnText: document.getElementById("cmsPortalHistoryBtnText")?.value || "📱 查詢我的訂單",
 
         BoxABadge: document.getElementById("cmsBoxABadge")?.value || "",
-        BoxAIcon: document.getElementById("cmsBoxAIcon")?.value || "🍱",
+        BoxAIcon: document.getElementById("cmsBoxAIcon")?.value || "🌽",
         BoxATitle: document.getElementById("cmsBoxATitle")?.value || "",
         BoxASubtitle: document.getElementById("cmsBoxASubtitle")?.value || "",
         BoxADesc: document.getElementById("cmsBoxADesc")?.value || "",
         BoxABullets: document.getElementById("cmsBoxABullets")?.value || "",
         BoxABtnText: document.getElementById("cmsBoxABtnText")?.value || "",
-        BoxALink: document.getElementById("cmsBoxALink")?.value || "/party.html",
+        BoxALink: document.getElementById("cmsBoxALink")?.value || "/menu.html",
 
         BoxBBadge: document.getElementById("cmsBoxBBadge")?.value || "",
-        BoxBIcon: document.getElementById("cmsBoxBIcon")?.value || "🌽",
+        BoxBIcon: document.getElementById("cmsBoxBIcon")?.value || "🍱",
         BoxBTitle: document.getElementById("cmsBoxBTitle")?.value || "",
         BoxBSubtitle: document.getElementById("cmsBoxBSubtitle")?.value || "",
         BoxBDesc: document.getElementById("cmsBoxBDesc")?.value || "",
         BoxBBullets: document.getElementById("cmsBoxBBullets")?.value || "",
         BoxBBtnText: document.getElementById("cmsBoxBBtnText")?.value || "",
-        BoxBLink: document.getElementById("cmsBoxBLink")?.value || "/menu.html",
+        BoxBLink: document.getElementById("cmsBoxBLink")?.value || "/party.html",
 
         StoryQuote: document.getElementById("cmsStoryQuote")?.value || "",
         StoryAuthor: document.getElementById("cmsStoryAuthor")?.value || "",

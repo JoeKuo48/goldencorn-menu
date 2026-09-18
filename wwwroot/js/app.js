@@ -759,6 +759,11 @@ function openPaymentModal(method, amount) {
         modalTitle.textContent = "LINE Pay 掃碼付款";
         secLinePay.style.display = "block";
         secBank.style.display = "none";
+
+        const deepLinkBtn = document.getElementById("btnLinePayDeepLink");
+        if (deepLinkBtn) {
+            deepLinkBtn.href = storeSettings.LinePayUrl || "line://nv/cameraRoll/single";
+        }
     } else if (method === "BankTransfer") {
         modalTitle.textContent = "銀行轉帳付款";
         secLinePay.style.display = "none";

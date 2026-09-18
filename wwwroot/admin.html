@@ -285,6 +285,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label" for="settingLinePayUrl">
+                        💚 LINE Pay 一鍵開啟 / 付款連結 (URL Scheme 或 商家付款網址)
+                    </label>
+                    <input type="text" id="settingLinePayUrl" class="form-control" placeholder="預設：line://nv/cameraRoll/single" value="line://nv/cameraRoll/single">
+                    <span style="font-size:12px; color:var(--admin-muted); display:block; margin-top:4px;">
+                        💡 預設 <code>line://nv/cameraRoll/single</code> 可在顧客手機上一鍵開啟 LINE 相簿選取截圖付款；若有自訂 LINE Pay 商家付款網址亦可填於此處。
+                    </span>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label" for="settingAdminPin">
                         🔒 後台管理密碼
                     </label>
@@ -381,45 +391,100 @@
                     </div>
                 </div>
 
-                <!-- CARD 3: A 框【派對餐盒】卡片自訂 -->
-                <div style="background:#fff; border-radius:12px; border:2px solid #0284c7; padding:22px;">
-                    <h3 style="font-size:16px; font-weight:800; color:#0369a1; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-                        <span>🍱</span> A 框：派對餐盒 (Party Box)
+                <!-- CARD 3: A 框【門市菜單】卡片自訂 -->
+                <div style="background:#fff; border-radius:12px; border:2px solid #16a34a; padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:#15803d; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>🌽</span> A 框：門市菜單 (Diner Menu)
                     </h3>
 
                     <div class="form-group">
                         <label class="form-label" for="cmsBoxABadge">頂部徽章文字</label>
-                        <input type="text" id="cmsBoxABadge" class="form-control" value="[ 團體聚會 · 露營野餐 · 預約外燴 ]">
+                        <input type="text" id="cmsBoxABadge" class="form-control" value="[ 靈魂美式餐點 · 預約外帶 ]">
                     </div>
 
                     <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:12px;">
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxAIcon">圖示/圖片</label>
-                            <input type="text" id="cmsBoxAIcon" class="form-control" value="/img/box_a_icon.jpg" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxAIcon', 'boxAIconPreview')">
-                            <label style="cursor:pointer; font-size:11px; color:#0284c7; font-weight:700; display:inline-block; margin-top:4px;">
+                            <input type="text" id="cmsBoxAIcon" class="form-control" value="/img/box_b_icon.jpg" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxAIcon', 'boxAIconPreview')">
+                            <label style="cursor:pointer; font-size:11px; color:#16a34a; font-weight:700; display:inline-block; margin-top:4px;">
                                 📁 上傳圖示
                                 <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsBoxAIcon', 'boxAIconPreview')">
                             </label>
-                            <div id="boxAIconPreview" style="font-size:24px; margin-top:2px;"><img src="/img/box_a_icon.jpg" style="max-height:48px; border-radius:6px;"></div>
+                            <div id="boxAIconPreview" style="font-size:24px; margin-top:2px;"><img src="/img/box_b_icon.jpg" style="max-height:48px; border-radius:6px;"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxATitle">中文標題</label>
-                            <input type="text" id="cmsBoxATitle" class="form-control" value="A. 派對餐盒">
+                            <input type="text" id="cmsBoxATitle" class="form-control" value="A. 門市菜單">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxASubtitle">英文副標</label>
-                            <input type="text" id="cmsBoxASubtitle" class="form-control" value="PARTY BOX & CATERING">
+                            <input type="text" id="cmsBoxASubtitle" class="form-control" value="DINER MENU & ORDERING">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="cmsBoxADesc">描述說明文字</label>
-                        <textarea id="cmsBoxADesc" class="form-control" rows="2">專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！</textarea>
+                        <textarea id="cmsBoxADesc" class="form-control" rows="2">個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。</textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="cmsBoxABullets">特色條列重點 (每行一條)</label>
-                        <textarea id="cmsBoxABullets" class="form-control" rows="5">燻烤肉拼盤/美式炸物
+                        <textarea id="cmsBoxABullets" class="form-control" rows="4">德州燻烤牛胸肉/克里奧雞
+美式奶油玉米/蘋果捲心菜
+*線上預約取餐時間、Line Pay快速結帳</textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxABtnText">按鈕文字</label>
+                            <input type="text" id="cmsBoxABtnText" class="form-control" value="進入線上點餐">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxALink">點擊跳轉網址</label>
+                            <input type="text" id="cmsBoxALink" class="form-control" value="/menu.html">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: B 框【派對餐盒】卡片自訂 -->
+                <div style="background:#fff; border-radius:12px; border:2px solid #0284c7; padding:22px;">
+                    <h3 style="font-size:16px; font-weight:800; color:#0369a1; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <span>🍱</span> B 框：派對餐盒 (Party Box)
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxBBadge">頂部徽章文字</label>
+                        <input type="text" id="cmsBoxBBadge" class="form-control" value="[ 團體聚會 · 露營野餐 · 預約外燴 ]">
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBIcon">圖示/圖片</label>
+                            <input type="text" id="cmsBoxBIcon" class="form-control" value="/img/box_a_icon.jpg" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxBIcon', 'boxBIconPreview')">
+                            <label style="cursor:pointer; font-size:11px; color:#0284c7; font-weight:700; display:inline-block; margin-top:4px;">
+                                📁 上傳圖示
+                                <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsBoxBIcon', 'boxBIconPreview')">
+                            </label>
+                            <div id="boxBIconPreview" style="font-size:24px; margin-top:2px;"><img src="/img/box_a_icon.jpg" style="max-height:48px; border-radius:6px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBTitle">中文標題</label>
+                            <input type="text" id="cmsBoxBTitle" class="form-control" value="B. 派對餐盒">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cmsBoxBSubtitle">英文副標</label>
+                            <input type="text" id="cmsBoxBSubtitle" class="form-control" value="PARTY BOX & CATERING">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxBDesc">描述說明文字</label>
+                        <textarea id="cmsBoxBDesc" class="form-control" rows="2">專為露營野餐、朋友聚會、公司下午茶與派對打造的大份量美式分享盛宴！</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cmsBoxBBullets">特色條列重點 (每行一條)</label>
+                        <textarea id="cmsBoxBBullets" class="form-control" rows="5">燻烤肉拼盤/美式炸物
 黃金玉米肋條/嫩葉沙拉
 玉米布丁麵包/布朗尼
 手工獨門醬料
@@ -428,67 +493,12 @@
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group">
-                            <label class="form-label" for="cmsBoxABtnText">按鈕文字</label>
-                            <input type="text" id="cmsBoxABtnText" class="form-control" value="探索派對餐盒">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cmsBoxALink">點擊跳轉網址</label>
-                            <input type="text" id="cmsBoxALink" class="form-control" value="/party.html">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARD 4: B 框【門市菜單】卡片自訂 -->
-                <div style="background:#fff; border-radius:12px; border:2px solid #16a34a; padding:22px;">
-                    <h3 style="font-size:16px; font-weight:800; color:#15803d; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-                        <span>🌽</span> B 框：門市菜單 (Diner Menu)
-                    </h3>
-
-                    <div class="form-group">
-                        <label class="form-label" for="cmsBoxBBadge">頂部徽章文字</label>
-                        <input type="text" id="cmsBoxBBadge" class="form-control" value="[ 靈魂美式餐點 · 預約外帶 ]">
-                    </div>
-
-                    <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:12px;">
-                        <div class="form-group">
-                            <label class="form-label" for="cmsBoxBIcon">圖示/圖片</label>
-                            <input type="text" id="cmsBoxBIcon" class="form-control" value="/img/box_b_icon.jpg" placeholder="Emoji 或網址" oninput="updateIconPreview('cmsBoxBIcon', 'boxBIconPreview')">
-                            <label style="cursor:pointer; font-size:11px; color:#16a34a; font-weight:700; display:inline-block; margin-top:4px;">
-                                📁 上傳圖示
-                                <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'cmsBoxBIcon', 'boxBIconPreview')">
-                            </label>
-                            <div id="boxBIconPreview" style="font-size:24px; margin-top:2px;"><img src="/img/box_b_icon.jpg" style="max-height:48px; border-radius:6px;"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cmsBoxBTitle">中文標題</label>
-                            <input type="text" id="cmsBoxBTitle" class="form-control" value="B. 門市菜單">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cmsBoxBSubtitle">英文副標</label>
-                            <input type="text" id="cmsBoxBSubtitle" class="form-control" value="DINER MENU & ORDERING">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="cmsBoxBDesc">描述說明文字</label>
-                        <textarea id="cmsBoxBDesc" class="form-control" rows="2">個人獨享或雙人經典美式餐盤！自由搭配主餐肉類、美式配菜與自選澱粉。</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="cmsBoxBBullets">特色條列重點 (每行一條)</label>
-                        <textarea id="cmsBoxBBullets" class="form-control" rows="4">德州燻烤牛胸肉/克里奧雞
-美式奶油玉米/蘋果捲心菜
-*線上預約取餐時間、Line Pay快速結帳</textarea>
-                    </div>
-
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                        <div class="form-group">
                             <label class="form-label" for="cmsBoxBBtnText">按鈕文字</label>
-                            <input type="text" id="cmsBoxBBtnText" class="form-control" value="進入線上點餐">
+                            <input type="text" id="cmsBoxBBtnText" class="form-control" value="探索派對餐盒">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="cmsBoxBLink">點擊跳轉網址</label>
-                            <input type="text" id="cmsBoxBLink" class="form-control" value="/menu.html">
+                            <input type="text" id="cmsBoxBLink" class="form-control" value="/party.html">
                         </div>
                     </div>
                 </div>
