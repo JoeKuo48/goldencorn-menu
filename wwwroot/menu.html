@@ -8,7 +8,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Golden Corn · 後勁 Houjing | 線上點餐系統</title>
-    <link rel="stylesheet" href="/css/style.css?v=2.0">
+    <link rel="stylesheet" href="/css/style.css?v=3.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -264,38 +264,22 @@
                 </div>
 
                 <!-- LINE Pay Section -->
-                <div id="paymentSectionLinePay" style="display:none;">
-                    <!-- Mobile Fast Jump Button -->
-                    <div style="margin-bottom:14px;">
-                        <a id="btnLinePayDeepLink" href="line://nv/cameraRoll/single" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:#06C755; color:#ffffff; font-weight:800; font-size:15px; padding:13px 16px; border-radius:12px; text-decoration:none; box-shadow:0 4px 12px rgba(6,199,85,0.3); transition:all 0.2s ease;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.92 2 10.76c0 3.12 1.87 5.86 4.7 7.37-.17.6-.74 2.53-.78 2.68-.07.26.14.36.33.24.15-.1 2.54-1.74 3.58-2.47.7.1 1.43.15 2.17.15 5.52 0 10-3.92 10-8.76S17.52 2 12 2z"/></svg>
-                            <span>🟢 點此一鍵開啟 LINE 進行付款 / 掃碼</span>
-                        </a>
-                    </div>
-
+                <div id="paymentSectionLinePay" style="display:none; text-align:center;">
                     <!-- Step-by-Step Instruction Card -->
-                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px 14px; margin-bottom:14px; text-align:left;">
-                        <div style="font-size:13px; font-weight:800; color:#15803d; margin-bottom:6px;">📱 手機 3 步驟快速付款：</div>
-                        <ol style="margin:0; padding-left:18px; font-size:12px; color:#166534; line-height:1.6;">
-                            <li>先將本頁<strong>螢幕截圖</strong>（或長按下方圖片儲存至相簿）</li>
-                            <li>點擊上方<strong>【一鍵開啟 LINE】</strong>綠色按鈕喚醒 LINE 並選取截圖付款</li>
-                            <li>付款完成後<strong>切換回本頁面</strong>點擊下方【我已完成付款】送出訂單</li>
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px 16px; margin-bottom:14px; text-align:left;">
+                        <div style="font-size:13px; font-weight:800; color:#15803d; margin-bottom:6px;">操作方式：</div>
+                        <ol style="margin:0; padding-left:20px; font-size:12.5px; color:#166534; line-height:1.6;">
+                            <li>長按 QR Code 並選擇「打開」或「掃描」，即可進入 LINE 付款頁面</li>
+                            <li>長按 QR Code 儲存圖片（或直接截圖），再到 LINE 裡面的掃描功能點選圖片</li>
                         </ol>
                     </div>
 
-                    <!-- QR Code Display -->
-                    <div style="background:#fff; padding:10px; border-radius:12px; border:2px dashed #16a34a; display:inline-block; margin-bottom:10px;">
-                        <img src="/img/linepay_qr.png" alt="LINE Pay QR Code" style="width:180px; height:180px; display:block; border-radius:8px; margin:0 auto;">
-                        <span style="font-size:11px; color:var(--gc-text-muted); display:block; margin-top:4px;">💡 電腦/平板點餐：直接使用手機 LINE 掃描此處</span>
+                    <!-- QR Code Display (Supports mobile long press) -->
+                    <div style="background:#fff; padding:12px; border-radius:14px; border:2px solid #16a34a; display:inline-block; margin-bottom:10px; box-shadow:0 4px 12px rgba(22,163,74,0.12);">
+                        <img src="/img/linepay_qr.png" alt="LINE Pay QR Code" style="width:200px; height:200px; display:block; border-radius:8px; margin:0 auto; -webkit-touch-callout:default; user-select:auto;">
                     </div>
 
-                    <div style="display:flex; justify-content:center; gap:8px; margin-bottom:8px;">
-                        <a href="line://qr" style="font-size:12px; color:#059669; text-decoration:underline; font-weight:600;">
-                            📷 若需直接開啟 LINE 相機掃描請點此
-                        </a>
-                    </div>
-
-                    <p style="font-size:12px; color:var(--gc-text-muted); line-height:1.5;">
+                    <p style="font-size:12px; color:var(--gc-text-muted); line-height:1.5; margin:0;">
                         💡 轉帳付款完成後，請務必點擊下方按鈕送出訂單，店家收到通知後將立即開火烹煮！
                     </p>
                 </div>
@@ -411,7 +395,7 @@
                     <div style="font-size:13.5px; font-weight:800; color:#15803d; margin-bottom:4px;">💬 對此筆訂單有疑問或特殊需求？</div>
                     <div style="font-size:12px; color:#166534; margin-bottom:10px;">點擊下方按鈕即可直接開啟 LINE / IG 與主廚一對一聯繫</div>
                     <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-                        <a id="btnTrackerContactLine" href="https://line.me/R/ti/p/@goldencorn_diner" target="_blank" style="background:#06C755; color:#fff; font-weight:800; font-size:13px; padding:8px 16px; border-radius:30px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(6,199,85,0.3);">
+                        <a id="btnTrackerContactLine" href="https://line.me/R/ti/p/@260nqbpr" target="_blank" style="background:#06C755; color:#fff; font-weight:800; font-size:13px; padding:8px 16px; border-radius:30px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(6,199,85,0.3);">
                             <span>🟢 LINE 一對一私訊主廚</span>
                         </a>
                         <a id="btnTrackerContactIg" href="https://www.instagram.com/goldencorn_diner/" target="_blank" style="background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:#fff; font-weight:800; font-size:13px; padding:8px 16px; border-radius:30px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(220,39,67,0.3);">
@@ -498,7 +482,7 @@
             <div class="modal-body" style="padding:20px;">
                 <div style="display:flex; flex-direction:column; gap:12px;">
                     <!-- LINE Button -->
-                    <a id="btnModalLineChat" href="https://line.me/R/ti/p/@goldencorn_diner" target="_blank" style="background:#06C755; color:#ffffff; font-weight:800; font-size:15px; padding:14px 18px; border-radius:12px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 4px 12px rgba(6,199,85,0.3); transition:transform 0.15s ease;">
+                    <a id="btnModalLineChat" href="https://line.me/R/ti/p/@260nqbpr" target="_blank" style="background:#06C755; color:#ffffff; font-weight:800; font-size:15px; padding:14px 18px; border-radius:12px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 4px 12px rgba(6,199,85,0.3); transition:transform 0.15s ease;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.92 2 10.76c0 3.12 1.87 5.86 4.7 7.37-.17.6-.74 2.53-.78 2.68-.07.26.14.36.33.24.15-.1 2.54-1.74 3.58-2.47.7.1 1.43.15 2.17.15 5.52 0 10-3.92 10-8.76S17.52 2 12 2z"/></svg>
                         <span>🟢 LINE 官方一對一即時私訊</span>
                     </a>
@@ -536,6 +520,6 @@
     <!-- Toast Notification Element -->
     <div class="toast-msg" id="toastMsg">通知訊息</div>
 
-    <script src="/js/app.js"></script>
+    <script src="/js/app.js?v=3.1"></script>
 </body>
 </html>
