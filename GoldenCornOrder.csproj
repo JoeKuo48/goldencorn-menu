@@ -15,4 +15,9 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="本次只需更新這6個檔案/**/*.cs" />
+    <Compile Remove="上傳到GitHub的更新檔案/**/*.cs" />
+  </ItemGroup>
+
 </Project>
