@@ -3,20 +3,96 @@
  */
 
 let allOrders = [];
-let knownOrderIds = new Set();
-let isKdsFirstLoad = true;
+let alertedPendingOrderIds = new Set();
+let lastReminderChimeTime = 0;
 let isAudioAlertEnabled = true;
 let kdsInterval = null;
 let currentFilterStatus = "active";
 let allMenuItems = [];
 let globalAudioCtx = null;
+let orderAudioElement = null;
+
+// Generate loud Diner Bell 16-bit PCM WAV in browser memory
+function generateBellWavDataUri() {
+    try {
+        const sampleRate = 44100;
+        const duration = 1.3;
+        const numSamples = Math.floor(sampleRate * duration);
+        const buffer = new ArrayBuffer(44 + numSamples * 2);
+        const view = new DataView(buffer);
+
+        function writeString(offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+        writeString(0, 'RIFF');
+        view.setUint32(4, 36 + numSamples * 2, true);
+        writeString(8, 'WAVE');
+        writeString(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true); // PCM
+        view.setUint16(22, 1, true); // Mono
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(36, 'data');
+        view.setUint32(40, numSamples * 2, true);
+
+        const tones = [
+            { freq: 587.33, start: 0.0, dur: 0.25 },
+            { freq: 880.00, start: 0.18, dur: 0.32 },
+            { freq: 1174.66, start: 0.38, dur: 0.55 },
+            { freq: 880.00, start: 0.85, dur: 0.22 },
+            { freq: 1174.66, start: 1.02, dur: 0.45 }
+        ];
+
+        for (let i = 0; i < numSamples; i++) {
+            const t = i / sampleRate;
+            let sample = 0;
+            tones.forEach(tone => {
+                if (t >= tone.start && t < tone.start + tone.dur) {
+                    const localT = t - tone.start;
+                    const env = Math.exp(-localT * 5.5);
+                    sample += Math.sin(2 * Math.PI * tone.freq * localT) * env * 0.5;
+                    sample += Math.sin(2 * Math.PI * tone.freq * 2 * localT) * env * 0.18;
+                }
+            });
+            sample = Math.max(-1, Math.min(1, sample));
+            view.setInt16(44 + i * 2, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        }
+
+        const blob = new Blob([buffer], { type: 'audio/wav' });
+        return URL.createObjectURL(blob);
+    } catch (e) {
+        console.warn("WAV synthesis failed:", e);
+        return "";
+    }
+}
+
+function initAudioElement() {
+    try {
+        if (!orderAudioElement) {
+            orderAudioElement = document.createElement("audio");
+            orderAudioElement.id = "gcOrderBell";
+            orderAudioElement.preload = "auto";
+            const wavUrl = generateBellWavDataUri();
+            if (wavUrl) orderAudioElement.src = wavUrl;
+            document.body.appendChild(orderAudioElement);
+        }
+    } catch (e) {
+        console.warn("Audio element init failed:", e);
+    }
+}
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
+    initAudioElement();
     checkAdminAuth();
-    // Unlock AudioContext on first user interaction anywhere
-    document.addEventListener("click", unlockAudio, { passive: true });
-    document.addEventListener("touchstart", unlockAudio, { passive: true });
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+        document.addEventListener(evt, unlockAudio, { passive: true, once: false });
+    });
 });
 
 function unlockAudio() {
@@ -24,11 +100,18 @@ function unlockAudio() {
         if (!globalAudioCtx) {
             globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        if (globalAudioCtx.state === "suspended") {
+        if (globalAudioCtx && globalAudioCtx.state === "suspended") {
             globalAudioCtx.resume();
         }
+        if (orderAudioElement && orderAudioElement.paused && orderAudioElement.src) {
+            // Touch play/pause quickly to unlock media playback
+            orderAudioElement.play().then(() => {
+                orderAudioElement.pause();
+                orderAudioElement.currentTime = 0;
+            }).catch(() => {});
+        }
     } catch (e) {
-        console.warn("AudioContext unlock failed:", e);
+        console.warn("Audio unlock error:", e);
     }
 }
 
@@ -96,6 +179,25 @@ function adminLogout() {
     showAdminToast("🔒 後台已鎖定");
 }
 
+let wakeLockSentinel = null;
+async function requestScreenWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLockSentinel = await navigator.wakeLock.request('screen');
+        }
+    } catch (err) {
+        console.warn("Screen wake lock error:", err);
+    }
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        requestScreenWakeLock();
+        unlockAudio();
+        loadKdsOrders();
+    }
+});
+
 function initAdminApp() {
     setupTabNavigation();
     loadKdsOrders();
@@ -104,9 +206,10 @@ function initAdminApp() {
     loadAdminHomepageSettings();
     loadAdminSettings();
     initCustomerAccessInfo();
+    requestScreenWakeLock();
 
     if (kdsInterval) clearInterval(kdsInterval);
-    kdsInterval = setInterval(loadKdsOrders, 4000);
+    kdsInterval = setInterval(loadKdsOrders, 3000);
 }
 
 function initCustomerAccessInfo() {
@@ -159,41 +262,91 @@ function setupTabNavigation() {
     });
 }
 
-// 2. Audio Alert
-function playOrderChime() {
+// 2. Audio Alert & Voice Broadcast
+function playOrderChime(orderInfo = null) {
     if (!isAudioAlertEnabled) return;
+
+    // Layer 1: HTML5 Audio Element (.wav direct playback)
+    try {
+        if (!orderAudioElement) {
+            initAudioElement();
+        }
+        if (orderAudioElement) {
+            orderAudioElement.currentTime = 0;
+            orderAudioElement.play().catch(e => console.warn("HTML5 audio tag play caught:", e));
+        }
+    } catch (e) {
+        console.warn("HTML5 audio playback failed:", e);
+    }
+
+    // Layer 2: Web Audio API Synthesizer (Loud Multi-harmonic Diner Bell)
     try {
         if (!globalAudioCtx) {
             globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        if (globalAudioCtx.state === "suspended") {
+        if (globalAudioCtx && globalAudioCtx.state === "suspended") {
             globalAudioCtx.resume();
         }
 
-        const audioCtx = globalAudioCtx;
-        function playTone(freq, startTime, duration, vol = 0.5) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTime);
-            gain.gain.setValueAtTime(vol, audioCtx.currentTime + startTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + startTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(audioCtx.currentTime + startTime);
-            osc.stop(audioCtx.currentTime + startTime + duration);
-        }
+        if (globalAudioCtx && globalAudioCtx.state === "running") {
+            const audioCtx = globalAudioCtx;
+            function playTone(freq, startTime, duration, vol = 0.85) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime + startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + startTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + startTime);
+                osc.stop(audioCtx.currentTime + startTime + duration);
+            }
 
-        // Distinctive 2-round diner order bell chime: Ding - Dong - Ding!
-        playTone(587.33, 0.00, 0.22, 0.6); // D5
-        playTone(880.00, 0.15, 0.28, 0.7); // A5
-        playTone(1174.66, 0.32, 0.45, 0.8); // D6
-        // Echo chime
-        playTone(880.00, 0.70, 0.20, 0.5);
-        playTone(1174.66, 0.85, 0.45, 0.6);
+            // Distinctive 2-round diner order bell chime: Ding - Dong - Ding!
+            playTone(587.33, 0.00, 0.25, 0.9); // D5
+            playTone(880.00, 0.18, 0.32, 1.0); // A5
+            playTone(1174.66, 0.38, 0.55, 1.0); // D6
+            // Echo chime
+            playTone(880.00, 0.85, 0.25, 0.7);
+            playTone(1174.66, 1.05, 0.55, 0.8);
+        }
     } catch (e) {
-        console.warn("Audio chime failed:", e);
+        console.warn("Web Audio chime failed:", e);
     }
+
+    // Layer 3: Chinese Voice Broadcast via Web Speech API
+    try {
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            let text = "叮咚！Golden Corn 收到新訂單！";
+            if (orderInfo) {
+                const typeText = orderInfo.diningType === "DineIn" ? `內用桌號 ${orderInfo.tableNumber || "未填"}` : "外帶自取";
+                text = `叮咚！收到新訂單，${typeText}，金額 ${orderInfo.totalAmount} 元`;
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "zh-TW";
+            utterance.rate = 1.05;
+            utterance.pitch = 1.1;
+            utterance.volume = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+    } catch (e) {
+        console.warn("Speech synthesis failed:", e);
+    }
+
+    // Layer 4: Mobile Device Vibration
+    try {
+        if ("vibrate" in navigator) {
+            navigator.vibrate([300, 150, 300, 150, 400]);
+        }
+    } catch (e) {}
+}
+
+function testOrderAudio() {
+    unlockAudio();
+    showAdminToast("🔊 正在播放測試鈴聲與語音播報...");
+    playOrderChime({ diningType: "Takeout", totalAmount: 380 });
 }
 
 function toggleAudioAlert() {
@@ -204,7 +357,7 @@ function toggleAudioAlert() {
         if (isAudioAlertEnabled) {
             btn.className = "btn-audio-toggle";
             btn.innerHTML = "🔔 提示音：開";
-            playOrderChime();
+            testOrderAudio();
         } else {
             btn.className = "btn-audio-toggle muted";
             btn.innerHTML = "🔕 提示音：靜音";
@@ -215,37 +368,44 @@ function toggleAudioAlert() {
 // 3. KDS Orders Loading & Rendering
 async function loadKdsOrders() {
     try {
-        const res = await fetch(`/api/admin/orders?status=${currentFilterStatus}`);
-        if (!res.ok) return;
+        // Always fetch active orders to detect any new Pending orders regardless of current tab/filter
+        const activeRes = await fetch(`/api/admin/orders?status=active`);
+        if (!activeRes.ok) return;
 
-        const orders = await res.json();
-        allOrders = orders;
+        const activeOrders = await activeRes.json();
+        
+        // Check for any Pending (unconfirmed) orders
+        const pendingOrders = activeOrders.filter(o => o.orderStatus === "Pending");
+        const newlyDiscoveredPending = pendingOrders.filter(o => !alertedPendingOrderIds.has(o.id));
 
-        let hasNewPending = false;
-
-        if (isKdsFirstLoad) {
-            // First time loading backend: record all existing orders without playing alarm
-            orders.forEach(o => knownOrderIds.add(o.id));
-            isKdsFirstLoad = false;
-        } else {
-            // Subsequent polls: detect any new order that arrives with Pending status
-            orders.forEach(o => {
-                if (!knownOrderIds.has(o.id)) {
-                    if (o.orderStatus === "Pending") {
-                        hasNewPending = true;
-                    }
-                    knownOrderIds.add(o.id);
-                }
-            });
-
-            if (hasNewPending) {
-                playOrderChime();
-                showAdminToast("🔔 收到新訂單！請確認出單");
-                flashAdminTitle("🔔【新訂單到達！】Golden Corn 管理後台");
+        if (newlyDiscoveredPending.length > 0) {
+            // Found fresh pending orders!
+            newlyDiscoveredPending.forEach(o => alertedPendingOrderIds.add(o.id));
+            const latest = newlyDiscoveredPending[0];
+            playOrderChime(latest);
+            showAdminToast(`🔔 收到 ${newlyDiscoveredPending.length} 筆新訂單！請確認出單`);
+            flashAdminTitle(`🚨【新訂單到達！】Golden Corn 管理後台`);
+            lastReminderChimeTime = Date.now();
+        } else if (pendingOrders.length > 0 && isAudioAlertEnabled) {
+            // Unhandled pending orders still waiting after 18 seconds -> repeat chime so chef never misses it!
+            const now = Date.now();
+            if (now - lastReminderChimeTime > 18000) {
+                playOrderChime(pendingOrders[0]);
+                lastReminderChimeTime = now;
             }
         }
 
-        renderKdsCards(orders);
+        // Load filtered orders for display if current filter is not 'active'
+        let displayOrders = activeOrders;
+        if (currentFilterStatus !== "active") {
+            const filterRes = await fetch(`/api/admin/orders?status=${currentFilterStatus}`);
+            if (filterRes.ok) {
+                displayOrders = await filterRes.json();
+            }
+        }
+
+        allOrders = displayOrders;
+        renderKdsCards(displayOrders);
         updateKdsBadgeCounts();
 
     } catch (err) {
@@ -1016,7 +1176,7 @@ async function loadAdminSettings() {
         if (document.getElementById("settingBankAccount")) document.getElementById("settingBankAccount").value = settings.BankAccount || "";
         if (document.getElementById("settingBankAccountName")) document.getElementById("settingBankAccountName").value = settings.BankAccountName || "";
         if (document.getElementById("settingLinePayUrl")) document.getElementById("settingLinePayUrl").value = settings.LinePayUrl || "line://nv/cameraRoll/single";
-        if (document.getElementById("settingLineServiceUrl")) document.getElementById("settingLineServiceUrl").value = settings.LineServiceUrl || "https://line.me/R/ti/p/@goldencorn_diner";
+        if (document.getElementById("settingLineServiceUrl")) document.getElementById("settingLineServiceUrl").value = settings.LineServiceUrl || "https://line.me/R/ti/p/@260nqbpr";
         if (document.getElementById("settingIgServiceUrl")) document.getElementById("settingIgServiceUrl").value = settings.IgServiceUrl || "https://www.instagram.com/goldencorn_diner/";
         if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "Hawking";
     } catch (e) {
@@ -1038,7 +1198,7 @@ async function saveAdminSettings() {
         BankAccount: document.getElementById("settingBankAccount")?.value || "",
         BankAccountName: document.getElementById("settingBankAccountName")?.value || "",
         LinePayUrl: document.getElementById("settingLinePayUrl")?.value || "line://nv/cameraRoll/single",
-        LineServiceUrl: document.getElementById("settingLineServiceUrl")?.value || "https://line.me/R/ti/p/@goldencorn_diner",
+        LineServiceUrl: document.getElementById("settingLineServiceUrl")?.value || "https://line.me/R/ti/p/@260nqbpr",
         IgServiceUrl: document.getElementById("settingIgServiceUrl")?.value || "https://www.instagram.com/goldencorn_diner/",
         AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking"
     };
