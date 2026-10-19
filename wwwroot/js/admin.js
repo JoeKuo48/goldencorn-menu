@@ -1179,6 +1179,8 @@ async function loadAdminSettings() {
         if (document.getElementById("settingLineServiceUrl")) document.getElementById("settingLineServiceUrl").value = settings.LineServiceUrl || "https://line.me/R/ti/p/@260nqbpr";
         if (document.getElementById("settingIgServiceUrl")) document.getElementById("settingIgServiceUrl").value = settings.IgServiceUrl || "https://www.instagram.com/goldencorn_diner/";
         if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "Hawking";
+        if (document.getElementById("settingLineChannelAccessToken")) document.getElementById("settingLineChannelAccessToken").value = settings.LineChannelAccessToken || "";
+        if (document.getElementById("settingLineAdminUserId")) document.getElementById("settingLineAdminUserId").value = settings.LineAdminUserId || "";
     } catch (e) {
         console.error("Settings load failed:", e);
     }
@@ -1200,7 +1202,9 @@ async function saveAdminSettings() {
         LinePayUrl: document.getElementById("settingLinePayUrl")?.value || "line://nv/cameraRoll/single",
         LineServiceUrl: document.getElementById("settingLineServiceUrl")?.value || "https://line.me/R/ti/p/@260nqbpr",
         IgServiceUrl: document.getElementById("settingIgServiceUrl")?.value || "https://www.instagram.com/goldencorn_diner/",
-        AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking"
+        AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking",
+        LineChannelAccessToken: document.getElementById("settingLineChannelAccessToken")?.value?.trim() || "",
+        LineAdminUserId: document.getElementById("settingLineAdminUserId")?.value?.trim() || ""
     };
 
     try {
@@ -1211,12 +1215,69 @@ async function saveAdminSettings() {
         });
 
         if (res.ok) {
-            showAdminToast("門市、收款與安全設定已成功儲存！");
+            showAdminToast("門市、收款與 LINE 推播設定已成功儲存！");
         } else {
             showAdminToast("設定儲存失敗");
         }
     } catch (e) {
         showAdminToast("連線失敗");
+    }
+}
+
+async function testLinePushNotification() {
+    const btn = document.getElementById("btnTestLinePush");
+    const resultBox = document.getElementById("lineTestResult");
+    const token = document.getElementById("settingLineChannelAccessToken")?.value?.trim() || "";
+    const userId = document.getElementById("settingLineAdminUserId")?.value?.trim() || "";
+
+    if (!userId) {
+        alert("請先輸入您的 LINE User ID（以 U 開頭）");
+        return;
+    }
+    if (!token) {
+        alert("請先輸入 LINE Channel Access Token");
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = "⏳ 正在發送測試推播...";
+    }
+    if (resultBox) {
+        resultBox.style.display = "none";
+    }
+
+    try {
+        const res = await fetch("/api/admin/test-line", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, userId })
+        });
+        const data = await res.json();
+
+        if (resultBox) {
+            resultBox.style.display = "block";
+            if (res.ok && data.success) {
+                resultBox.style.color = "#16a34a";
+                resultBox.innerHTML = "✅ " + data.message;
+                showAdminToast("LINE 測試推播發送成功！請查看手機");
+            } else {
+                resultBox.style.color = "#dc2626";
+                resultBox.innerHTML = "❌ 發送失敗：" + (data.message || "未知錯誤");
+                showAdminToast("發送失敗，請確認 Token 與 User ID");
+            }
+        }
+    } catch (e) {
+        if (resultBox) {
+            resultBox.style.display = "block";
+            resultBox.style.color = "#dc2626";
+            resultBox.innerHTML = "❌ 連線錯誤：" + e.message;
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = "📲 發送 LINE 測試推播到我手機";
+        }
     }
 }
 

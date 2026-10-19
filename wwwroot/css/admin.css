@@ -661,9 +661,12 @@ input:checked + .slider:before {
   }
 
   .admin-nav-right {
-    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 
   .admin-nav-links {

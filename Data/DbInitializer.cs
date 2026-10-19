@@ -355,7 +355,9 @@ namespace GoldenCornOrder.Data
                 ["PartyInquiryIgText"] = ("私訊 IG 預約：@goldencorn_diner", "IG洽詢文字"),
                 ["PartyInquiryIgLink"] = ("https://www.instagram.com/goldencorn_diner/", "IG洽詢連結"),
                 ["PartyInquiryPhoneText"] = ("電話洽詢：0910-237-105", "電話洽詢文字"),
-                ["PartyInquiryPhoneLink"] = ("tel:0910237105", "電話洽詢連結")
+                ["PartyInquiryPhoneLink"] = ("tel:0910237105", "電話洽詢連結"),
+                ["LineChannelAccessToken"] = ("", "LINE Bot Channel Access Token"),
+                ["LineAdminUserId"] = ("", "老闆的 LINE User ID")
             };
 
             foreach (var kvp in defaultSettings)
@@ -372,7 +374,11 @@ namespace GoldenCornOrder.Data
                 }
                 else
                 {
-                    existing.Value = kvp.Value.Value;
+                    // Do not overwrite credentials, tokens, or pins configured by the owner
+                    if (!kvp.Key.StartsWith("Line") && kvp.Key != "AdminPin")
+                    {
+                        existing.Value = kvp.Value.Value;
+                    }
                 }
             }
 

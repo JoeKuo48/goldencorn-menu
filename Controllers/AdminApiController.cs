@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using GoldenCornOrder.Data;
 using GoldenCornOrder.Models;
+using GoldenCornOrder.Services;
 
 namespace GoldenCornOrder.Controllers
 {
@@ -11,10 +12,12 @@ namespace GoldenCornOrder.Controllers
     public class AdminApiController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly LineNotificationService _lineService;
 
-        public AdminApiController(AppDbContext context)
+        public AdminApiController(AppDbContext context, LineNotificationService lineService)
         {
             _context = context;
+            _lineService = lineService;
         }
 
         public class PinRequestDto
@@ -460,6 +463,24 @@ namespace GoldenCornOrder.Controllers
 
             var bytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
             return File(bytes, "text/csv; charset=utf-8", $"GoldenCorn_Orders_{TaiwanTimeHelper.Now:yyyyMMdd_HHmm}.csv");
+        }
+
+        public class LineTestRequestDto
+        {
+            public string? Token { get; set; }
+            public string? UserId { get; set; }
+        }
+
+        // POST: api/admin/test-line
+        [HttpPost("test-line")]
+        public async Task<IActionResult> TestLine([FromBody] LineTestRequestDto? dto)
+        {
+            var (success, message) = await _lineService.SendTestMessageAsync(dto?.Token, dto?.UserId);
+            if (success)
+            {
+                return Ok(new { success = true, message });
+            }
+            return BadRequest(new { success = false, message });
         }
     }
 }

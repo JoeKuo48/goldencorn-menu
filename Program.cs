@@ -12,6 +12,9 @@ if (!string.IsNullOrEmpty(port))
 }
 
 // Add services to the container.
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<GoldenCornOrder.Services.LineNotificationService>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

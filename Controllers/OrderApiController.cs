@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GoldenCornOrder.Data;
 using GoldenCornOrder.Models;
+using GoldenCornOrder.Services;
 
 namespace GoldenCornOrder.Controllers
 {
@@ -10,10 +11,12 @@ namespace GoldenCornOrder.Controllers
     public class OrderApiController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly LineNotificationService _lineService;
 
-        public OrderApiController(AppDbContext context)
+        public OrderApiController(AppDbContext context, LineNotificationService lineService)
         {
             _context = context;
+            _lineService = lineService;
         }
 
         // POST: api/order
@@ -160,6 +163,16 @@ namespace GoldenCornOrder.Controllers
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+
+            // Send LINE Push Notification in background
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await _lineService.SendNewOrderAlertAsync(order);
+                }
+                catch { }
+            });
 
             var response = new OrderResponseDto
             {
