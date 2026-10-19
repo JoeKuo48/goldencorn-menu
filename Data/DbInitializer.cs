@@ -356,7 +356,7 @@ namespace GoldenCornOrder.Data
                 ["PartyInquiryIgLink"] = ("https://www.instagram.com/goldencorn_diner/", "IG洽詢連結"),
                 ["PartyInquiryPhoneText"] = ("電話洽詢：0910-237-105", "電話洽詢文字"),
                 ["PartyInquiryPhoneLink"] = ("tel:0910237105", "電話洽詢連結"),
-                ["LineChannelAccessToken"] = ("", "LINE Bot Channel Access Token"),
+                ["LineChannelAccessToken"] = ("GqRCM0iA0svQWNfGKN51Vd98mO4ZAt7LnGS8esGfvB58voeur0fPUUOx1WIG3BZf1IlDSDSSEH2o9+89xg3cPge5GKznZw1vKS5P/WHXH+GLv8L05gAfnTPGiGjEt0ON4TSqehR5fXG5OUYndnfDIAdB04t89/1O/w1cDnyilFU=", "LINE Bot Channel Access Token"),
                 ["LineAdminUserId"] = ("", "老闆的 LINE User ID")
             };
 
@@ -374,8 +374,12 @@ namespace GoldenCornOrder.Data
                 }
                 else
                 {
-                    // Do not overwrite credentials, tokens, or pins configured by the owner
-                    if (!kvp.Key.StartsWith("Line") && kvp.Key != "AdminPin")
+                    // If LineChannelAccessToken in DB is empty, populate with the verified token
+                    if (kvp.Key == "LineChannelAccessToken" && string.IsNullOrWhiteSpace(existing.Value))
+                    {
+                        existing.Value = kvp.Value.Value;
+                    }
+                    else if (!kvp.Key.StartsWith("Line") && kvp.Key != "AdminPin")
                     {
                         existing.Value = kvp.Value.Value;
                     }
