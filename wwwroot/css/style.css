@@ -206,6 +206,11 @@ body {
   color: #1b6d34;
 }
 
+.status-pill.preorder {
+  background: #fef3c7;
+  color: #92400e;
+}
+
 .status-pill.closed {
   background: #fde8e8;
   color: #b91c1c;

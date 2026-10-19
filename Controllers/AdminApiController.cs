@@ -359,16 +359,33 @@ namespace GoldenCornOrder.Controllers
         [HttpPost("options/{id}/toggle-availability")]
         public async Task<IActionResult> ToggleOptionAvailability(int id)
         {
-            var option = await _context.OptionItems.FindAsync(id);
+            var option = await _context.OptionItems
+                .Include(o => o.OptionGroup)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
             if (option == null)
             {
                 return NotFound(new { message = "找不到該配料/加購選項" });
             }
 
-            option.IsAvailable = !option.IsAvailable;
+            var newStatus = !option.IsAvailable;
+            var groupName = option.OptionGroup?.Name;
+            var optionName = option.Name;
+
+            // Synchronize across all matching option items (e.g. 薯塊沙拉, 起司通心粉 across all BBQ plates)
+            var matchingOptions = await _context.OptionItems
+                .Include(o => o.OptionGroup)
+                .Where(o => o.Name == optionName && (groupName == null || (o.OptionGroup != null && o.OptionGroup.Name == groupName)))
+                .ToListAsync();
+
+            foreach (var opt in matchingOptions)
+            {
+                opt.IsAvailable = newStatus;
+            }
+
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true, id = option.Id, isAvailable = option.IsAvailable });
+            return Ok(new { success = true, id = option.Id, isAvailable = newStatus, updatedCount = matchingOptions.Count });
         }
 
         // GET: api/admin/stats

@@ -165,8 +165,13 @@
                     <!-- Dynamic Cart Items -->
                 </div>
 
+                <!-- Pre-order notice if outside live hours -->
+                <div id="preOrderNoticeBox" style="display:none; background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:10px 14px; border-radius:8px; font-size:13px; margin-bottom:12px; font-weight:600; line-height:1.5;">
+                    ⏰ 目前為非現場營業時段（現場營業：週四至週六 16:30-22:30）。歡迎預先訂餐，請於下方指定預計取餐日期與時間！
+                </div>
+
                 <!-- Dining Type Toggle -->
-                <div class="form-group">
+                <div class="form-group" id="diningTypeGroup">
                     <label class="form-label">用餐方式</label>
                     <div class="dining-type-toggle">
                         <button type="button" class="btn-dining-toggle active" id="btnDiningTakeout" onclick="setDiningType('Takeout')">
@@ -197,9 +202,10 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="orderPickupTime">預計取餐時間</label>
+                <div class="form-group" id="pickupTimeGroup">
+                    <label class="form-label" for="orderPickupTime" id="lblOrderPickupTime">預計取餐時間</label>
                     <input type="text" id="orderPickupTime" class="form-control" value="儘速製作 (約 15-20 分鐘)" placeholder="例如：儘速製作 或 18:30">
+                    <div id="pickupTimeHint" style="font-size:12px; color:#b45309; margin-top:4px; display:none; font-weight:600;">⚠️ 目前非現場營業時段，請填寫預計取餐日期與時間（如：週五 18:00 或 10/24 17:30）。</div>
                 </div>
 
                 <!-- Payment Methods -->

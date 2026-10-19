@@ -42,11 +42,20 @@ function renderStoreSettings() {
         annEl.textContent = storeSettings.Announcement;
     }
     
-    const isOpen = storeSettings.IsOpen === "true" || storeSettings.IsOpen === true;
+    const isStoreOpen = storeSettings.IsOpen !== "false" && storeSettings.IsOpen !== false;
+    const isLiveOpen = isStoreOpen && (storeSettings.IsLiveOpen === "true" || storeSettings.IsLiveOpen === true);
     const statusPill = document.getElementById("storeStatusPill");
     if (statusPill) {
-        statusPill.className = `status-pill ${isOpen ? 'open' : 'closed'}`;
-        statusPill.innerHTML = `<span class="status-dot"></span>${isOpen ? '營業中 · 現點現烤' : '今日已打烊'}`;
+        if (!isStoreOpen) {
+            statusPill.className = "status-pill closed";
+            statusPill.innerHTML = `<span class="status-dot"></span>今日公休 / 暫停接單`;
+        } else if (isLiveOpen) {
+            statusPill.className = "status-pill open";
+            statusPill.innerHTML = `<span class="status-dot"></span>現場營業中 · 現點現烤`;
+        } else {
+            statusPill.className = "status-pill preorder";
+            statusPill.innerHTML = `<span class="status-dot" style="background:#f59e0b;"></span>開放預約取餐 · 營業時段出餐`;
+        }
     }
 
     if (document.getElementById("storeInfoName") && storeSettings.StoreName) {
@@ -601,11 +610,47 @@ function openCartModal() {
         showToast("購物車目前是空的");
         return;
     }
-    const preDate = sessionStorage.getItem("gc_selected_pickup_date");
+
+    const isStoreOpen = storeSettings.IsOpen !== "false" && storeSettings.IsOpen !== false;
+    const isLiveOpen = isStoreOpen && (storeSettings.IsLiveOpen === "true" || storeSettings.IsLiveOpen === true);
+
+    const preNotice = document.getElementById("preOrderNoticeBox");
+    const hint = document.getElementById("pickupTimeHint");
+    const dineInBtn = document.getElementById("btnDiningDineIn");
     const pickupInput = document.getElementById("orderPickupTime");
-    if (preDate && pickupInput && (pickupInput.value === "儘速製作 (約 15-20 分鐘)" || !pickupInput.value)) {
-        pickupInput.value = `${preDate} 17:30 (預約取餐)`;
+    const preDate = sessionStorage.getItem("gc_selected_pickup_date");
+
+    if (!isLiveOpen) {
+        // Outside business hours: show pre-order notice, hide dine-in option
+        if (preNotice) preNotice.style.display = "block";
+        if (hint) hint.style.display = "block";
+        if (dineInBtn) dineInBtn.style.display = "none";
+        setDiningType("Takeout");
+
+        if (pickupInput) {
+            if (preDate) {
+                pickupInput.value = `${preDate} 17:30 (預約取餐)`;
+            } else if (!pickupInput.value || pickupInput.value.includes("儘速")) {
+                pickupInput.value = "";
+                pickupInput.placeholder = "請輸入預約取餐日期與時間，例如：週五 18:00";
+            }
+        }
+    } else {
+        // Inside live business hours: normal ordering
+        if (preNotice) preNotice.style.display = "none";
+        if (hint) hint.style.display = "none";
+        if (dineInBtn) dineInBtn.style.display = "inline-flex";
+
+        if (pickupInput) {
+            if (preDate && (!pickupInput.value || pickupInput.value.includes("儘速"))) {
+                pickupInput.value = `${preDate} 17:30 (預約取餐)`;
+            } else if (!pickupInput.value) {
+                pickupInput.value = "儘速製作 (約 15-20 分鐘)";
+            }
+            pickupInput.placeholder = "例如：儘速製作 或 18:30";
+        }
     }
+
     renderCartModalItems();
     const backdrop = document.getElementById("cartModalBackdrop");
     if (backdrop) backdrop.classList.add("show");
@@ -718,6 +763,26 @@ async function submitOrder() {
         showToast("內用請輸入桌號");
         document.getElementById("orderTableNumber")?.focus();
         return;
+    }
+
+    const isStoreOpen = storeSettings.IsOpen !== "false" && storeSettings.IsOpen !== false;
+    const isLiveOpen = isStoreOpen && (storeSettings.IsLiveOpen === "true" || storeSettings.IsLiveOpen === true);
+
+    if (!isStoreOpen) {
+        showToast("本店目前公休中，暫停線上點餐服務，敬請見諒！");
+        return;
+    }
+
+    if (!isLiveOpen) {
+        if (diningType === "DineIn") {
+            showToast("非現場營業時段僅接受預約外帶取餐，請切換至外帶自取");
+            return;
+        }
+        if (!pickupTime || pickupTime.includes("儘速") || pickupTime.includes("尽速")) {
+            showToast("目前非現場營業時段，請填寫預計取餐日期與時間（如：週五 18:00）");
+            document.getElementById("orderPickupTime")?.focus();
+            return;
+        }
     }
 
     const { grandTotal } = calculateCartTotals();

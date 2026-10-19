@@ -104,9 +104,9 @@ namespace GoldenCornOrder.Data
                     {
                         new() { Name = "蘋果捲心菜", EnglishName = "Apple Kale Coleslaw", ExtraPrice = 0, DisplayOrder = 1, IsAvailable = true },
                         new() { Name = "美式奶油玉米", EnglishName = "Creamed Corn", ExtraPrice = 0, DisplayOrder = 2, IsAvailable = true },
-                        new() { Name = "薯塊沙拉", EnglishName = "Potato Salad", ExtraPrice = 10, DisplayOrder = 3, IsAvailable = true },
+                        new() { Name = "薯塊沙拉", EnglishName = "Potato Salad", ExtraPrice = 10, DisplayOrder = 3, IsAvailable = false },
                         new() { Name = "火烤起司紅薯", EnglishName = "Sweet Potato With Cheese", ExtraPrice = 20, DisplayOrder = 4, IsAvailable = true },
-                        new() { Name = "起司通心粉", EnglishName = "Mac & Cheese", ExtraPrice = 30, DisplayOrder = 5, IsAvailable = true }
+                        new() { Name = "起司通心粉", EnglishName = "Mac & Cheese", ExtraPrice = 30, DisplayOrder = 5, IsAvailable = false }
                     }
                 };
 
@@ -129,9 +129,9 @@ namespace GoldenCornOrder.Data
             }
 
             // Upsert MenuItem helper
-            void UpsertMenuItem(int catId, string name, string engName, decimal price, string desc, string? badge, bool reqPlate, int order, string img = "/img/2.jpg")
+            void UpsertMenuItem(int catId, string name, string engName, decimal price, string desc, string? badge, bool reqPlate, int order, string img = "/img/2.jpg", bool isAvailable = true)
             {
-                var item = context.MenuItems.Include(m => m.OptionGroups).FirstOrDefault(m => m.Name == name);
+                var item = context.MenuItems.Include(m => m.OptionGroups).ThenInclude(g => g.Options).FirstOrDefault(m => m.Name == name);
                 if (item == null)
                 {
                     item = new MenuItem
@@ -145,7 +145,7 @@ namespace GoldenCornOrder.Data
                         RequiresPlateSides = reqPlate,
                         DisplayOrder = order,
                         ImageUrl = img,
-                        IsAvailable = true
+                        IsAvailable = isAvailable
                     };
                     if (reqPlate)
                     {
@@ -162,37 +162,99 @@ namespace GoldenCornOrder.Data
                     item.Badge = badge;
                     item.RequiresPlateSides = reqPlate;
                     item.DisplayOrder = order;
+                    item.ImageUrl = img;
+                    item.IsAvailable = isAvailable;
+
+                    if (reqPlate && (item.OptionGroups == null || !item.OptionGroups.Any()))
+                    {
+                        item.OptionGroups = CreatePlateOptionGroups();
+                    }
                 }
             }
 
             // 1. 美式餐盤（GOLDEN BBQ PLATE）
-            UpsertMenuItem(catPlates.Id, "克里奧雞腿排", "Creole Chicken Thigh", 180, "南方香料醃製, 烤出焦香外皮與飽滿肉汁。", "人氣", true, 1, "/img/2.jpg");
-            UpsertMenuItem(catPlates.Id, "古巴風烤豬排", "Cuban Grilled Pork Chop", 210, "軟嫩豬排，塗上由橙汁、檸檬、歐芹、蒜頭及橄欖油做成的Mojo青醬，清新略帶微酸。", null, true, 2, "/img/2.jpg");
-            UpsertMenuItem(catPlates.Id, "德州燻烤豬梅花", "Texas Smoked Pork Collar", 210, "獨門香料慢烤16小時,香氣逼人軟嫩不油膩。", "招牌", true, 3, "/img/2.jpg");
-            UpsertMenuItem(catPlates.Id, "卡津風味烤魚", "Cajun Grilled Fish", 230, "卡津為路易斯安那州的經典風味，多種香草香料混合，略帶煙燻味及溫和草本香氣。", null, true, 4, "/img/2.jpg");
-            UpsertMenuItem(catPlates.Id, "德州燻烤牛胸肉", "Texas Smoked Brisket", 250, "冠軍香料柴火48小時熟成，不一定每天都有。", "主廚推薦", true, 5, "/img/2.jpg");
-            UpsertMenuItem(catPlates.Id, "萊姆炭香鮭魚菲力", "Grilled Lime Salmon Fillet", 240, "蚵仔寮直送整條鮭魚只取菲力，厚切鮭魚丁口感飽滿, 外層帶有淡淡煙燻香氣。", null, true, 6, "/img/2.jpg");
-            UpsertMenuItem(catPlates.Id, "克里奧鮮蝦", "Creole Shrimp", 220, "南方香料醃製, 淡淡地萊姆清香，大火炙燒脆彈鮮甜。", null, true, 7, "/img/2.jpg");
+            UpsertMenuItem(catPlates.Id, "克里奧雞腿排", "Creole Chicken Thigh", 180, "南方香料醃製, 烤出焦香外皮與飽滿肉汁。", "人氣", true, 1, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "柴燻櫻桃鴨胸", "Texas Smoked Duck Breast", 220, "煙燻鴨胸需要精準的溫度與火候，畢竟禽肉over cook(smoked)就不美味了！", "需預訂", true, 2, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "柴燻慢烤豬沙朗", "Texas Smoked Pork Collar", 210, "獨門香料慢烤18小時,香氣逼人軟嫩不油膩。", "招牌", true, 3, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "卡津風味烤魚", "Cajun Grilled Fish", 230, "卡津為路易斯安那州的經典風味，多種香草香料混合，略帶煙燻味及溫和草本香氣。", "有去逛漁港才有(可提前預訂)", true, 4, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "德州燻烤牛胸肉", "Texas Smoked Brisket", 250, "冠軍香料柴火48小時熟成，不一定每天都有。", "主廚推薦", true, 5, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "萊姆炭香鮭魚菲力", "Grilled Lime Salmon Fillet", 240, "蚵仔寮直送整條鮭魚只取菲力，厚切鮭魚丁口感飽滿, 外層帶有淡淡煙燻香氣。", "海港直送", true, 6, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "克里奧萊姆鮮蝦", "Creole Shrimp", 220, "南方香料醃製, 淡淡地萊姆清香，大火炙燒脆彈鮮甜。", "主廚手剝去腸泥", true, 7, "/img/2.jpg", true);
 
             // 2. 美墨小點（SNACKS）
-            UpsertMenuItem(catSnacks.Id, "海鹽經典美式細薯", "Classic American Fries with Sea Salt", 70, "鞋帶細薯，通常在餐酒館才吃得到。", null, false, 1, "/img/4.jpg");
-            UpsertMenuItem(catSnacks.Id, "美式燒烤玉米肋排", "Corn Ribs", 120, "Golden Corn招牌！沾特調酸奶醬實在太搭。", "必點招牌", false, 2, "/img/4.jpg");
-            UpsertMenuItem(catSnacks.Id, "辣辣的花椒細薯", "Fries with Confit Garlic and Chili", 90, "辣辣的。", "微辣推薦", false, 3, "/img/4.jpg");
-            UpsertMenuItem(catSnacks.Id, "燻烤起司馬鈴薯", "Smoked Potato with Cheese", 60, "刷上奶油燻烤至綿密, 塞入傑克寇比起司。", null, false, 4, "/img/4.jpg");
-            UpsertMenuItem(catSnacks.Id, "黑松露醬細薯", "Fries with Black Truffle Sauce", 120, "黑松露醬好貴，主廚不惜成本。", null, false, 5, "/img/4.jpg");
-            UpsertMenuItem(catSnacks.Id, "美式酸奶炸雞柳條", "Chicken Tender with Yogurt", 150, "住太遠不要點，炸物不夠脆主廚會傷心。", "人氣", false, 6, "/img/4.jpg");
-            UpsertMenuItem(catSnacks.Id, "楓糖辣水牛城美式炸雞柳條", "Chicken Tender with Maple Buffalo Sauce", 180, "吃過最狂的水牛城秘方(謝謝老闆艾迪) 住太遠不要點，炸物現吃才讚。", "美式經典", false, 7, "/img/4.jpg");
+            UpsertMenuItem(catSnacks.Id, "海鹽經典美式細薯", "Classic American Fries with Sea Salt", 70, "鞋帶細薯，通常在餐酒館才吃得到。", null, false, 1, "/img/4.jpg", true);
+            UpsertMenuItem(catSnacks.Id, "辣辣的花椒細薯", "Fries with Confit Garlic and Chili", 80, "辣辣的。", "微辣推薦", false, 2, "/img/4.jpg", true);
+            UpsertMenuItem(catSnacks.Id, "黑松露醬細薯", "Fries with Black Truffle Sauce", 110, "黑松露醬好貴，主廚不惜成本。", null, false, 3, "/img/4.jpg", true);
+            UpsertMenuItem(catSnacks.Id, "燻烤起司馬鈴薯", "Smoked Potato with Cheese", 70, "刷上奶油燻烤至綿密, 塞入傑克寇比起司。", null, false, 4, "/img/4.jpg", true);
+            UpsertMenuItem(catSnacks.Id, "美式燒烤玉米肋排", "Corn Ribs", 110, "Golden Corn招牌！沾特調酸奶醬實在太搭。", "必點招牌", false, 5, "/img/4.jpg", true);
+            UpsertMenuItem(catSnacks.Id, "美式酸奶炸雞柳條", "Chicken Tender with Yogurt", 150, "住太遠不要點，炸物不夠脆主廚會傷心。", "人氣", false, 6, "/img/4.jpg", false);
+            UpsertMenuItem(catSnacks.Id, "楓糖辣水牛城炸雞柳條", "Chicken Tender with Maple Buffalo Sauce", 180, "吃過最狂的水牛城秘方(謝謝老闆艾迪) 住太遠不要點，炸物現吃才讚。", "美式經典", false, 7, "/img/4.jpg", false);
 
             // 3. 吃點蔬菜 & 最佳綠葉 & 醬料
-            UpsertMenuItem(catVeggies.Id, "燒烤厚切櫛瓜", "Grilled Thick Cut Zucchini", 100, "厚切才爽。", null, false, 1, "/img/5.jpg");
-            UpsertMenuItem(catVeggies.Id, "燒烤杏鮑菇", "Grilled King Oyster Mushroom", 100, "烤杏鮑菇需要耐心。", null, false, 2, "/img/5.jpg");
-            UpsertMenuItem(catVeggies.Id, "燒烤甜椒青椒", "Grilled Green and Bell Pepper", 100, "甜椒好貴，但配色才美。", null, false, 3, "/img/5.jpg");
+            UpsertMenuItem(catVeggies.Id, "燒烤厚切櫛瓜", "Grilled Thick Cut Zucchini", 100, "厚切才爽。", null, false, 1, "/img/5.jpg", true);
+            UpsertMenuItem(catVeggies.Id, "燒烤杏鮑菇", "Grilled King Oyster Mushroom", 100, "烤杏鮑菇需要耐心。", null, false, 2, "/img/5.jpg", true);
+            UpsertMenuItem(catVeggies.Id, "燒烤甜椒青椒", "Grilled Green and Bell Pepper", 100, "甜椒好貴，但配色才美。", null, false, 3, "/img/5.jpg", false);
 
-            UpsertMenuItem(catSalad.Id, "純 水耕嫩生菜杯", "Mesclun", 60, "內行人點來包肉吃。喜歡可以專門配送。", null, false, 1, "/img/6.jpg");
-            UpsertMenuItem(catSalad.Id, "燒烤嫩雞胸沙拉", "Grilled Chicken Breast Salad", 150, "經典不敗，凱撒的升級低脂版！", "輕食推薦", false, 2, "/img/6.jpg");
+            // 4. 最佳綠葉
+            UpsertMenuItem(catSalad.Id, "純 水耕嫩生菜杯", "Mesclun", 80, "內行人點來包肉吃，附蘋果油醋醬＆蒔蘿優格醬。喜歡可以專門配送。", null, false, 1, "/img/6.jpg", true);
+            UpsertMenuItem(catSalad.Id, "蘋果手撕豬沙拉", "Pulled Pork Salad", 160, "蘋果跟豬是靈魂伴侶。", "輕食推薦", false, 2, "/img/6.jpg", true);
 
-            UpsertMenuItem(catSauces.Id, "卡羅萊納BBQ燒烤醬", "Carolina BBQ Sauce", 15, "經典道地濃郁酸甜，胡椒的微微辣是大人的口味。", null, false, 1, "/img/6.jpg");
-            UpsertMenuItem(catSauces.Id, "蒔蘿優格醬", "Ranch Sauce", 15, "蒔蘿與優格特調，簡單清爽什麼都能沾。", null, false, 2, "/img/6.jpg");
+            // 5. 醬料
+            UpsertMenuItem(catSauces.Id, "卡羅萊納BBQ燒烤醬", "Carolina BBQ Sauce", 15, "經典道地濃郁酸甜，胡椒的微微辣是大人的口味。", null, false, 1, "/img/6.jpg", true);
+            UpsertMenuItem(catSauces.Id, "燒烤酸辣醬", "BBQ Spicy Sauce", 25, "煙燻感的酸甜辣醬，偏酸微辣。", null, false, 2, "/img/2.jpg", true);
+            UpsertMenuItem(catSauces.Id, "蒔蘿優格醬", "Ranch Sauce", 15, "蒔蘿與優格特調，簡單清爽什麼都能沾。", null, false, 3, "/img/6.jpg", true);
+
+            // Clean up obsolete menu items that were renamed or removed
+            var validNames = new HashSet<string>
+            {
+                "克里奧雞腿排", "柴燻櫻桃鴨胸", "柴燻慢烤豬沙朗", "卡津風味烤魚", "德州燻烤牛胸肉", "萊姆炭香鮭魚菲力", "克里奧萊姆鮮蝦",
+                "海鹽經典美式細薯", "辣辣的花椒細薯", "黑松露醬細薯", "燻烤起司馬鈴薯", "美式燒烤玉米肋排", "美式酸奶炸雞柳條", "楓糖辣水牛城炸雞柳條",
+                "燒烤厚切櫛瓜", "燒烤杏鮑菇", "燒烤甜椒青椒",
+                "純 水耕嫩生菜杯", "蘋果手撕豬沙拉",
+                "卡羅萊納BBQ燒烤醬", "燒烤酸辣醬", "蒔蘿優格醬"
+            };
+
+            var obsoleteItems = context.MenuItems
+                .Include(m => m.OptionGroups)
+                    .ThenInclude(g => g.Options)
+                .Where(m => !validNames.Contains(m.Name))
+                .ToList();
+
+            foreach (var obs in obsoleteItems)
+            {
+                var isReferencedInOrders = context.OrderItems.Any(oi => oi.MenuItemId == obs.Id);
+                if (!isReferencedInOrders)
+                {
+                    if (obs.OptionGroups != null)
+                    {
+                        foreach (var g in obs.OptionGroups)
+                        {
+                            context.OptionItems.RemoveRange(g.Options);
+                        }
+                        context.OptionGroups.RemoveRange(obs.OptionGroups);
+                    }
+                    context.MenuItems.Remove(obs);
+                }
+                else
+                {
+                    obs.IsAvailable = false;
+                }
+            }
+
+            // Sync option availability across all option items
+            var soldOutOptions = new HashSet<string> { "薯塊沙拉", "起司通心粉" };
+            var allPlateOptions = context.OptionItems
+                .Include(o => o.OptionGroup)
+                .Where(o => o.OptionGroup != null && o.OptionGroup.Name == "美式餐盤自選配料")
+                .ToList();
+
+            foreach (var opt in allPlateOptions)
+            {
+                if (soldOutOptions.Contains(opt.Name))
+                {
+                    opt.IsAvailable = false;
+                }
+            }
 
             context.SaveChanges();
 
@@ -203,7 +265,7 @@ namespace GoldenCornOrder.Data
                 ["BrandSub"] = ("後勁 Houjing · Texas Smoked BBQ & Soul Food", "副標題/品牌標語"),
                 ["Phone"] = ("0910237105", "門市電話"),
                 ["Address"] = ("高雄市楠梓區金富街85-1號", "門市地址"),
-                ["BusinessHours"] = ("週四至週六 16:30-22:30 《週日至週三僅接受線上提前預點》", "營業時間"),
+                ["BusinessHours"] = ("週四至週六 16:30-22:30 《週日至週三可來電預點餐》《BBQ外燴或客製化團訂歡迎來電或私訊IG》", "營業時間"),
                 ["Announcement"] = ("🔥 歡迎光臨 Golden Corn！", "前台跑馬燈公告"),
                 ["StoreTip"] = ("", "門市資訊燈泡備註/溫馨提示"),
                 ["BankCode"] = ("822", "銀行代碼"),

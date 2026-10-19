@@ -39,7 +39,24 @@ namespace GoldenCornOrder.Controllers
             var isOpenSetting = await _context.StoreSettings.FirstOrDefaultAsync(s => s.Key == "IsOpen");
             if (isOpenSetting != null && isOpenSetting.Value == "false")
             {
-                return BadRequest(new { message = "本店今日已打烊，暫停線上點餐服務，敬請見諒！" });
+                return BadRequest(new { message = "本店目前公休中，暫停線上點餐服務，敬請見諒！" });
+            }
+
+            var pickupTime = (dto.PickupTime ?? "").Trim();
+
+            // Option B: Outside live business hours (Thu-Sat 16:30-22:30), immediate preparation ("儘速製作") is blocked.
+            // Customers must schedule an advance pickup date and time.
+            if (!TaiwanTimeHelper.IsLiveBusinessHours)
+            {
+                if (dto.DiningType == "DineIn")
+                {
+                    return BadRequest(new { message = "目前非現場營業時段（營業時段：週四至週六 16:30-22:30），僅接受預約外帶取餐，請改選「外帶自取」並指定預約取餐時間。" });
+                }
+
+                if (string.IsNullOrWhiteSpace(pickupTime) || pickupTime.Contains("儘速") || pickupTime.Contains("尽速"))
+                {
+                    return BadRequest(new { message = "目前非現場即時出餐時段（營業時段：週四至週六 16:30-22:30），無法選擇「儘速製作」。請填寫預計取餐日期與時間（例如：週五 18:00 或 10/24 17:30）。" });
+                }
             }
 
             // Generate Order Number: GC-yyyyMMdd-001 using Taiwan Timezone (UTC+8)
@@ -58,7 +75,7 @@ namespace GoldenCornOrder.Controllers
                 CustomerPhone = dto.CustomerPhone.Trim(),
                 DiningType = dto.DiningType == "DineIn" ? "DineIn" : "Takeout",
                 TableNumber = dto.DiningType == "DineIn" ? dto.TableNumber?.Trim() : null,
-                PickupTime = string.IsNullOrWhiteSpace(dto.PickupTime) ? "儘速製作" : dto.PickupTime.Trim(),
+                PickupTime = string.IsNullOrWhiteSpace(pickupTime) ? "儘速製作" : pickupTime,
                 CustomerNote = dto.CustomerNote?.Trim(),
                 PaymentMethod = dto.PaymentMethod,
                 PaymentStatus = dto.PaymentMethod == "Cash" ? "Unpaid" : "Paid",

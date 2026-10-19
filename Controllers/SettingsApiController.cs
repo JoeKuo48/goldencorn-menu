@@ -22,6 +22,11 @@ namespace GoldenCornOrder.Controllers
         {
             var settings = await _context.StoreSettings.ToListAsync();
             var dict = settings.ToDictionary(s => s.Key, s => s.Value);
+
+            var manualOpen = !dict.TryGetValue("IsOpen", out var isOpenVal) || isOpenVal != "false";
+            var isLiveOpen = manualOpen && TaiwanTimeHelper.IsLiveBusinessHours;
+            dict["IsLiveOpen"] = isLiveOpen ? "true" : "false";
+            dict["CurrentTaiwanTime"] = TaiwanTimeHelper.Now.ToString("yyyy-MM-dd HH:mm");
             return Ok(dict);
         }
 
