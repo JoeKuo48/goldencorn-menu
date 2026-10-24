@@ -456,11 +456,11 @@ function renderKdsCards(orders) {
         const isUrgent = order.orderStatus === "Pending" && elapsedMins > 5;
 
         // Payment status badge
-        let paymentBadgeHtml = `<span style="background:#fef3c7; color:#92400e; font-size:11px; font-weight:800; padding:2px 8px; border-radius:12px;">💵 現場現金 (未付款)</span>`;
+        let paymentBadgeHtml = `<span style="background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🔴 現場收款 (現金/到店掃碼) · NT$ ${order.totalAmount}</span>`;
         if (order.paymentMethod === "LinePay") {
-            paymentBadgeHtml = `<span style="background:#dcfce7; color:#166534; font-size:11px; font-weight:800; padding:2px 8px; border-radius:12px;">🟢 LINE Pay (已付款)</span>`;
+            paymentBadgeHtml = `<span style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🟡 線上先 LINE Pay (取餐需核對) · NT$ ${order.totalAmount}</span>`;
         } else if (order.paymentMethod === "BankTransfer") {
-            paymentBadgeHtml = `<span style="background:#dbeafe; color:#1e40af; font-size:11px; font-weight:800; padding:2px 8px; border-radius:12px;">🏦 銀行轉帳 (已轉帳 · 後5碼: <strong>${order.transferLast5 || '未填'}</strong>)</span>`;
+            paymentBadgeHtml = `<span style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🏦 銀行轉帳 (待核帳 · 後5碼: <strong>${order.transferLast5 || '未填'}</strong>) · NT$ ${order.totalAmount}</span>`;
         }
 
         html += `
@@ -639,9 +639,9 @@ function renderReceiptView(data) {
         `;
     });
 
-    let payStr = "現場現金 (未付款)";
-    if (o.paymentMethod === "LinePay") payStr = "LINE Pay (已付款)";
-    if (o.paymentMethod === "BankTransfer") payStr = `銀行轉帳 (已轉帳 · 末5碼: ${o.transferLast5 || '未填'})`;
+    let payStr = "🔴 現場收款 (現金/到店掃碼)";
+    if (o.paymentMethod === "LinePay") payStr = "🟡 線上先 LINE Pay (取餐需核對截圖)";
+    if (o.paymentMethod === "BankTransfer") payStr = `🏦 銀行轉帳 (待核帳 · 末5碼: ${o.transferLast5 || '未填'})`;
 
     container.innerHTML = `
         <div class="receipt-header">

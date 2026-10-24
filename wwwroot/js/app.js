@@ -730,6 +730,20 @@ function setPaymentMethod(method) {
     if (btn) btn.classList.add("active");
     const input = document.getElementById("orderPaymentMethod");
     if (input) input.value = method;
+
+    const hintEl = document.getElementById("paymentMethodHint");
+    if (hintEl) {
+        if (method === "Cash") {
+            hintEl.textContent = "到店取餐現場付款或掃碼";
+            hintEl.style.color = "#d97706";
+        } else if (method === "LinePay") {
+            hintEl.textContent = "請先截圖付款，到店出示截圖";
+            hintEl.style.color = "#16a34a";
+        } else if (method === "BankTransfer") {
+            hintEl.textContent = "請先完成轉帳並備註末5碼";
+            hintEl.style.color = "#2563eb";
+        }
+    }
 }
 
 // 7. Checkout & Payment Confirmation
@@ -982,9 +996,9 @@ function renderOrderTrackerData(order) {
 
     const payEl = document.getElementById("trackerPaymentMethod");
     if (payEl) {
-        let payText = "💵 現場現金 (未付款)";
-        if (order.paymentMethod === "LinePay") payText = "🟢 LINE Pay (已完成付款)";
-        if (order.paymentMethod === "BankTransfer") payText = `🏦 銀行轉帳 (已轉帳 · 末五碼: ${order.transferLast5 || '已備註'})`;
+        let payText = "🔴 現場付款 (到店現場付款或掃碼)";
+        if (order.paymentMethod === "LinePay") payText = "🟡 線上先 LINE Pay (取餐請出示付款截圖)";
+        if (order.paymentMethod === "BankTransfer") payText = `🏦 銀行轉帳 (待核帳 · 末五碼: ${order.transferLast5 || '已備註'})`;
         payEl.textContent = payText;
     }
 
@@ -999,8 +1013,8 @@ function renderOrderTrackerData(order) {
     }).join('\n');
 
     const diningText = order.diningType === "DineIn" ? `🍽️ 內用 (桌號: ${order.tableNumber || '現場安排'})` : `🥡 外帶自取`;
-    let paymentDesc = order.paymentMethod === "Cash" ? "💵 現場現金付款" :
-                      order.paymentMethod === "LinePay" ? "🟢 LINE Pay 付款" :
+    let paymentDesc = order.paymentMethod === "Cash" ? "🔴 現場付款 (到店現場付款或掃碼)" :
+                      order.paymentMethod === "LinePay" ? "🟡 線上預先 LINE Pay (取餐請出示付款截圖)" :
                       order.paymentMethod === "BankTransfer" ? `🏦 銀行轉帳 (末5碼: ${order.transferLast5 || '已註明'})` : order.paymentMethod;
 
     const orderText = `🌽【Golden Corn 線上點餐】\n` +
