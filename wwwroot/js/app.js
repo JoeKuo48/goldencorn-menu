@@ -91,12 +91,16 @@ function openEntranceNoticeModal(title, body) {
     if (!m) return;
     if (title && document.getElementById("entranceNoticeTitle")) document.getElementById("entranceNoticeTitle").textContent = title;
     if (body && document.getElementById("entranceNoticeBody")) document.getElementById("entranceNoticeBody").textContent = body;
+    m.style.display = "flex";
     m.classList.add("show");
 }
 
 function closeEntranceNoticeModal() {
     const m = document.getElementById("entranceNoticeBackdrop");
-    if (m) m.classList.remove("show");
+    if (m) {
+        m.style.display = "none";
+        m.classList.remove("show");
+    }
 }
 
 // 2. Load Menu
