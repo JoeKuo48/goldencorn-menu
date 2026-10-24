@@ -324,60 +324,28 @@
                 </button>
             </div>
 
-            <!-- LINE Notification Settings Form -->
+            <!-- LINE Official Account Order Notification Card -->
             <div style="background:#fff; border-radius:12px; border:1px solid var(--admin-border); padding:24px; max-width:800px; margin-bottom:24px; border-left: 5px solid #06C755;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="background:#06C755; color:#fff; border-radius:8px; padding:4px 8px; font-weight:900; font-size:14px;">LINE</span>
-                        <h3 style="font-size:16px; font-weight:800; color:#182e20; margin:0;">📲 老闆手機即時推播通知 (LINE Messaging API)</h3>
+                        <h3 style="font-size:16px; font-weight:800; color:#182e20; margin:0;">📲 官方 LINE 點餐通知模式 (@260nqbpr)</h3>
                     </div>
                     <span style="font-size:12px; background:#f0fdf4; color:#166534; padding:3px 10px; border-radius:20px; font-weight:700; border:1px solid #bbf7d0;">
-                        免電腦開著 · 顧客下單即時跳手機通知
+                        🟢 運作中 · 訂單直達官方 LINE App
                     </span>
                 </div>
                 
-                <p style="font-size:13px; color:var(--admin-muted); margin-bottom:16px; line-height:1.6;">
-                    綁定您的 LINE 官方帳號 Bot 後，只要前台有新訂單成立，系統會即時將【完整出單明細、金額、備註、取餐時間】直接推送到您的個人 LINE 聊天室，手機螢幕立即跳出通知，不再漏單！
+                <p style="font-size:13.5px; color:#166534; background:#f0fdf4; border:1px solid #bbf7d0; padding:12px 16px; border-radius:8px; line-height:1.6; margin-bottom:16px;">
+                    ✅ <strong>公私分明模式已啟用：</strong> 顧客在線上送出訂單後，系統會自動引導顧客「一鍵將完整訂單明細傳送至官方 LINE（@260nqbpr）」。您的手機 <strong>LINE 官方帳號 App</strong> 會立即收到點餐通知與顧客訊息，不干擾老闆個人生活 LINE！
                 </p>
 
-                <div class="form-group">
-                    <label class="form-label" for="settingLineAdminUserId" style="display:flex; justify-content:space-between;">
-                        <span>1. 您的個人 LINE User ID (接收推播的人)</span>
-                        <span style="font-size:12px; color:#059669; font-weight:normal;">格式：以 U 開頭的 33 碼英數</span>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" style="font-size:13px; color:var(--admin-muted);">
+                        官方 LINE 服務帳號（顧客傳送對象）
                     </label>
-                    <input type="text" id="settingLineAdminUserId" class="form-control" placeholder="例：U1234567890abcdef1234567890abcdef">
-                    <span style="font-size:12px; color:var(--admin-muted); display:block; margin-top:4px;">
-                        💡 取得位置：至 LINE Developers 控制台 ➔ 點入您的 Channel ➔ 【Basic settings】分頁最下方 ➔ 複製 <code>Your user ID</code>。
-                    </span>
+                    <input type="text" class="form-control" value="https://line.me/R/ti/p/@260nqbpr" readonly style="background:#f8fafc; font-weight:700; color:#0f766e;">
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="settingLineChannelAccessToken" style="display:flex; justify-content:space-between;">
-                        <span>2. LINE Channel Access Token (長期權杖)</span>
-                        <span style="font-size:12px; color:#059669; font-weight:normal;">發送推播的金鑰</span>
-                    </label>
-                    <textarea id="settingLineChannelAccessToken" class="form-control" rows="3" placeholder="貼上 Messaging API 分頁中的 Channel access token"></textarea>
-                    <span style="font-size:12px; color:var(--admin-muted); display:block; margin-top:4px;">
-                        💡 取得位置：LINE Developers 控制台 ➔ 【Messaging API】分頁最下方 ➔ 點擊 <code>Issue</code> (發行) 並複製整個長字串。
-                    </span>
-                </div>
-
-                <div style="background:#fefce8; border:1px solid #fef08a; border-radius:8px; padding:12px 16px; margin-bottom:18px;">
-                    <div style="font-size:13px; font-weight:700; color:#854d0e; margin-bottom:4px;">⚠️ 重要提醒：請務必先將機器人加為好友！</div>
-                    <div style="font-size:12px; color:#a16207; line-height:1.6;">
-                        在【Messaging API】分頁上方有機器人的 <strong>QR code</strong>，請用手機 LINE 掃描並「加入好友」。如果沒有加為好友，LINE 會因隱私權限制而擋下推播訊息。
-                    </div>
-                </div>
-
-                <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                    <button type="button" class="btn-primary-admin" onclick="saveAdminSettings()" style="background:#06C755; padding:10px 20px;">
-                        💾 儲存 LINE 設定
-                    </button>
-                    <button type="button" id="btnTestLinePush" class="btn-primary-admin" onclick="testLinePushNotification()" style="background:#0284c7; padding:10px 20px;">
-                        📲 發送 LINE 測試推播到我手機
-                    </button>
-                </div>
-                <div id="lineTestResult" style="margin-top:12px; font-size:13px; font-weight:700; display:none;"></div>
             </div>
         </section>
 

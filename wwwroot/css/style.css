@@ -1008,6 +1008,20 @@ body {
   margin: 12px 0 6px;
 }
 
+#btnSendOrderToOfficialLine {
+  animation: pulseGreen 2.2s infinite ease-in-out;
+}
+
+#btnSendOrderToOfficialLine:hover {
+  filter: brightness(1.08);
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(1); box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3); }
+  50% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(6, 199, 85, 0.5); }
+  100% { transform: scale(1); box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3); }
+}
+
 .tracker-badge.Pending {
   background: #fff3cd;
   color: #856404;

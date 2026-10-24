@@ -913,7 +913,7 @@ async function executeSubmitOrder(payload) {
         clearCart();
         closeCartModal();
 
-        showToast("🎉 訂單已成功送出！店家將立即安排製作");
+        showToast("🎉 訂單已成功送出！請點擊綠色按鈕傳送給官方 LINE");
         openOrderTracker(data.orderNumber);
 
     } catch (err) {
@@ -991,10 +991,42 @@ function renderOrderTrackerData(order) {
     const totalEl = document.getElementById("trackerTotalAmount");
     if (totalEl) totalEl.textContent = `NT$ ${order.totalAmount}`;
 
+    // Format full order slip for LINE Official Account message
+    const itemsLines = (order.items || []).map(i => {
+        let opt = i.selectedOptionsSummary ? ` (${i.selectedOptionsSummary})` : '';
+        let note = i.itemNote ? ` [備註: ${i.itemNote}]` : '';
+        return `• ${i.menuItemName} x${i.quantity} ($${i.subTotal})${opt}${note}`;
+    }).join('\n');
+
+    const diningText = order.diningType === "DineIn" ? `🍽️ 內用 (桌號: ${order.tableNumber || '現場安排'})` : `🥡 外帶自取`;
+    let paymentDesc = order.paymentMethod === "Cash" ? "💵 現場現金付款" :
+                      order.paymentMethod === "LinePay" ? "🟢 LINE Pay 付款" :
+                      order.paymentMethod === "BankTransfer" ? `🏦 銀行轉帳 (末5碼: ${order.transferLast5 || '已註明'})` : order.paymentMethod;
+
+    const orderText = `🌽【Golden Corn 線上點餐】\n` +
+        `━━━━━━━━━━━━━━\n` +
+        `📋 單號：${order.orderNumber}\n` +
+        `👤 訂購人：${order.customerName} (${order.customerPhone})\n` +
+        `🍽️ 用餐方式：${diningText}\n` +
+        `⏰ 預約時間：${order.pickupTime}\n` +
+        `💰 總金額：NT$ ${order.totalAmount} (${paymentDesc})\n` +
+        `━━━━━━━━━━━━━━\n` +
+        `🍖 點餐明細：\n${itemsLines}\n` +
+        (order.customerNote ? `━━━━━━━━━━━━━━\n📝 全單備註：${order.customerNote}\n` : '') +
+        `━━━━━━━━━━━━━━\n` +
+        `主廚您好，我剛剛送出這張訂單，再麻煩您幫忙確認安排製作，謝謝！`;
+
+    const lineOaMessageUrl = `https://line.me/R/oaMessage/@260nqbpr/?${encodeURIComponent(orderText)}`;
+
+    const sendLineBtn = document.getElementById("btnSendOrderToOfficialLine");
+    if (sendLineBtn) {
+        sendLineBtn.href = lineOaMessageUrl;
+    }
+
     // Update Contact Chef Buttons in Tracker Modal
     const trackerLineBtn = document.getElementById("btnTrackerContactLine");
     if (trackerLineBtn) {
-        trackerLineBtn.href = storeSettings.LineServiceUrl || "https://line.me/R/ti/p/@260nqbpr";
+        trackerLineBtn.href = lineOaMessageUrl;
     }
     const trackerIgBtn = document.getElementById("btnTrackerContactIg");
     if (trackerIgBtn) {

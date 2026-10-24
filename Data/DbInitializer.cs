@@ -356,7 +356,7 @@ namespace GoldenCornOrder.Data
                 ["PartyInquiryIgLink"] = ("https://www.instagram.com/goldencorn_diner/", "IG洽詢連結"),
                 ["PartyInquiryPhoneText"] = ("電話洽詢：0910-237-105", "電話洽詢文字"),
                 ["PartyInquiryPhoneLink"] = ("tel:0910237105", "電話洽詢連結"),
-                ["LineChannelAccessToken"] = ("GqRCM0iA0svQWNfGKN51Vd98mO4ZAt7LnGS8esGfvB58voeur0fPUUOx1WIG3BZf1IlDSDSSEH2o9+89xg3cPge5GKznZw1vKS5P/WHXH+GLv8L05gAfnTPGiGjEt0ON4TSqehR5fXG5OUYndnfDIAdB04t89/1O/w1cDnyilFU=", "LINE Bot Channel Access Token"),
+                ["LineChannelAccessToken"] = ("fq8y2BxxQgc1HTk3FjLehq6vwk5o7w/qUPaq13SBOawDme5JPpmEJEiSnqIA/j761V4xWEiRY3Z+WmxAIGjfF77lx3JZjr6Alnz+jjHBdyt8qqqFpluvsIKWPbKk0MqvfugY1K22JL84gV4ET7bdRAdB04t89/1O/w1cDnyilFU=", "LINE Bot Channel Access Token"),
                 ["LineAdminUserId"] = ("", "老闆的 LINE User ID")
             };
 
