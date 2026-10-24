@@ -357,7 +357,10 @@ namespace GoldenCornOrder.Data
                 ["PartyInquiryPhoneText"] = ("電話洽詢：0910-237-105", "電話洽詢文字"),
                 ["PartyInquiryPhoneLink"] = ("tel:0910237105", "電話洽詢連結"),
                 ["LineChannelAccessToken"] = ("fq8y2BxxQgc1HTk3FjLehq6vwk5o7w/qUPaq13SBOawDme5JPpmEJEiSnqIA/j761V4xWEiRY3Z+WmxAIGjfF77lx3JZjr6Alnz+jjHBdyt8qqqFpluvsIKWPbKk0MqvfugY1K22JL84gV4ET7bdRAdB04t89/1O/w1cDnyilFU=", "LINE Bot Channel Access Token"),
-                ["LineAdminUserId"] = ("", "老闆的 LINE User ID")
+                ["LineAdminUserId"] = ("", "老闆的 LINE User ID"),
+                ["PopupNoticeEnabled"] = ("false", "進站彈窗開關"),
+                ["PopupNoticeTitle"] = ("🚨 門市臨時公休公告", "進站彈窗標題"),
+                ["PopupNoticeContent"] = ("親愛的顧客您好：\n今日因主廚外出備料／設備維護，今日門市暫停營業一日！\n敬請見諒，如有預訂需求歡迎私訊官方 LINE，感謝大家的體諒與支持！", "進站彈窗內容")
             };
 
             foreach (var kvp in defaultSettings)
@@ -379,7 +382,7 @@ namespace GoldenCornOrder.Data
                     {
                         existing.Value = kvp.Value.Value;
                     }
-                    else if (!kvp.Key.StartsWith("Line") && kvp.Key != "AdminPin")
+                    else if (!kvp.Key.StartsWith("Line") && !kvp.Key.StartsWith("Popup") && kvp.Key != "AdminPin")
                     {
                         existing.Value = kvp.Value.Value;
                     }
