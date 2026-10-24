@@ -207,7 +207,47 @@
             <div class="kds-header">
                 <div>
                     <h2 class="kds-title">門市營運與資訊設定</h2>
-                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">設定門市名稱、電話、地址、營業時間、溫馨叮嚀與銀行轉帳資訊</p>
+                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">設定門市名稱、電話、地址、營業時間、溫馨叮嚀、公休彈窗與銀行轉帳資訊</p>
+                </div>
+            </div>
+
+            <!-- Emergency / Temporary Rest Day Popup Notice Card -->
+            <div style="background:#fff; border-radius:12px; border:2px solid #e11d48; padding:24px; max-width:800px; margin-bottom:24px; box-shadow:0 4px 16px rgba(225,29,72,0.08);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:24px;">🚨</span>
+                        <h3 style="font-size:16px; font-weight:800; color:#9f1239; margin:0;">臨時公休 / 重要公告進站彈窗 (強制提醒)</h3>
+                    </div>
+                    <span style="font-size:12px; background:#fff1f2; color:#be123c; padding:3px 10px; border-radius:20px; font-weight:700; border:1px solid #fecdd3;">
+                        客人點進網站第一時間跳出
+                    </span>
+                </div>
+                <p style="font-size:13px; color:#475569; margin-bottom:16px; line-height:1.6;">
+                    當您遇到臨時外出備料、設備維護、臨時公休或重大活動時，開啟此功能後，顧客只要<strong>一開啟首頁或菜單頁面，畫面上就會立即跳出醒目的公休通知視窗</strong>，並提供官方 LINE 按鈕讓客人方便私訊詢問！
+                </p>
+                
+                <div class="form-group">
+                    <label class="form-label" for="settingPopupNoticeEnabled" style="font-weight:700; color:#1e293b;">彈窗開關狀態</label>
+                    <select id="settingPopupNoticeEnabled" class="form-control" style="font-weight:700; font-size:14.5px;">
+                        <option value="false">⚪ 關閉彈窗 (正常營業，顧客直接瀏覽點餐)</option>
+                        <option value="true">🔴 開啟彈窗 (客人點進首頁或菜單時立即跳出通知)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="settingPopupNoticeTitle">彈窗大標題</label>
+                    <input type="text" id="settingPopupNoticeTitle" class="form-control" value="🚨 門市臨時公休公告" placeholder="例如：🚨 門市臨時公休公告 或 📢 主廚重要通知">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="settingPopupNoticeContent">彈窗詳細公告內容 (支援換行)</label>
+                    <textarea id="settingPopupNoticeContent" class="form-control" rows="4" placeholder="請輸入欲通知顧客的內容..."></textarea>
+                </div>
+
+                <div style="text-align:right;">
+                    <button type="button" class="btn-primary-admin" onclick="saveAdminSettings()" style="background:#e11d48; border-color:#e11d48; padding:10px 24px;">
+                        <span>💾</span> 儲存公休彈窗設定
+                    </button>
                 </div>
             </div>
 

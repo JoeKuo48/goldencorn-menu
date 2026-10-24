@@ -1006,6 +1006,35 @@
         </div>
     </div>
 
+    <!-- ================= Modal: Entrance Popup Notice (臨時公休 / 重要進站公告) ================= -->
+    <div class="modal-overlay" id="entranceNoticeBackdrop" style="z-index: 1200; background: rgba(15, 23, 42, 0.85);" onclick="if(event.target===this) closeEntranceNoticeModal()">
+        <div class="modal-card-box" style="max-width: 440px; border: 2px solid #fb7185; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <div style="background: linear-gradient(135deg, #be123c, #881337); color: #ffffff; padding: 22px 20px 18px; text-align: center; border-bottom: 2px solid #fda4af;">
+                <div style="font-size: 36px; margin-bottom: 6px;">📢</div>
+                <div id="entranceNoticeTitle" style="font-family: var(--font-display, inherit); font-size: 21px; font-weight: 900; letter-spacing: 1px; color: #ffffff;">
+                    🚨 門市臨時公休公告
+                </div>
+                <div style="font-size: 11px; letter-spacing: 2px; opacity: 0.85; margin-top: 4px; font-weight: 700;">GOLDEN CORN DINER NOTICE</div>
+            </div>
+            
+            <div style="padding: 22px 20px; background: #ffffff; text-align: left;">
+                <div id="entranceNoticeBody" style="font-size: 14.5px; line-height: 1.8; color: #1e293b; white-space: pre-wrap; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 16px 18px; margin-bottom: 20px; font-weight: 500;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Official LINE Button -->
+                    <a href="https://line.me/R/ti/p/@260nqbpr" target="_blank" style="background: #06C755; color: #ffffff; font-weight: 800; font-size: 15px; padding: 13px 18px; border-radius: 12px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(6,199,85,0.35); text-align: center;">
+                        <span>💬 私訊官方 LINE 詢問主廚</span>
+                    </a>
+                    <!-- Close / Continue Button -->
+                    <button type="button" onclick="closeEntranceNoticeModal()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-weight: 700; font-size: 14px; padding: 12px 18px; border-radius: 12px; cursor: pointer; transition: all 0.2s;">
+                        我知道了，繼續瀏覽
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Logic Script -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -1027,6 +1056,19 @@
 
         function closeAnnouncementModal() {
             const m = document.getElementById("announcementModalBackdrop");
+            if (m) m.classList.remove("show");
+        }
+
+        function openEntranceNoticeModal(title, body) {
+            const m = document.getElementById("entranceNoticeBackdrop");
+            if (!m) return;
+            if (title && document.getElementById("entranceNoticeTitle")) document.getElementById("entranceNoticeTitle").textContent = title;
+            if (body && document.getElementById("entranceNoticeBody")) document.getElementById("entranceNoticeBody").textContent = body;
+            m.classList.add("show");
+        }
+
+        function closeEntranceNoticeModal() {
+            const m = document.getElementById("entranceNoticeBackdrop");
             if (m) m.classList.remove("show");
         }
 
@@ -1119,6 +1161,11 @@
                 }
                 if (s.NoticeContact && document.getElementById("noticeContact")) {
                     document.getElementById("noticeContact").innerHTML = s.NoticeContact.replace(/\n/g, '<br>');
+                }
+
+                // Entrance Popup Notice (臨時公休 / 重要公告進站彈窗)
+                if (s.PopupNoticeEnabled === "true" || s.PopupNoticeEnabled === true) {
+                    openEntranceNoticeModal(s.PopupNoticeTitle, s.PopupNoticeContent);
                 }
             } catch (e) {
                 console.error("Failed to load settings:", e);
