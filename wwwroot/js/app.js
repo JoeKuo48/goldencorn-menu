@@ -79,6 +79,24 @@ function renderStoreSettings() {
     if (document.getElementById("storeInfoTip") && storeSettings.StoreTip) {
         document.getElementById("storeInfoTip").textContent = storeSettings.StoreTip;
     }
+
+    // Entrance Popup Notice (臨時公休 / 重要進站公告)
+    if (storeSettings.PopupNoticeEnabled === "true" || storeSettings.PopupNoticeEnabled === true) {
+        openEntranceNoticeModal(storeSettings.PopupNoticeTitle, storeSettings.PopupNoticeContent);
+    }
+}
+
+function openEntranceNoticeModal(title, body) {
+    const m = document.getElementById("entranceNoticeBackdrop");
+    if (!m) return;
+    if (title && document.getElementById("entranceNoticeTitle")) document.getElementById("entranceNoticeTitle").textContent = title;
+    if (body && document.getElementById("entranceNoticeBody")) document.getElementById("entranceNoticeBody").textContent = body;
+    m.classList.add("show");
+}
+
+function closeEntranceNoticeModal() {
+    const m = document.getElementById("entranceNoticeBackdrop");
+    if (m) m.classList.remove("show");
 }
 
 // 2. Load Menu

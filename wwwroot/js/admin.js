@@ -1181,6 +1181,9 @@ async function loadAdminSettings() {
         if (document.getElementById("settingAdminPin")) document.getElementById("settingAdminPin").value = settings.AdminPin || "Hawking";
         if (document.getElementById("settingLineChannelAccessToken")) document.getElementById("settingLineChannelAccessToken").value = settings.LineChannelAccessToken || "";
         if (document.getElementById("settingLineAdminUserId")) document.getElementById("settingLineAdminUserId").value = settings.LineAdminUserId || "";
+        if (document.getElementById("settingPopupNoticeEnabled")) document.getElementById("settingPopupNoticeEnabled").value = settings.PopupNoticeEnabled || "false";
+        if (document.getElementById("settingPopupNoticeTitle")) document.getElementById("settingPopupNoticeTitle").value = settings.PopupNoticeTitle || "🚨 門市臨時公休公告";
+        if (document.getElementById("settingPopupNoticeContent")) document.getElementById("settingPopupNoticeContent").value = settings.PopupNoticeContent || "";
     } catch (e) {
         console.error("Settings load failed:", e);
     }
@@ -1204,7 +1207,10 @@ async function saveAdminSettings() {
         IgServiceUrl: document.getElementById("settingIgServiceUrl")?.value || "https://www.instagram.com/goldencorn_diner/",
         AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking",
         LineChannelAccessToken: document.getElementById("settingLineChannelAccessToken")?.value?.trim() || "",
-        LineAdminUserId: document.getElementById("settingLineAdminUserId")?.value?.trim() || ""
+        LineAdminUserId: document.getElementById("settingLineAdminUserId")?.value?.trim() || "",
+        PopupNoticeEnabled: document.getElementById("settingPopupNoticeEnabled")?.value || "false",
+        PopupNoticeTitle: document.getElementById("settingPopupNoticeTitle")?.value || "🚨 門市臨時公休公告",
+        PopupNoticeContent: document.getElementById("settingPopupNoticeContent")?.value || ""
     };
 
     try {
