@@ -275,7 +275,7 @@ namespace GoldenCornOrder.Data
                 ["LinePayUrl"] = ("line://nv/cameraRoll/single", "LINE Pay 連結"),
                 ["LineServiceUrl"] = ("https://line.me/R/ti/p/@260nqbpr", "官方 LINE 客服連結"),
                 ["IgServiceUrl"] = ("https://www.instagram.com/goldencorn_diner/", "官方 IG 連結"),
-                ["IsOpen"] = ("true", "是否營業中 (true/false)"),
+                ["IsOpen"] = ("false", "是否營業中 (true/false)"),
                 ["AdminPin"] = ("Hawking", "店家管理密碼/PIN碼"),
                 ["CoverImageUrl"] = ("/img/cover_poster.png", "首頁封面大圖網址"),
                 ["HeroBadge"] = ("🔥 每日限量低溫煙燻熟成", "首頁徽章"),
@@ -358,9 +358,9 @@ namespace GoldenCornOrder.Data
                 ["PartyInquiryPhoneLink"] = ("tel:0910237105", "電話洽詢連結"),
                 ["LineChannelAccessToken"] = ("fq8y2BxxQgc1HTk3FjLehq6vwk5o7w/qUPaq13SBOawDme5JPpmEJEiSnqIA/j761V4xWEiRY3Z+WmxAIGjfF77lx3JZjr6Alnz+jjHBdyt8qqqFpluvsIKWPbKk0MqvfugY1K22JL84gV4ET7bdRAdB04t89/1O/w1cDnyilFU=", "LINE Bot Channel Access Token"),
                 ["LineAdminUserId"] = ("", "老闆的 LINE User ID"),
-                ["PopupNoticeEnabled"] = ("false", "進站彈窗開關"),
+                ["PopupNoticeEnabled"] = ("true", "進站彈窗開關"),
                 ["PopupNoticeTitle"] = ("🚨 門市臨時公休公告", "進站彈窗標題"),
-                ["PopupNoticeContent"] = ("親愛的顧客您好：\n今日因主廚外出備料／設備維護，今日門市暫停營業一日！\n敬請見諒，如有預訂需求歡迎私訊官方 LINE，感謝大家的體諒與支持！", "進站彈窗內容")
+                ["PopupNoticeContent"] = ("親愛的顧客您好：\n十月底因主廚有外燴任務，會進行燻肉及其他備料行程，將暫停供應餐點。十一月才會恢復上線唷！\n敬請見諒，如有任何問題歡迎私訊官方LINE，感謝大家的體諒與支持；）", "進站彈窗內容")
             };
 
             foreach (var kvp in defaultSettings)
@@ -382,10 +382,7 @@ namespace GoldenCornOrder.Data
                     {
                         existing.Value = kvp.Value.Value;
                     }
-                    else if (!kvp.Key.StartsWith("Line") && !kvp.Key.StartsWith("Popup") && kvp.Key != "AdminPin")
-                    {
-                        existing.Value = kvp.Value.Value;
-                    }
+                    // 保留後台店家所有已設定之數值，重啟或重新部屬時絕對不覆蓋！
                 }
             }
 
