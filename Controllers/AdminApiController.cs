@@ -199,7 +199,7 @@ namespace GoldenCornOrder.Controllers
                 IsAvailable = dto.IsAvailable,
                 StockQuantity = dto.StockQuantity,
                 DisplayOrder = dto.DisplayOrder > 0 ? dto.DisplayOrder : 1,
-                RequiresPlateSides = dto.RequiresPlateSides || dto.CategoryId == 1
+                RequiresPlateSides = dto.RequiresPlateSides
             };
 
             if (menuItem.StockQuantity.HasValue && menuItem.StockQuantity.Value <= 0)
@@ -252,7 +252,11 @@ namespace GoldenCornOrder.Controllers
         [HttpPut("menu/{id}")]
         public async Task<IActionResult> UpdateMenuItem(int id, [FromBody] MenuItemEditDto dto)
         {
-            var item = await _context.MenuItems.FindAsync(id);
+            var item = await _context.MenuItems
+                .Include(m => m.OptionGroups)
+                    .ThenInclude(g => g.Options)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (item == null)
             {
                 return NotFound(new { message = "找不到該餐點" });
@@ -280,7 +284,49 @@ namespace GoldenCornOrder.Controllers
                 item.IsAvailable = true;
             }
             item.DisplayOrder = dto.DisplayOrder;
-            item.RequiresPlateSides = dto.RequiresPlateSides || dto.CategoryId == 1;
+            item.RequiresPlateSides = dto.RequiresPlateSides;
+
+            if (item.RequiresPlateSides)
+            {
+                if (item.OptionGroups == null || !item.OptionGroups.Any())
+                {
+                    var existingGroup = await _context.OptionGroups
+                        .Include(g => g.Options)
+                        .FirstOrDefaultAsync(g => g.Name == "美式餐盤自選配料");
+                    if (existingGroup != null)
+                    {
+                        item.OptionGroups = new List<OptionGroup>
+                        {
+                            new()
+                            {
+                                Name = existingGroup.Name,
+                                EnglishName = existingGroup.EnglishName,
+                                Description = existingGroup.Description,
+                                IsRequired = existingGroup.IsRequired,
+                                MinSelect = existingGroup.MinSelect,
+                                MaxSelect = existingGroup.MaxSelect,
+                                DisplayOrder = 1,
+                                Options = existingGroup.Options.Select(o => new OptionItem
+                                {
+                                    Name = o.Name,
+                                    EnglishName = o.EnglishName,
+                                    ExtraPrice = o.ExtraPrice,
+                                    IsAvailable = true,
+                                    DisplayOrder = o.DisplayOrder,
+                                    Tag = o.Tag
+                                }).ToList()
+                            }
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (item.OptionGroups != null && item.OptionGroups.Any())
+                {
+                    _context.OptionGroups.RemoveRange(item.OptionGroups);
+                }
+            }
 
             await _context.SaveChangesAsync();
 
