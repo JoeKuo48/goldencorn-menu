@@ -12,6 +12,28 @@ namespace GoldenCornOrder.Data
         {
             context.Database.EnsureCreated();
 
+            // Auto-migrate: Ensure "StockQuantity" column exists on MenuItems table
+            try
+            {
+                var provider = context.Database.ProviderName ?? "";
+                if (provider.Contains("Npgsql", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Database.ExecuteSqlRaw(@"ALTER TABLE ""MenuItems"" ADD COLUMN IF NOT EXISTS ""StockQuantity"" integer NULL;");
+                }
+                else
+                {
+                    try
+                    {
+                        context.Database.ExecuteSqlRaw(@"ALTER TABLE ""MenuItems"" ADD COLUMN ""StockQuantity"" INTEGER NULL;");
+                    }
+                    catch { }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"DB Migration Note: {ex.Message}");
+            }
+
             // 1. Categories
             var catPlates = context.Categories.FirstOrDefault(c => c.Name == "美式餐盤");
             if (catPlates == null)
