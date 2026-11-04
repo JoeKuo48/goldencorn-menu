@@ -191,6 +191,10 @@ namespace GoldenCornOrder.Data
                     {
                         item.OptionGroups = CreatePlateOptionGroups();
                     }
+                    else if (!reqPlate && item.OptionGroups != null && item.OptionGroups.Any())
+                    {
+                        context.OptionGroups.RemoveRange(item.OptionGroups);
+                    }
                 }
             }
 
@@ -202,6 +206,7 @@ namespace GoldenCornOrder.Data
             UpsertMenuItem(catPlates.Id, "德州燻烤牛胸肉", "Texas Smoked Brisket", 250, "冠軍香料柴火48小時熟成，不一定每天都有。", "主廚推薦", true, 5, "/img/2.jpg", true);
             UpsertMenuItem(catPlates.Id, "萊姆炭香鮭魚菲力", "Grilled Lime Salmon Fillet", 240, "蚵仔寮直送整條鮭魚只取菲力，厚切鮭魚丁口感飽滿, 外層帶有淡淡煙燻香氣。", "海港直送", true, 6, "/img/2.jpg", true);
             UpsertMenuItem(catPlates.Id, "克里奧萊姆鮮蝦", "Creole Shrimp", 220, "南方香料醃製, 淡淡地萊姆清香，大火炙燒脆彈鮮甜。", "主廚手剝去腸泥", true, 7, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "美式酸奶炸雞柳條", "Chicken Tender with Yogurt", 190, "住太遠不要點，炸物不夠脆主廚會傷心。", "人氣", false, 8, "/img/4.jpg", true);
 
             // 2. 美墨小點（SNACKS）
             UpsertMenuItem(catSnacks.Id, "海鹽經典美式細薯", "Classic American Fries with Sea Salt", 70, "鞋帶細薯，通常在餐酒館才吃得到。", null, false, 1, "/img/4.jpg", true);
@@ -209,8 +214,7 @@ namespace GoldenCornOrder.Data
             UpsertMenuItem(catSnacks.Id, "黑松露醬細薯", "Fries with Black Truffle Sauce", 110, "黑松露醬好貴，主廚不惜成本。", null, false, 3, "/img/4.jpg", true);
             UpsertMenuItem(catSnacks.Id, "燻烤起司馬鈴薯", "Smoked Potato with Cheese", 70, "刷上奶油燻烤至綿密, 塞入傑克寇比起司。", null, false, 4, "/img/4.jpg", true);
             UpsertMenuItem(catSnacks.Id, "美式燒烤玉米肋排", "Corn Ribs", 110, "Golden Corn招牌！沾特調酸奶醬實在太搭。", "必點招牌", false, 5, "/img/4.jpg", true);
-            UpsertMenuItem(catSnacks.Id, "美式酸奶炸雞柳條", "Chicken Tender with Yogurt", 150, "住太遠不要點，炸物不夠脆主廚會傷心。", "人氣", false, 6, "/img/4.jpg", false);
-            UpsertMenuItem(catSnacks.Id, "楓糖辣水牛城炸雞柳條", "Chicken Tender with Maple Buffalo Sauce", 180, "吃過最狂的水牛城秘方(謝謝老闆艾迪) 住太遠不要點，炸物現吃才讚。", "美式經典", false, 7, "/img/4.jpg", false);
+            UpsertMenuItem(catSnacks.Id, "楓糖辣水牛城炸雞柳條", "Chicken Tender with Maple Buffalo Sauce", 180, "吃過最狂的水牛城秘方(謝謝老闆艾迪) 住太遠不要點，炸物現吃才讚。", "美式經典", false, 6, "/img/4.jpg", false);
 
             // 3. 吃點蔬菜 & 最佳綠葉 & 醬料
             UpsertMenuItem(catVeggies.Id, "燒烤厚切櫛瓜", "Grilled Thick Cut Zucchini", 100, "厚切才爽。", null, false, 1, "/img/5.jpg", true);
@@ -226,11 +230,27 @@ namespace GoldenCornOrder.Data
             UpsertMenuItem(catSauces.Id, "燒烤酸辣醬", "BBQ Spicy Sauce", 25, "煙燻感的酸甜辣醬，偏酸微辣。", null, false, 2, "/img/2.jpg", true);
             UpsertMenuItem(catSauces.Id, "蒔蘿優格醬", "Ranch Sauce", 15, "蒔蘿與優格特調，簡單清爽什麼都能沾。", null, false, 3, "/img/6.jpg", true);
 
+            // 確保「美式酸奶炸雞柳」位於美式餐盤，且不需選配料
+            var chickenItems = context.MenuItems
+                .Include(m => m.OptionGroups)
+                .Where(m => m.Name.Contains("炸雞柳") && m.Name.Contains("酸奶"))
+                .ToList();
+            foreach (var ci in chickenItems)
+            {
+                ci.CategoryId = catPlates.Id;
+                ci.RequiresPlateSides = false;
+                if (ci.OptionGroups != null && ci.OptionGroups.Any())
+                {
+                    context.OptionGroups.RemoveRange(ci.OptionGroups);
+                }
+            }
+            context.SaveChanges();
+
             // Clean up obsolete menu items that were renamed or removed
             var validNames = new HashSet<string>
             {
                 "克里奧雞腿排", "柴燻櫻桃鴨胸", "柴燻慢烤豬沙朗", "卡津風味烤魚", "德州燻烤牛胸肉", "萊姆炭香鮭魚菲力", "克里奧萊姆鮮蝦",
-                "海鹽經典美式細薯", "辣辣的花椒細薯", "黑松露醬細薯", "燻烤起司馬鈴薯", "美式燒烤玉米肋排", "美式酸奶炸雞柳條", "楓糖辣水牛城炸雞柳條",
+                "海鹽經典美式細薯", "辣辣的花椒細薯", "黑松露醬細薯", "燻烤起司馬鈴薯", "美式燒烤玉米肋排", "美式酸奶炸雞柳條", "美式酸奶炸雞柳", "楓糖辣水牛城炸雞柳條",
                 "燒烤厚切櫛瓜", "燒烤杏鮑菇", "燒烤甜椒青椒",
                 "純 水耕嫩生菜杯", "蘋果手撕豬沙拉",
                 "卡羅萊納BBQ燒烤醬", "燒烤酸辣醬", "蒔蘿優格醬"
