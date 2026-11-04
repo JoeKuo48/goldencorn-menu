@@ -703,8 +703,38 @@ async function loadAdminMenu() {
         allMenuItems = await res.json();
         let html = "";
 
+        // Render Fast Daily Quota Grid
+        renderDailyStockFastGrid(allMenuItems);
+
         allMenuItems.forEach(item => {
             const imgUrl = item.imageUrl || "/img/2.jpg";
+            const isManaged = item.stockQuantity !== null && item.stockQuantity !== undefined;
+            const isSoldOut = !item.isAvailable || (isManaged && item.stockQuantity <= 0);
+
+            let stockDisplay = "";
+            if (!isManaged) {
+                stockDisplay = `
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span style="color:#059669; font-weight:700; font-size:13px;">♾️ 不限數量</span>
+                        <button type="button" style="font-size:11px; padding:2px 8px; background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; border-radius:4px; cursor:pointer; font-weight:700;" onclick="promptSetStock(${item.id}, '${item.name.replace(/'/g, "\\'")}')">設限額</button>
+                    </div>
+                `;
+            } else {
+                stockDisplay = `
+                    <div>
+                        <div style="display:inline-flex; align-items:center; gap:4px;">
+                            <button type="button" style="width:24px; height:24px; border:1px solid #cbd5e1; background:#fff; border-radius:4px; font-weight:900; cursor:pointer;" onclick="quickStepStock(${item.id}, -1)">-</button>
+                            <input type="number" id="inlineStockInput_${item.id}" value="${item.stockQuantity}" style="width:48px; height:24px; text-align:center; font-weight:800; font-size:13px; border:1px solid #cbd5e1; border-radius:4px;" onchange="saveInlineStock(${item.id})">
+                            <button type="button" style="width:24px; height:24px; border:1px solid #cbd5e1; background:#fff; border-radius:4px; font-weight:900; cursor:pointer;" onclick="quickStepStock(${item.id}, 1)">+</button>
+                            <button type="button" style="font-size:10px; padding:2px 5px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="setStockUnlimited(${item.id})" title="改為不限數量">不限</button>
+                        </div>
+                        <div style="font-size:11px; margin-top:2px;">
+                            ${item.stockQuantity <= 0 ? '<span style="color:#dc2626; font-weight:700;">🔴 剩 0 份 (已自動售完)</span>' : `<span style="color:#2563eb; font-weight:700;">📦 剩餘 ${item.stockQuantity} 份</span>`}
+                        </div>
+                    </div>
+                `;
+            }
+
             html += `
                 <tr>
                     <td style="width:50px;">
@@ -718,14 +748,15 @@ async function loadAdminMenu() {
                     <td>${item.category ? item.category.name : '-'}</td>
                     <td><strong>NT$ ${item.price}</strong></td>
                     <td>${item.badge ? `<span style="background:#fef3c7; color:#92400e; font-size:11px; padding:2px 6px; border-radius:4px; font-weight:700;">${item.badge}</span>` : '-'}</td>
+                    <td>${stockDisplay}</td>
                     <td>
                         <label class="stock-toggle-switch">
                             <span class="switch">
-                                <input type="checkbox" ${item.isAvailable ? 'checked' : ''} onchange="toggleItemStock(${item.id})">
+                                <input type="checkbox" ${item.isAvailable && (!isManaged || item.stockQuantity > 0) ? 'checked' : ''} onchange="toggleItemStock(${item.id})">
                                 <span class="slider"></span>
                             </span>
-                            <span style="font-size:13px; font-weight:700; color:${item.isAvailable ? '#16a34a' : '#dc2626'};">
-                                ${item.isAvailable ? '供應中' : '已售完'}
+                            <span style="font-size:13px; font-weight:700; color:${item.isAvailable && (!isManaged || item.stockQuantity > 0) ? '#16a34a' : '#dc2626'};">
+                                ${item.isAvailable && (!isManaged || item.stockQuantity > 0) ? '供應中' : '已售完'}
                             </span>
                         </label>
                     </td>
@@ -745,6 +776,49 @@ async function loadAdminMenu() {
     } catch (err) {
         console.error("Failed to load menu items:", err);
     }
+}
+
+function renderDailyStockFastGrid(items) {
+    const grid = document.getElementById("dailyStockFastGrid");
+    if (!grid) return;
+
+    let html = "";
+    items.forEach(item => {
+        const isManaged = item.stockQuantity !== null && item.stockQuantity !== undefined;
+        const qtyVal = isManaged ? item.stockQuantity : "";
+        const isSoldOut = !item.isAvailable || (isManaged && item.stockQuantity <= 0);
+
+        let statusBadge = `<span style="font-size:11px; font-weight:800; color:#059669; background:#ecfdf5; padding:2px 8px; border-radius:12px; border:1px solid #a7f3d0;">♾️ 不限數量</span>`;
+        if (isSoldOut) {
+            statusBadge = `<span style="font-size:11px; font-weight:800; color:#dc2626; background:#fef2f2; padding:2px 8px; border-radius:12px; border:1px solid #fecaca;">🔴 已售完 (0 份)</span>`;
+        } else if (isManaged) {
+            statusBadge = `<span style="font-size:11px; font-weight:800; color:#2563eb; background:#eff6ff; padding:2px 8px; border-radius:12px; border:1px solid #bfdbfe;">📦 剩 ${item.stockQuantity} 份</span>`;
+        }
+
+        html += `
+            <div style="background:#ffffff; border:1px solid ${isSoldOut ? '#fca5a5' : '#cbd5e1'}; border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:8px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                    <div>
+                        <div style="font-weight:800; font-size:14px; color:#1e293b;">${item.name}</div>
+                        <div style="font-size:11px; color:#64748b;">${item.category ? item.category.name : ''} · NT$ ${item.price}</div>
+                    </div>
+                    <div>${statusBadge}</div>
+                </div>
+
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:4px;">
+                    <span style="font-size:12px; font-weight:700; color:#475569;">今日配額:</span>
+                    <div style="display:inline-flex; align-items:center; gap:4px;">
+                        <button type="button" style="width:28px; height:28px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:6px; font-weight:900; cursor:pointer;" onclick="quickStepStock(${item.id}, -1)">-</button>
+                        <input type="number" id="batchStockInput_${item.id}" class="daily-quota-input" data-id="${item.id}" value="${qtyVal}" placeholder="不限" style="width:55px; height:28px; text-align:center; font-size:13px; font-weight:800; border:1px solid #cbd5e1; border-radius:6px; background:#ffffff;" onchange="saveSingleStock(${item.id})">
+                        <button type="button" style="width:28px; height:28px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:6px; font-weight:900; cursor:pointer;" onclick="quickStepStock(${item.id}, 1)">+</button>
+                        <button type="button" style="font-size:11px; padding:3px 6px; background:#e2e8f0; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; font-weight:700;" onclick="setStockUnlimited(${item.id})" title="設為不限數量">不限</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    grid.innerHTML = html;
 }
 
 async function loadAdminCategories() {
@@ -776,6 +850,7 @@ function openCreateItemModal() {
     document.getElementById("editItemEnglish").value = "";
     document.getElementById("editItemPrice").value = "";
     document.getElementById("editItemBadge").value = "";
+    if (document.getElementById("editItemStock")) document.getElementById("editItemStock").value = "";
     document.getElementById("editItemOrder").value = "1";
     document.getElementById("editItemImageUrl").value = "/img/2.jpg";
     updateItemImagePreview("/img/2.jpg");
@@ -798,6 +873,9 @@ function openEditItemModal(itemId) {
     document.getElementById("editItemEnglish").value = item.englishName || "";
     document.getElementById("editItemPrice").value = item.price;
     document.getElementById("editItemBadge").value = item.badge || "";
+    if (document.getElementById("editItemStock")) {
+        document.getElementById("editItemStock").value = (item.stockQuantity !== null && item.stockQuantity !== undefined) ? item.stockQuantity : "";
+    }
     document.getElementById("editItemOrder").value = item.displayOrder || 1;
     document.getElementById("editItemImageUrl").value = item.imageUrl || "/img/2.jpg";
     updateItemImagePreview(item.imageUrl || "/img/2.jpg");
@@ -836,6 +914,8 @@ async function saveMenuItem() {
     const englishName = document.getElementById("editItemEnglish").value.trim();
     const price = parseFloat(document.getElementById("editItemPrice").value) || 0;
     const badge = document.getElementById("editItemBadge").value.trim();
+    const stockVal = document.getElementById("editItemStock") ? document.getElementById("editItemStock").value.trim() : "";
+    const stockQuantity = (stockVal === "" || stockVal === "-1") ? null : Math.max(0, parseInt(stockVal) || 0);
     const displayOrder = parseInt(document.getElementById("editItemOrder").value) || 1;
     const imageUrl = document.getElementById("editItemImageUrl").value.trim() || "/img/2.jpg";
     const requiresPlateSides = document.getElementById("editItemRequiresPlateSides").checked;
@@ -861,7 +941,8 @@ async function saveMenuItem() {
         displayOrder,
         description: desc,
         categoryId,
-        isAvailable: true
+        stockQuantity: stockQuantity,
+        isAvailable: stockQuantity === null || stockQuantity > 0
     };
 
     try {
@@ -884,6 +965,111 @@ async function saveMenuItem() {
         }
     } catch (e) {
         showAdminToast("儲存失敗，請檢查網路連線");
+    }
+}
+
+// Stock Stepper / Inline Management Functions
+async function quickStepStock(itemId, delta) {
+    const item = allMenuItems.find(i => i.id === itemId);
+    let currentVal = (item && item.stockQuantity !== null && item.stockQuantity !== undefined) ? item.stockQuantity : 0;
+    
+    const inlineInput = document.getElementById(`inlineStockInput_${itemId}`);
+    const batchInput = document.getElementById(`batchStockInput_${itemId}`);
+    if (inlineInput && inlineInput.value !== "") {
+        currentVal = parseInt(inlineInput.value) || 0;
+    } else if (batchInput && batchInput.value !== "") {
+        currentVal = parseInt(batchInput.value) || 0;
+    }
+
+    const newVal = Math.max(0, currentVal + delta);
+    await updateItemStockOnServer(itemId, newVal);
+}
+
+async function saveInlineStock(itemId) {
+    const input = document.getElementById(`inlineStockInput_${itemId}`);
+    if (!input) return;
+    const valStr = input.value.trim();
+    const qty = (valStr === "" || valStr === "-1") ? null : Math.max(0, parseInt(valStr) || 0);
+    await updateItemStockOnServer(itemId, qty);
+}
+
+async function saveSingleStock(itemId) {
+    const input = document.getElementById(`batchStockInput_${itemId}`);
+    if (!input) return;
+    const valStr = input.value.trim();
+    const qty = (valStr === "" || valStr === "-1") ? null : Math.max(0, parseInt(valStr) || 0);
+    await updateItemStockOnServer(itemId, qty);
+}
+
+async function setStockUnlimited(itemId) {
+    await updateItemStockOnServer(itemId, null);
+}
+
+function promptSetStock(itemId, itemName) {
+    const current = allMenuItems.find(i => i.id === itemId);
+    const defaultVal = (current && current.stockQuantity !== null) ? current.stockQuantity : 15;
+    const input = prompt(`請輸入「${itemName}」今日準備的限量份數：\n(輸入數字，例如 15；或輸入 -1 代表不限數量)`, defaultVal);
+    if (input === null) return;
+    const valStr = input.trim();
+    const qty = (valStr === "" || valStr === "-1") ? null : Math.max(0, parseInt(valStr) || 0);
+    updateItemStockOnServer(itemId, qty);
+}
+
+async function updateItemStockOnServer(itemId, qty) {
+    const item = allMenuItems.find(i => i.id === itemId);
+    const itemName = item ? item.name : "此餐點";
+
+    try {
+        const res = await fetch(`/api/admin/menu/${itemId}/stock`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ stockQuantity: qty })
+        });
+
+        if (res.ok) {
+            if (qty === null) {
+                showAdminToast(`「${itemName}」已改為 ♾️ 不限數量`);
+            } else if (qty === 0) {
+                showAdminToast(`「${itemName}」庫存為 0，已自動顯示已售完 🔴`);
+            } else {
+                showAdminToast(`「${itemName}」今日剩餘數量更新為 ${qty} 份 📦`);
+            }
+            loadAdminMenu();
+        } else {
+            showAdminToast("庫存更新失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線錯誤，更新失敗");
+    }
+}
+
+async function saveAllDailyStockBatch() {
+    const inputs = document.querySelectorAll(".daily-quota-input");
+    if (!inputs || inputs.length === 0) return;
+
+    const payload = [];
+    inputs.forEach(inp => {
+        const id = parseInt(inp.getAttribute("data-id"));
+        const valStr = inp.value.trim();
+        const qty = (valStr === "" || valStr === "-1") ? null : Math.max(0, parseInt(valStr) || 0);
+        payload.push({ id, stockQuantity: qty });
+    });
+
+    try {
+        const res = await fetch("/api/admin/menu/batch-stock", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            showAdminToast("✅ 今日所有餐點庫存配額已成功儲存！");
+            loadAdminMenu();
+        } else {
+            showAdminToast("批次更新失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線錯誤，更新失敗");
     }
 }
 

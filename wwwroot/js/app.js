@@ -199,16 +199,30 @@ function renderMenuItems(filterCatId = "all", searchQuery = "") {
         items.forEach(item => {
             const isPlateCat = cat.name && cat.name.includes("餐盤");
             const hasOptions = item.requiresPlateSides || isPlateCat || (item.optionGroups && item.optionGroups.length > 0);
+            const isManaged = item.stockQuantity !== null && item.stockQuantity !== undefined;
+            const isSoldOut = !item.isAvailable || (isManaged && item.stockQuantity <= 0);
+
+            let stockBadge = "";
+            if (!isSoldOut && isManaged) {
+                if (item.stockQuantity <= 5) {
+                    stockBadge = `<span class="stock-badge-low">🔥 僅剩 ${item.stockQuantity} 份</span>`;
+                } else {
+                    stockBadge = `<span class="stock-badge-normal">限量剩 ${item.stockQuantity} 份</span>`;
+                }
+            }
 
             html += `
-                <div class="menu-card" data-id="${item.id}" onclick="handleItemClick(${item.id})">
+                <div class="menu-card ${isSoldOut ? 'sold-out' : ''}" data-id="${item.id}" onclick="${isSoldOut ? '' : `handleItemClick(${item.id})`}">
                     <div>
                         <div class="card-top">
                             <div>
                                 <div class="item-name">${item.name}</div>
                                 <div class="item-english">${item.englishName || ''}</div>
                             </div>
-                            ${item.badge ? `<span class="item-badge">${item.badge}</span>` : ''}
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                                ${item.badge ? `<span class="item-badge">${item.badge}</span>` : ''}
+                                ${stockBadge}
+                            </div>
                         </div>
                         <p class="item-description">${item.description || ''}</p>
                     </div>
@@ -216,13 +230,13 @@ function renderMenuItems(filterCatId = "all", searchQuery = "") {
                         <div class="item-price">
                             <span class="item-price-unit">NT$</span>${item.price}
                         </div>
-                        ${item.isAvailable ? `
+                        ${!isSoldOut ? `
                             <button class="btn-add-item" onclick="event.stopPropagation(); handleItemClick(${item.id})">
                                 <span>${hasOptions ? '選擇配料' : '加入'}</span>
                                 <span style="font-size:16px; margin-left:2px;">+</span>
                             </button>
                         ` : `
-                            <button class="btn-add-item sold-out" disabled onclick="event.stopPropagation();">已售完</button>
+                            <button class="btn-add-item sold-out" disabled onclick="event.stopPropagation();">今日已售完</button>
                         `}
                     </div>
                 </div>
@@ -296,12 +310,26 @@ function handleItemClick(itemId) {
 
     if (!targetItem) return;
 
+    const isManaged = targetItem.stockQuantity !== null && targetItem.stockQuantity !== undefined;
+    const isSoldOut = !targetItem.isAvailable || (isManaged && targetItem.stockQuantity <= 0);
+
+    if (isSoldOut) {
+        showToast(`很抱歉！「${targetItem.name}」今日已售完！`);
+        return;
+    }
+
     const isPlateCat = parentCat && parentCat.name.includes("餐盤");
     const hasOptions = targetItem.requiresPlateSides || isPlateCat || (targetItem.optionGroups && targetItem.optionGroups.length > 0);
 
     if (hasOptions) {
         openPlateOptionsModal(targetItem);
     } else {
+        const inCartTotal = cart.filter(c => c.menuItemId === targetItem.id).reduce((s, c) => s + c.quantity, 0);
+        if (isManaged && inCartTotal + 1 > targetItem.stockQuantity) {
+            showToast(`很抱歉！「${targetItem.name}」今日庫存僅剩 ${targetItem.stockQuantity} 份，已達購買上限！`);
+            return;
+        }
+
         addToCart({
             menuItemId: targetItem.id,
             name: targetItem.name,
@@ -318,6 +346,14 @@ function handleItemClick(itemId) {
 }
 
 function openPlateOptionsModal(item) {
+    const isManaged = item.stockQuantity !== null && item.stockQuantity !== undefined;
+    const isSoldOut = !item.isAvailable || (isManaged && item.stockQuantity <= 0);
+
+    if (isSoldOut) {
+        showToast(`很抱歉！「${item.name}」今日已售完！`);
+        return;
+    }
+
     currentPlateItem = item;
     selectedOptionIds = [];
     currentModalQty = 1;
@@ -334,7 +370,13 @@ function openPlateOptionsModal(item) {
     }
 
     const nameEl = document.getElementById("modalItemName");
-    if (nameEl) nameEl.textContent = item.name;
+    if (nameEl) {
+        let stockHint = "";
+        if (isManaged) {
+            stockHint = item.stockQuantity <= 5 ? ` <span style="font-size:12px; color:#dc2626; font-weight:800;">(剩餘 ${item.stockQuantity} 份)</span>` : ` <span style="font-size:12px; color:#2563eb; font-weight:700;">(剩餘 ${item.stockQuantity} 份)</span>`;
+        }
+        nameEl.innerHTML = `${item.name}${stockHint}`;
+    }
 
     const engEl = document.getElementById("modalItemEnglish");
     if (engEl) engEl.textContent = item.englishName || "";
@@ -452,6 +494,13 @@ function handleOptionSelection(groupId, optionId, isSingleChoice, isAvailable) {
 }
 
 function adjustModalQty(delta) {
+    if (delta > 0 && currentPlateItem && currentPlateItem.stockQuantity !== null && currentPlateItem.stockQuantity !== undefined) {
+        const inCartTotal = cart.filter(c => c.menuItemId === currentPlateItem.id).reduce((s, c) => s + c.quantity, 0);
+        if (currentModalQty + delta + inCartTotal > currentPlateItem.stockQuantity) {
+            showToast(`很抱歉！「${currentPlateItem.name}」今日庫存僅剩 ${currentPlateItem.stockQuantity} 份！`);
+            return;
+        }
+    }
     currentModalQty = Math.max(1, currentModalQty + delta);
     const qtyEl = document.getElementById("modalQtyDisplay");
     if (qtyEl) qtyEl.textContent = currentModalQty;
@@ -483,6 +532,14 @@ function updateModalPriceCalculation() {
 
 function confirmAddPlateModal() {
     if (!currentPlateItem) return;
+
+    if (currentPlateItem && currentPlateItem.stockQuantity !== null && currentPlateItem.stockQuantity !== undefined) {
+        const inCartTotal = cart.filter(c => c.menuItemId === currentPlateItem.id).reduce((s, c) => s + c.quantity, 0);
+        if (inCartTotal + currentModalQty > currentPlateItem.stockQuantity) {
+            showToast(`很抱歉！「${currentPlateItem.name}」今日庫存僅剩 ${currentPlateItem.stockQuantity} 份，購物車已有 ${inCartTotal} 份！`);
+            return;
+        }
+    }
 
     if (currentPlateItem.optionGroups) {
         for (let group of currentPlateItem.optionGroups) {
@@ -538,6 +595,20 @@ function confirmAddPlateModal() {
 
 // 6. Cart Management
 function addToCart(newItem) {
+    let targetMenuItem = null;
+    for (let cat of menuData) {
+        let f = (cat.menuItems || []).find(m => m.id === newItem.menuItemId);
+        if (f) { targetMenuItem = f; break; }
+    }
+
+    if (targetMenuItem && targetMenuItem.stockQuantity !== null && targetMenuItem.stockQuantity !== undefined) {
+        const inCartTotal = cart.filter(c => c.menuItemId === newItem.menuItemId).reduce((s, c) => s + c.quantity, 0);
+        if (inCartTotal + newItem.quantity > targetMenuItem.stockQuantity) {
+            showToast(`很抱歉！「${targetMenuItem.name}」今日庫存僅剩 ${targetMenuItem.stockQuantity} 份，無法再加入！`);
+            return;
+        }
+    }
+
     const existingIndex = cart.findIndex(i => 
         i.menuItemId === newItem.menuItemId &&
         i.optionsSummary === newItem.optionsSummary &&
@@ -556,6 +627,20 @@ function addToCart(newItem) {
 
 function updateCartItemQty(index, delta) {
     if (cart[index]) {
+        if (delta > 0) {
+            let targetMenuItem = null;
+            for (let cat of menuData) {
+                let f = (cat.menuItems || []).find(m => m.id === cart[index].menuItemId);
+                if (f) { targetMenuItem = f; break; }
+            }
+            if (targetMenuItem && targetMenuItem.stockQuantity !== null && targetMenuItem.stockQuantity !== undefined) {
+                const totalInCart = cart.filter(c => c.menuItemId === cart[index].menuItemId).reduce((s, c) => s + c.quantity, 0);
+                if (totalInCart + delta > targetMenuItem.stockQuantity) {
+                    showToast(`「${targetMenuItem.name}」今日僅剩 ${targetMenuItem.stockQuantity} 份囉！`);
+                    return;
+                }
+            }
+        }
         cart[index].quantity += delta;
         if (cart[index].quantity <= 0) {
             cart.splice(index, 1);
@@ -955,6 +1040,8 @@ async function executeSubmitOrder(payload) {
     } catch (err) {
         console.error("Order submission error:", err);
         showToast("❌ 下單失敗: " + err.message);
+        alert("❌ 下單失敗: " + err.message);
+        loadMenu();
     }
 }
 
