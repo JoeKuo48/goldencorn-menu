@@ -197,8 +197,7 @@ function renderMenuItems(filterCatId = "all", searchQuery = "") {
         html += `<div class="menu-grid">`;
 
         items.forEach(item => {
-            const isPlateCat = cat.name && cat.name.includes("餐盤");
-            const hasOptions = item.requiresPlateSides || isPlateCat || (item.optionGroups && item.optionGroups.length > 0);
+            const hasOptions = Boolean(item.optionGroups && item.optionGroups.length > 0);
             const isManaged = item.stockQuantity !== null && item.stockQuantity !== undefined;
             const isSoldOut = !item.isAvailable || (isManaged && item.stockQuantity <= 0);
 
@@ -318,8 +317,7 @@ function handleItemClick(itemId) {
         return;
     }
 
-    const isPlateCat = parentCat && parentCat.name.includes("餐盤");
-    const hasOptions = targetItem.requiresPlateSides || isPlateCat || (targetItem.optionGroups && targetItem.optionGroups.length > 0);
+    const hasOptions = Boolean(targetItem.optionGroups && targetItem.optionGroups.length > 0);
 
     if (hasOptions) {
         openPlateOptionsModal(targetItem);
