@@ -101,9 +101,27 @@ namespace GoldenCornOrder.Controllers
                     return BadRequest(new { message = $"找不到品項 ID: {itemDto.MenuItemId}" });
                 }
 
-                if (!menuItem.IsAvailable)
+                if (!menuItem.IsAvailable || (menuItem.StockQuantity.HasValue && menuItem.StockQuantity.Value <= 0))
                 {
-                    return BadRequest(new { message = $"餐點「{menuItem.Name}」今日已售完" });
+                    return BadRequest(new { message = $"餐點「{menuItem.Name}」今日已售完，無法下單！" });
+                }
+
+                // 檢查並扣除限量庫存配額
+                if (menuItem.StockQuantity.HasValue && menuItem.StockQuantity.Value >= 0)
+                {
+                    if (menuItem.StockQuantity.Value < itemDto.Quantity)
+                    {
+                        return BadRequest(new { 
+                            message = $"很抱歉！「{menuItem.Name}」今日僅剩 {menuItem.StockQuantity.Value} 份，您點了 {itemDto.Quantity} 份，數量不足，請調整數量後再送出！" 
+                        });
+                    }
+
+                    menuItem.StockQuantity -= itemDto.Quantity;
+                    if (menuItem.StockQuantity <= 0)
+                    {
+                        menuItem.StockQuantity = 0;
+                        menuItem.IsAvailable = false; // 賣完最後一份自動標記為已售完
+                    }
                 }
 
                 decimal itemBasePrice = menuItem.Price;

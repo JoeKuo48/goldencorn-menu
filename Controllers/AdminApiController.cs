@@ -100,12 +100,37 @@ namespace GoldenCornOrder.Controllers
                 return BadRequest(new { message = "無效的訂單狀態" });
             }
 
+            var oldStatus = order.OrderStatus;
             order.OrderStatus = dto.Status;
             if (dto.KitchenNote != null)
             {
                 order.KitchenNote = dto.KitchenNote;
             }
             order.UpdatedAt = TaiwanTimeHelper.Now;
+
+            // If order cancelled, restore stock for items that have StockQuantity managed!
+            if (dto.Status == "Cancelled" && oldStatus != "Cancelled")
+            {
+                var orderWithItems = await _context.Orders
+                    .Include(o => o.Items)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+
+                if (orderWithItems != null)
+                {
+                    foreach (var orderItem in orderWithItems.Items)
+                    {
+                        var menuItem = await _context.MenuItems.FindAsync(orderItem.MenuItemId);
+                        if (menuItem != null && menuItem.StockQuantity.HasValue)
+                        {
+                            menuItem.StockQuantity += orderItem.Quantity;
+                            if (menuItem.StockQuantity > 0 && !menuItem.IsAvailable)
+                            {
+                                menuItem.IsAvailable = true; // Auto re-open when stock restored!
+                            }
+                        }
+                    }
+                }
+            }
 
             await _context.SaveChangesAsync();
 
@@ -172,9 +197,16 @@ namespace GoldenCornOrder.Controllers
                 ImageUrl = string.IsNullOrWhiteSpace(dto.ImageUrl) ? "/img/2.jpg" : dto.ImageUrl.Trim(),
                 Badge = string.IsNullOrWhiteSpace(dto.Badge) ? null : dto.Badge.Trim(),
                 IsAvailable = dto.IsAvailable,
+                StockQuantity = dto.StockQuantity,
                 DisplayOrder = dto.DisplayOrder > 0 ? dto.DisplayOrder : 1,
                 RequiresPlateSides = dto.RequiresPlateSides || dto.CategoryId == 1
             };
+
+            if (menuItem.StockQuantity.HasValue && menuItem.StockQuantity.Value <= 0)
+            {
+                menuItem.StockQuantity = 0;
+                menuItem.IsAvailable = false;
+            }
 
             // If it requires plate sides, copy from default option groups if available
             if (menuItem.RequiresPlateSides)
@@ -237,12 +269,84 @@ namespace GoldenCornOrder.Controllers
             }
             item.Badge = string.IsNullOrWhiteSpace(dto.Badge) ? null : dto.Badge.Trim();
             item.IsAvailable = dto.IsAvailable;
+            item.StockQuantity = dto.StockQuantity;
+            if (item.StockQuantity.HasValue && item.StockQuantity.Value <= 0)
+            {
+                item.StockQuantity = 0;
+                item.IsAvailable = false;
+            }
+            else if (item.StockQuantity.HasValue && item.StockQuantity.Value > 0 && dto.IsAvailable)
+            {
+                item.IsAvailable = true;
+            }
             item.DisplayOrder = dto.DisplayOrder;
             item.RequiresPlateSides = dto.RequiresPlateSides || dto.CategoryId == 1;
 
             await _context.SaveChangesAsync();
 
             return Ok(item);
+        }
+
+        // PUT: api/admin/menu/{id}/stock
+        [HttpPut("menu/{id}/stock")]
+        public async Task<IActionResult> UpdateItemStock(int id, [FromBody] QuickUpdateStockDto dto)
+        {
+            var item = await _context.MenuItems.FindAsync(id);
+            if (item == null)
+            {
+                return NotFound(new { message = "找不到該餐點" });
+            }
+
+            item.StockQuantity = dto.StockQuantity;
+            if (item.StockQuantity.HasValue)
+            {
+                if (item.StockQuantity.Value <= 0)
+                {
+                    item.StockQuantity = 0;
+                    item.IsAvailable = false;
+                }
+                else
+                {
+                    item.IsAvailable = true;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true, id = item.Id, stockQuantity = item.StockQuantity, isAvailable = item.IsAvailable });
+        }
+
+        // POST: api/admin/menu/batch-stock
+        [HttpPost("menu/batch-stock")]
+        public async Task<IActionResult> BatchUpdateStock([FromBody] List<BatchStockItemDto> items)
+        {
+            if (items == null || items.Count == 0)
+            {
+                return BadRequest(new { message = "無更新資料" });
+            }
+
+            foreach (var b in items)
+            {
+                var item = await _context.MenuItems.FindAsync(b.Id);
+                if (item != null)
+                {
+                    item.StockQuantity = b.StockQuantity;
+                    if (item.StockQuantity.HasValue)
+                    {
+                        if (item.StockQuantity.Value <= 0)
+                        {
+                            item.StockQuantity = 0;
+                            item.IsAvailable = false;
+                        }
+                        else
+                        {
+                            item.IsAvailable = true;
+                        }
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true, message = "今日庫存已批次更新完成！" });
         }
 
         // DELETE: api/admin/menu/{id}

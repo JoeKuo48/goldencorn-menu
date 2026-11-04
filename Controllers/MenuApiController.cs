@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GoldenCornOrder.Data;
 using GoldenCornOrder.Models;
@@ -46,6 +46,7 @@ namespace GoldenCornOrder.Controllers
                             m.ImageUrl,
                             m.Badge,
                             m.IsAvailable,
+                            m.StockQuantity,
                             m.RequiresPlateSides,
                             m.DisplayOrder,
                             OptionGroups = m.OptionGroups
