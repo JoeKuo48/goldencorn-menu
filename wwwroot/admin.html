@@ -11,10 +11,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/admin.css?v=3.0">
-    <link rel="stylesheet" href="/css/style.css?v=3.0">
+    <link rel="stylesheet" href="/css/admin.css?v=3.6">
+    <link rel="stylesheet" href="/css/style.css?v=3.6">
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="/js/admin.js?v=3.0"></script>
+    <script src="/js/admin.js?v=3.6"></script>
 </head>
 <body>
 
@@ -113,6 +113,36 @@
                 </div>
             </div>
 
+            <!-- Daily BBQ & Item Stock Quota Fast Management Card -->
+            <div style="background:#ffffff; border-radius:12px; border:2px solid #059669; padding:20px; margin-bottom:24px; box-shadow:0 4px 16px rgba(5,150,105,0.08);">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:22px;">🥩</span>
+                            <h3 style="font-size:16px; font-weight:800; color:#065f46; margin:0;">
+                                今日肉品與限量餐點配額（下單自動扣庫 · 賣完自動顯示售完）
+                            </h3>
+                        </div>
+                        <p style="font-size:13px; color:var(--admin-muted); margin-top:4px; line-height:1.5;">
+                            主廚出餐必備！在此快速輸入今天準備的份數（例如牛胸肉 15 份、豬梅花 12 份）。客人線上每點一份，<strong>系統就即時自動扣除 1 份</strong>；扣到 0 份時<strong>自動切換為已售完</strong>，完全不怕現場忙碌時客人一直進單而超賣！
+                        </p>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn-primary-admin" onclick="saveAllDailyStockBatch()" style="background:#059669; border-color:#059669; padding:8px 18px; font-size:14px;">
+                            <span>💾</span> 儲存今日所有限量
+                        </button>
+                        <button type="button" class="btn-primary-admin" onclick="loadAdminMenu()" style="background:#64748b; border-color:#64748b; padding:8px 14px; font-size:13px;" title="重新整理最新剩餘數量">
+                            <span>🔄</span> 重新讀取
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fast Quota Grid for Daily Items -->
+                <div id="dailyStockFastGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px; margin-top:14px;">
+                    <!-- Dynamically populated daily quota cards -->
+                </div>
+            </div>
+
             <!-- Side Dishes & Add-ons Stock Toggles Box -->
             <div style="background:#ffffff; border-radius:12px; border:1px solid var(--admin-border); padding:18px; margin-bottom:24px;">
                 <h3 style="font-size:16px; font-weight:800; color:var(--gc-green); margin-bottom:12px;">
@@ -133,7 +163,8 @@
                             <th>類別</th>
                             <th>價格</th>
                             <th>標籤</th>
-                            <th>供應狀態 (點擊切換)</th>
+                            <th style="min-width:160px;">今日庫存 (限量剩餘)</th>
+                            <th>供應狀態</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -936,6 +967,19 @@
                     </div>
                 </div>
 
+                <div class="form-group" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px 14px; border-radius:8px;">
+                    <label class="form-label" for="editItemStock" style="color:#166534; font-weight:700; margin-bottom:4px;">
+                        🥩 今日限量庫存數量 (份)
+                    </label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="number" id="editItemStock" class="form-control" placeholder="留空或填 -1 代表不限數量" style="background:#ffffff; font-weight:700;">
+                        <button type="button" class="btn-primary-admin" style="white-space:nowrap; padding:8px 14px; font-size:12px; background:#64748b; border-color:#64748b;" onclick="document.getElementById('editItemStock').value=''">設為不限</button>
+                    </div>
+                    <small style="font-size:12px; color:#15803d; display:block; margin-top:4px; line-height:1.4;">
+                        💡 填入數字（例如 15）代表今日限量 15 份，客人每下一單系統自動扣庫存，最後一份賣完自動切換為已售完！留空則為不限數量。
+                    </small>
+                </div>
+
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                     <div class="form-group">
                         <label class="form-label" for="editItemCategory">所屬分類 <span style="color:#dc2626;">*</span></label>
@@ -1056,7 +1100,5 @@
 
     <!-- Admin Toast Notification -->
     <div class="toast-msg" id="adminToast">通知訊息</div>
-
-    <script src="/js/admin.js"></script>
 </body>
 </html>
