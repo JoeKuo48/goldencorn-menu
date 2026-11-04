@@ -95,8 +95,20 @@ namespace GoldenCornOrder.Models
         public string? ImageUrl { get; set; }
         public string? Badge { get; set; }
         public bool IsAvailable { get; set; } = true;
+        public int? StockQuantity { get; set; } // null = 不限數量；>= 0 = 剩餘數量
         public int DisplayOrder { get; set; }
         public bool RequiresPlateSides { get; set; }
+    }
+
+    public class QuickUpdateStockDto
+    {
+        public int? StockQuantity { get; set; }
+    }
+
+    public class BatchStockItemDto
+    {
+        public int Id { get; set; }
+        public int? StockQuantity { get; set; }
     }
 
     public class DashboardStatsDto

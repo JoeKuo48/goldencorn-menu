@@ -1,4 +1,4 @@
-﻿namespace GoldenCornOrder.Models
+namespace GoldenCornOrder.Models
 {
     public class MenuItem
     {
@@ -13,6 +13,10 @@
         public string? ImageUrl { get; set; }
         public string? Badge { get; set; } // e.g. "招牌", "人氣", "限量"
         public bool IsAvailable { get; set; } = true;
+
+        // 庫存管理：null 代表無限量供應；>= 0 代表今日剩餘數量 (為 0 時系統自動標記為已售完)
+        public int? StockQuantity { get; set; }
+
         public int DisplayOrder { get; set; }
 
         // Whether this item is an American BBQ Plate (美式餐盤) requiring plate sides
