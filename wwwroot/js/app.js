@@ -720,42 +720,20 @@ function openCartModal() {
     const isLiveOpen = isStoreOpen && (storeSettings.IsLiveOpen === "true" || storeSettings.IsLiveOpen === true);
 
     const preNotice = document.getElementById("preOrderNoticeBox");
-    const hint = document.getElementById("pickupTimeHint");
     const dineInBtn = document.getElementById("btnDiningDineIn");
-    const pickupInput = document.getElementById("orderPickupTime");
-    const preDate = sessionStorage.getItem("gc_selected_pickup_date");
 
     if (!isLiveOpen) {
         // Outside business hours: show pre-order notice, hide dine-in option
         if (preNotice) preNotice.style.display = "block";
-        if (hint) hint.style.display = "block";
         if (dineInBtn) dineInBtn.style.display = "none";
         setDiningType("Takeout");
-
-        if (pickupInput) {
-            if (preDate) {
-                pickupInput.value = `${preDate} 17:30 (預約取餐)`;
-            } else if (!pickupInput.value || pickupInput.value.includes("儘速")) {
-                pickupInput.value = "";
-                pickupInput.placeholder = "請輸入預約取餐日期與時間，例如：週五 18:00";
-            }
-        }
     } else {
         // Inside live business hours: normal ordering
         if (preNotice) preNotice.style.display = "none";
-        if (hint) hint.style.display = "none";
         if (dineInBtn) dineInBtn.style.display = "inline-flex";
-
-        if (pickupInput) {
-            if (preDate && (!pickupInput.value || pickupInput.value.includes("儘速"))) {
-                pickupInput.value = `${preDate} 17:30 (預約取餐)`;
-            } else if (!pickupInput.value) {
-                pickupInput.value = "儘速製作 (約 15-20 分鐘)";
-            }
-            pickupInput.placeholder = "例如：儘速製作 或 18:30";
-        }
     }
 
+    loadPickupSlots();
     renderCartModalItems();
     const backdrop = document.getElementById("cartModalBackdrop");
     if (backdrop) backdrop.classList.add("show");
@@ -829,6 +807,129 @@ function setDiningType(type) {
     }
 }
 
+let currentPickupMode = "asap";
+let currentSlotData = null;
+
+async function loadPickupSlots() {
+    try {
+        const preDate = sessionStorage.getItem("gc_selected_pickup_date");
+        const url = preDate ? `/api/order/slots?date=${encodeURIComponent(preDate)}` : "/api/order/slots";
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const data = await res.json();
+        currentSlotData = data;
+
+        // Slot capacity hint
+        const slotCapHint = document.getElementById("slotCapacityHint");
+        if (slotCapHint) {
+            slotCapHint.textContent = "名額有限，額滿為止";
+        }
+
+        // Busy Mode Banner & ASAP estimate
+        const busyBanner = document.getElementById("busyModeNotice");
+        const asapEst = document.getElementById("asapEstTime");
+        const busyMins = data.busyEstimatedMinutes || 45;
+
+        if (data.isBusyMode) {
+            if (busyBanner) {
+                busyBanner.style.display = "block";
+                busyBanner.innerHTML = `🔥 <strong>目前正值出餐高峰期</strong>：慢火現烤約需 <strong>${busyMins} 分鐘</strong>，建議選擇後續預約時段或耐心等候！`;
+            }
+            if (asapEst) asapEst.textContent = `(約 ${busyMins} 分鐘)`;
+        } else {
+            if (busyBanner) busyBanner.style.display = "none";
+            if (asapEst) asapEst.textContent = `(約 15-20 分鐘)`;
+        }
+
+        // Populate Slot Dropdown
+        const slotSelect = document.getElementById("pickupSlotSelect");
+        if (slotSelect && data.slots) {
+            let optionsHtml = `<option value="">-- 請選擇預約取餐時段 --</option>`;
+            data.slots.forEach(s => {
+                if (s.isPast) {
+                    optionsHtml += `<option value="${s.time}" disabled>${s.label} (已過時段)</option>`;
+                } else if (s.isFull) {
+                    optionsHtml += `<option value="${s.time}" disabled style="color:#94a3b8; font-weight:bold;">${s.label} (已額滿 🈵)</option>`;
+                } else {
+                    optionsHtml += `<option value="${s.time}">${s.label}</option>`;
+                }
+            });
+            slotSelect.innerHTML = optionsHtml;
+        }
+
+        // Live Open handling
+        const isLiveOpen = data.isLiveOpen;
+        const btnAsap = document.getElementById("btnPickupAsap");
+        const pickupHint = document.getElementById("pickupTimeHint");
+
+        if (!isLiveOpen) {
+            if (btnAsap) btnAsap.style.display = "none";
+            if (pickupHint) pickupHint.style.display = "block";
+            setPickupMode("slot");
+        } else {
+            if (btnAsap) btnAsap.style.display = "block";
+            if (pickupHint) pickupHint.style.display = "none";
+            if (currentPickupMode !== "slot") {
+                setPickupMode("asap");
+            }
+        }
+    } catch (err) {
+        console.error("Failed to load pickup slots:", err);
+    }
+}
+
+function setPickupMode(mode) {
+    currentPickupMode = mode;
+    const btnAsap = document.getElementById("btnPickupAsap");
+    const btnSlot = document.getElementById("btnPickupSlot");
+    const slotContainer = document.getElementById("slotSelectContainer");
+    const pickupInput = document.getElementById("orderPickupTime");
+    const slotSelect = document.getElementById("pickupSlotSelect");
+
+    if (mode === "asap") {
+        if (btnAsap) btnAsap.classList.add("active");
+        if (btnSlot) btnSlot.classList.remove("active");
+        if (slotContainer) slotContainer.style.display = "none";
+
+        const isBusy = currentSlotData && currentSlotData.isBusyMode;
+        const mins = currentSlotData?.busyEstimatedMinutes || 45;
+        if (pickupInput) {
+            pickupInput.value = isBusy ? `儘速製作 (約 ${mins} 分鐘)` : "儘速製作 (約 15-20 分鐘)";
+        }
+    } else {
+        if (btnSlot) btnSlot.classList.add("active");
+        if (btnAsap) btnAsap.classList.remove("active");
+        if (slotContainer) slotContainer.style.display = "block";
+
+        if (slotSelect && slotSelect.value) {
+            onPickupSlotSelect(slotSelect.value);
+        } else if (pickupInput) {
+            pickupInput.value = "";
+        }
+    }
+}
+
+function onPickupSlotSelect(val) {
+    const pickupInput = document.getElementById("orderPickupTime");
+    if (!val) {
+        if (pickupInput) pickupInput.value = "";
+        return;
+    }
+
+    const preDate = sessionStorage.getItem("gc_selected_pickup_date");
+    const datePrefix = preDate ? `${preDate} ` : "";
+
+    let label = val;
+    if (currentSlotData && currentSlotData.slots) {
+        const slot = currentSlotData.slots.find(s => s.time === val);
+        if (slot) label = slot.label;
+    }
+
+    if (pickupInput) {
+        pickupInput.value = `${datePrefix}${label} 取餐`;
+    }
+}
+
 function setPaymentMethod(method) {
     document.querySelectorAll(".btn-payment-option").forEach(b => b.classList.remove("active"));
     const btn = document.querySelector(`.btn-payment-option[data-method="${method}"]`);
@@ -898,9 +999,18 @@ async function submitOrder() {
             return;
         }
         if (!pickupTime || pickupTime.includes("儘速") || pickupTime.includes("尽速")) {
-            showToast("目前非現場營業時段，請填寫預計取餐日期與時間（如：週五 18:00）");
-            document.getElementById("orderPickupTime")?.focus();
+            showToast("目前非現場營業時段，請選擇預計取餐時段");
+            document.getElementById("pickupSlotSelect")?.focus();
             return;
+        }
+    } else {
+        if (currentPickupMode === "slot") {
+            const slotVal = document.getElementById("pickupSlotSelect")?.value;
+            if (!slotVal || !pickupTime || pickupTime.includes("儘速") || pickupTime.includes("尽速")) {
+                showToast("您已切換為指定預約時段，請下拉選擇預計取餐時間");
+                document.getElementById("pickupSlotSelect")?.focus();
+                return;
+            }
         }
     }
 
@@ -1239,6 +1349,16 @@ function closeHistoryModal() {
     if (backdrop) backdrop.classList.remove("show");
 }
 
+function formatCustomerOrderTime(dateStr) {
+    if (!dateStr) return "";
+    let d = new Date(dateStr);
+    let diffMins = Math.floor((new Date() - d) / 60000);
+    if (diffMins < -240) {
+        d = new Date(d.getTime() - 8 * 3600 * 1000);
+    }
+    return d.toLocaleString('zh-TW', { hour12: false });
+}
+
 async function searchOrderHistory() {
     const phone = (document.getElementById("historyPhoneInput")?.value || "").trim();
     if (!phone) {
@@ -1270,7 +1390,7 @@ async function searchOrderHistory() {
                             <span class="tracker-badge ${o.orderStatus}" style="font-size:11px; padding:2px 8px; margin:0;">${o.orderStatus}</span>
                         </div>
                         <div style="font-size:12px; color:var(--gc-text-muted); margin-top:4px;">
-                            ${new Date(o.createdAt).toLocaleString()} · ${o.diningType === 'DineIn' ? '內用' : '外帶'}
+                            ${formatCustomerOrderTime(o.createdAt)} · ${o.diningType === 'DineIn' ? '內用' : '外帶'}
                         </div>
                     </div>
                     <div style="text-align:right;">
