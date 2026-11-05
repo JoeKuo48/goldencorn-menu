@@ -62,6 +62,71 @@ namespace GoldenCornOrder.Controllers
                 }
             }
 
+            // 30分鐘出餐金額產能上限控管（例如每30分鐘限額 NT$ 2,000）
+            if (!string.IsNullOrWhiteSpace(pickupTime) && !pickupTime.Contains("儘速") && !pickupTime.Contains("尽速") && !pickupTime.Contains("現場"))
+            {
+                var match = System.Text.RegularExpressions.Regex.Match(pickupTime, @"(\d{1,2})[:：](\d{2})");
+                if (!match.Success) match = System.Text.RegularExpressions.Regex.Match(pickupTime, @"(\d{2})(\d{2})");
+                if (match.Success)
+                {
+                    int h = int.Parse(match.Groups[1].Value);
+                    int m = int.Parse(match.Groups[2].Value);
+                    int slotM = m < 30 ? 0 : 30;
+                    string targetSlotKey = $"{h:D2}:{slotM:D2}";
+                    int endH = slotM == 30 ? h + 1 : h;
+                    int endM = slotM == 30 ? 0 : 30;
+                    string slotLabel = $"{targetSlotKey} - {endH:D2}:{endM:D2}";
+
+                    var limitSetting = await _context.StoreSettings.FirstOrDefaultAsync(s => s.Key == "SlotAmountLimit");
+                    var limitVal = decimal.TryParse(limitSetting?.Value, out var parsedLimit) ? parsedLimit : 2000;
+
+                    var todayDate = TaiwanTimeHelper.Today;
+                    var startUtc = todayDate.AddHours(-8);
+                    var endUtc = startUtc.AddDays(1);
+
+                    var slotOrders = await _context.Orders
+                        .Where(o => o.OrderStatus != "Cancelled" &&
+                               ((o.CreatedAt >= todayDate && o.CreatedAt < todayDate.AddDays(1)) ||
+                                (o.CreatedAt >= startUtc && o.CreatedAt < endUtc)))
+                        .ToListAsync();
+
+                    decimal currentSlotSum = 0;
+                    foreach (var so in slotOrders)
+                    {
+                        var soPickup = (so.PickupTime ?? "").Trim();
+                        string? soSlot = null;
+                        if (string.IsNullOrWhiteSpace(soPickup) || soPickup.Contains("儘速") || soPickup.Contains("尽速") || soPickup.Contains("現場"))
+                        {
+                            var tw = so.CreatedAt.Kind == DateTimeKind.Utc ? so.CreatedAt.AddHours(8) : so.CreatedAt;
+                            int som = tw.Minute < 30 ? 0 : 30;
+                            soSlot = $"{tw.Hour:D2}:{som:D2}";
+                        }
+                        else
+                        {
+                            var soMatch = System.Text.RegularExpressions.Regex.Match(soPickup, @"(\d{1,2})[:：](\d{2})");
+                            if (!soMatch.Success) soMatch = System.Text.RegularExpressions.Regex.Match(soPickup, @"(\d{2})(\d{2})");
+                            if (soMatch.Success)
+                            {
+                                int soh = int.Parse(soMatch.Groups[1].Value);
+                                int som = int.Parse(soMatch.Groups[2].Value);
+                                int soslotM = som < 30 ? 0 : 30;
+                                soSlot = $"{soh:D2}:{soslotM:D2}";
+                            }
+                        }
+
+                        if (soSlot == targetSlotKey)
+                        {
+                            currentSlotSum += so.TotalAmount;
+                        }
+                    }
+
+                    if (currentSlotSum >= limitVal)
+                    {
+                        return BadRequest(new { message = $"很抱歉！預約取餐時段「{slotLabel}」名額已額滿，為維護慢火現烤出餐品質，請改選其他時段，謝謝您的體諒！" });
+                    }
+                }
+            }
+
             // Generate Order Number: GC-yyyyMMdd-001 using Taiwan Timezone (UTC+8)
             var today = TaiwanTimeHelper.Today;
             var tomorrow = today.AddDays(1);
@@ -314,6 +379,124 @@ namespace GoldenCornOrder.Controllers
             }
 
             return Ok(order);
+        }
+
+        public class TimeSlotDto
+        {
+            public string Time { get; set; } = string.Empty;
+            public string Label { get; set; } = string.Empty;
+            public bool IsFull { get; set; }
+            public bool IsPast { get; set; }
+        }
+
+        // GET: api/order/slots?date=2026-11-06
+        [HttpGet("slots")]
+        public async Task<IActionResult> GetAvailableSlots([FromQuery] string? date)
+        {
+            var now = TaiwanTimeHelper.Now;
+            DateTime targetDate = now.Date;
+            if (!string.IsNullOrWhiteSpace(date) && DateTime.TryParse(date, out var parsedDate))
+            {
+                targetDate = parsedDate.Date;
+            }
+
+            var settings = await _context.StoreSettings.ToDictionaryAsync(s => s.Key, s => s.Value);
+            var limitStr = settings.GetValueOrDefault("SlotAmountLimit", "2000");
+            if (!decimal.TryParse(limitStr, out var limit)) limit = 2000;
+
+            var isBusyMode = settings.GetValueOrDefault("IsBusyMode", "false") == "true";
+            var busyMinsStr = settings.GetValueOrDefault("BusyEstimatedMinutes", "45");
+            if (!int.TryParse(busyMinsStr, out var busyMins)) busyMins = 45;
+
+            var startOfDayUtc = targetDate.AddHours(-8);
+            var endOfDayUtc = startOfDayUtc.AddDays(1);
+
+            var orders = await _context.Orders
+                .Where(o => o.OrderStatus != "Cancelled" &&
+                       ((o.CreatedAt >= targetDate && o.CreatedAt < targetDate.AddDays(1)) ||
+                        (o.CreatedAt >= startOfDayUtc && o.CreatedAt < endOfDayUtc)))
+                .ToListAsync();
+
+            var standardSlots = new (int h, int m)[]
+            {
+                (16, 30), (17, 0), (17, 30), (18, 0), (18, 30),
+                (19, 0), (19, 30), (20, 0), (20, 30), (21, 0),
+                (21, 30), (22, 0)
+            };
+
+            var slotAmounts = new Dictionary<string, decimal>();
+            foreach (var s in standardSlots)
+            {
+                slotAmounts[$"{s.h:D2}:{s.m:D2}"] = 0;
+            }
+
+            foreach (var order in orders)
+            {
+                string? slotKey = null;
+                var pickupStr = (order.PickupTime ?? "").Trim();
+                if (string.IsNullOrWhiteSpace(pickupStr) || pickupStr.Contains("儘速") || pickupStr.Contains("尽速") || pickupStr.Contains("現場"))
+                {
+                    var tw = order.CreatedAt.Kind == DateTimeKind.Utc ? order.CreatedAt.AddHours(8) : order.CreatedAt;
+                    int m = tw.Minute < 30 ? 0 : 30;
+                    slotKey = $"{tw.Hour:D2}:{m:D2}";
+                }
+                else
+                {
+                    var match = System.Text.RegularExpressions.Regex.Match(pickupStr, @"(\d{1,2})[:：](\d{2})");
+                    if (!match.Success)
+                    {
+                        match = System.Text.RegularExpressions.Regex.Match(pickupStr, @"(\d{2})(\d{2})");
+                    }
+                    if (match.Success)
+                    {
+                        int h = int.Parse(match.Groups[1].Value);
+                        int m = int.Parse(match.Groups[2].Value);
+                        int slotM = m < 30 ? 0 : 30;
+                        slotKey = $"{h:D2}:{slotM:D2}";
+                    }
+                }
+
+                if (slotKey != null && slotAmounts.ContainsKey(slotKey))
+                {
+                    slotAmounts[slotKey] += order.TotalAmount;
+                }
+            }
+
+            var isToday = targetDate == now.Date;
+            var currentTwMins = now.Hour * 60 + now.Minute;
+
+            var result = standardSlots.Select(s =>
+            {
+                var timeKey = $"{s.h:D2}:{s.m:D2}";
+                var endH = s.m == 30 ? s.h + 1 : s.h;
+                var endM = s.m == 30 ? 0 : 30;
+                var label = $"{s.h:D2}:{s.m:D2} - {endH:D2}:{endM:D2}";
+
+                var curAmt = slotAmounts.GetValueOrDefault(timeKey, 0);
+                var isFull = curAmt >= limit;
+                var slotEndMins = endH * 60 + endM;
+                var isPast = isToday && slotEndMins <= currentTwMins;
+
+                return new TimeSlotDto
+                {
+                    Time = timeKey,
+                    Label = label,
+                    IsFull = isFull,
+                    IsPast = isPast
+                };
+            }).ToList();
+
+            var manualOpen = !settings.TryGetValue("IsOpen", out var isOpenVal) || isOpenVal != "false";
+            var isLiveOpen = manualOpen && TaiwanTimeHelper.IsLiveBusinessHours;
+
+            return Ok(new
+            {
+                date = targetDate.ToString("yyyy-MM-dd"),
+                isLiveOpen,
+                isBusyMode,
+                busyEstimatedMinutes = busyMins,
+                slots = result
+            });
         }
     }
 }
