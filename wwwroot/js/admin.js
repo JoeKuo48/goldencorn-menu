@@ -435,6 +435,98 @@ function setKdsFilter(status, btnEl) {
     loadKdsOrders();
 }
 
+// 取得真實下單時間（自動校正伺服器 UTC 與台灣時區 +8 差異，防止負數時間）
+function getOrderRealCreatedAt(order) {
+    if (!order || !order.createdAt) return new Date();
+    let d = new Date(order.createdAt);
+    let diffMins = Math.floor((new Date() - d) / 60000);
+    // 若時間被多加了8小時 (例如 -480 分鐘前)，校正回台灣真實時間
+    if (diffMins < -240) {
+        d = new Date(d.getTime() - 8 * 3600 * 1000);
+    }
+    return d;
+}
+
+function getOrderElapsedMins(order) {
+    const d = getOrderRealCreatedAt(order);
+    const diff = Math.floor((new Date() - d) / 60000);
+    return Math.max(0, diff);
+}
+
+function formatOrderTime(order) {
+    const d = getOrderRealCreatedAt(order);
+    return d.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+// 解析預約取餐時間（用於廚房出單看板按「取餐時間」先後排序）
+function getOrderTargetPickupDate(order) {
+    if (!order) return new Date();
+    const created = getOrderRealCreatedAt(order);
+    const pickupStr = (order.pickupTime || "").trim();
+
+    // 1. 儘速製作 / 現場等候 -> 下單時間 + 15 分鐘
+    if (!pickupStr || pickupStr.includes("儘速") || pickupStr.includes("尽速") || pickupStr.includes("現場")) {
+        return new Date(created.getTime() + 15 * 60000);
+    }
+
+    // 2. 擷取 HH:mm 或 4 位數字 (如 18:30, 1830, 19:15)
+    let timeMatch = pickupStr.match(/(\d{1,2})[:：](\d{2})/);
+    if (!timeMatch) {
+        timeMatch = pickupStr.match(/(\d{2})(\d{2})/);
+    }
+
+    if (timeMatch) {
+        const hours = parseInt(timeMatch[1], 10);
+        const mins = parseInt(timeMatch[2], 10);
+        const target = new Date(created);
+
+        // 若備註含月/日 (如 11/05 或 11-05)
+        const dateMatch = pickupStr.match(/(\d{1,2})[\/\-\.](\d{1,2})/);
+        if (dateMatch) {
+            target.setMonth(parseInt(dateMatch[1], 10) - 1);
+            target.setDate(parseInt(dateMatch[2], 10));
+        }
+
+        target.setHours(hours, mins, 0, 0);
+        return target;
+    }
+
+    // 預設容錯：下單時間 + 20 分鐘
+    return new Date(created.getTime() + 20 * 60000);
+}
+
+function renderPaymentStatusBadge(order) {
+    const isPaid = order.paymentStatus === 'Paid';
+    if (isPaid) {
+        return `
+            <span class="badge-payment-toggle paid" onclick="toggleOrderPaymentStatus(${order.id})" title="點擊可切換為未付款">
+                ✅ 已付款
+            </span>
+        `;
+    } else {
+        return `
+            <span class="badge-payment-toggle unpaid" onclick="toggleOrderPaymentStatus(${order.id})" title="點擊可切換為已付款">
+                🔴 未付款 (現場收)
+            </span>
+        `;
+    }
+}
+
+async function toggleOrderPaymentStatus(orderId) {
+    try {
+        const res = await fetch(`/api/admin/orders/${orderId}/toggle-payment`, { method: "POST" });
+        if (res.ok) {
+            const data = await res.json();
+            showAdminToast(`訂單付款狀態已更新為：${data.paymentStatus === 'Paid' ? '✅ 已付款' : '🔴 未付款'}`);
+            loadKdsOrders();
+        } else {
+            showAdminToast("更新付款狀態失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線異常");
+    }
+}
+
 function renderKdsCards(orders) {
     const grid = document.getElementById("kdsGrid");
     if (!grid) return;
@@ -450,9 +542,23 @@ function renderKdsCards(orders) {
         return;
     }
 
+    // 出單排序改為：依據訂單上的「預約取餐時間」先後排定順序！
+    let displayOrders = [...orders];
+    if (currentFilterStatus === "active" || currentFilterStatus === "Pending" || currentFilterStatus === "Preparing" || currentFilterStatus === "Ready") {
+        displayOrders.sort((a, b) => {
+            const timeA = getOrderTargetPickupDate(a).getTime();
+            const timeB = getOrderTargetPickupDate(b).getTime();
+            if (timeA !== timeB) return timeA - timeB;
+            return a.id - b.id;
+        });
+    } else {
+        // 歷史訂單或已取消：最新完成的在最前
+        displayOrders.sort((a, b) => b.id - a.id);
+    }
+
     let html = "";
-    orders.forEach(order => {
-        const elapsedMins = Math.floor((new Date() - new Date(order.createdAt)) / 60000);
+    displayOrders.forEach(order => {
+        const elapsedMins = getOrderElapsedMins(order);
         const isUrgent = order.orderStatus === "Pending" && elapsedMins > 5;
 
         // Payment status badge
@@ -465,14 +571,23 @@ function renderKdsCards(orders) {
 
         html += `
             <div class="kds-card ${order.orderStatus}" data-id="${order.id}">
-                <div class="kds-card-header">
+                <div class="kds-card-header" style="align-items: flex-start;">
                     <div>
                         <span class="kds-order-num">${order.orderNumber}</span>
+                        <div style="font-size:11.5px; color:#64748b; margin-top:4px;">
+                            下單時間: ${formatOrderTime(order)}
+                        </div>
                     </div>
-                    <div>
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
                         <span class="kds-badge ${order.diningType}">
                             ${order.diningType === 'DineIn' ? `🍽️ 內用 (${order.tableNumber || '未填'})` : '🥡 外帶自取'}
                         </span>
+                        <div class="kds-pickup-badge">
+                            ⏰ 取餐: <strong>${order.pickupTime || '儘速製作'}</strong>
+                        </div>
+                        <div>
+                            ${renderPaymentStatusBadge(order)}
+                        </div>
                     </div>
                 </div>
 
@@ -655,9 +770,10 @@ function renderReceiptView(data) {
         </div>
 
         <div style="font-size:12px; margin-bottom:8px;">
-            <div>時間: ${new Date(o.createdAt).toLocaleString()}</div>
+            <div>時間: ${getOrderRealCreatedAt(o).toLocaleString('zh-TW', { hour12: false })}</div>
             <div>顧客: ${o.customerName} (${o.customerPhone})</div>
-            <div>預計: ${o.pickupTime}</div>
+            <div>預計取餐: <strong>${o.pickupTime}</strong></div>
+            <div>付款狀態: <strong>${o.paymentStatus === 'Paid' ? '✅ 已付款' : '🔴 未付款'}</strong> (${payStr})</div>
             ${o.customerNote ? `<div style="color:#000; font-weight:bold;">備註: ${o.customerNote}</div>` : ''}
         </div>
 
@@ -1370,8 +1486,64 @@ async function loadAdminSettings() {
         if (document.getElementById("settingPopupNoticeEnabled")) document.getElementById("settingPopupNoticeEnabled").value = settings.PopupNoticeEnabled || "false";
         if (document.getElementById("settingPopupNoticeTitle")) document.getElementById("settingPopupNoticeTitle").value = settings.PopupNoticeTitle || "🚨 門市臨時公休公告";
         if (document.getElementById("settingPopupNoticeContent")) document.getElementById("settingPopupNoticeContent").value = settings.PopupNoticeContent || "";
+        if (document.getElementById("settingSlotAmountLimit")) document.getElementById("settingSlotAmountLimit").value = settings.SlotAmountLimit || "2000";
+        if (document.getElementById("settingBusyEstimatedMinutes")) document.getElementById("settingBusyEstimatedMinutes").value = settings.BusyEstimatedMinutes || "45";
+        updateBusyModeButton(settings.IsBusyMode === "true");
     } catch (e) {
         console.error("Settings load failed:", e);
+    }
+}
+
+function updateBusyModeButton(isBusy) {
+    const btn = document.getElementById("btnBusyModeToggle");
+    if (!btn) return;
+    if (isBusy) {
+        btn.classList.add("active");
+        btn.innerHTML = "🔥 廚房爆單中 (+30分)";
+        btn.title = "點擊切換恢復正常出餐模式";
+    } else {
+        btn.classList.remove("active");
+        btn.innerHTML = "⚡ 廚房接單：正常 (15-20分)";
+        btn.title = "點擊切換為爆單忙碌模式";
+    }
+}
+
+async function toggleBusyMode() {
+    try {
+        const res = await fetch("/api/admin/toggle-busy-mode", { method: "POST" });
+        if (res.ok) {
+            const data = await res.json();
+            updateBusyModeButton(data.isBusyMode);
+            showAdminToast(data.isBusyMode ? "🔥 已開啟廚房爆單模式（前台等待時間已自動拉長）" : "⚡ 已恢復正常出餐模式");
+        } else {
+            showAdminToast("切換失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線異常");
+    }
+}
+
+async function saveCapacitySettings() {
+    const limit = document.getElementById("settingSlotAmountLimit")?.value || "2000";
+    const mins = document.getElementById("settingBusyEstimatedMinutes")?.value || "45";
+
+    try {
+        const res = await fetch("/api/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                SlotAmountLimit: limit,
+                BusyEstimatedMinutes: mins
+            })
+        });
+
+        if (res.ok) {
+            showAdminToast("出餐產能與防爆單設定已成功儲存！");
+        } else {
+            showAdminToast("儲存失敗");
+        }
+    } catch (e) {
+        showAdminToast("連線異常");
     }
 }
 
@@ -1396,7 +1568,9 @@ async function saveAdminSettings() {
         LineAdminUserId: document.getElementById("settingLineAdminUserId")?.value?.trim() || "",
         PopupNoticeEnabled: document.getElementById("settingPopupNoticeEnabled")?.value || "false",
         PopupNoticeTitle: document.getElementById("settingPopupNoticeTitle")?.value || "🚨 門市臨時公休公告",
-        PopupNoticeContent: document.getElementById("settingPopupNoticeContent")?.value || ""
+        PopupNoticeContent: document.getElementById("settingPopupNoticeContent")?.value || "",
+        SlotAmountLimit: document.getElementById("settingSlotAmountLimit")?.value || "2000",
+        BusyEstimatedMinutes: document.getElementById("settingBusyEstimatedMinutes")?.value || "45"
     };
 
     try {
