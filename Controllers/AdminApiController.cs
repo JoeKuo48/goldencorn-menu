@@ -156,6 +156,26 @@ namespace GoldenCornOrder.Controllers
             return Ok(new { success = true, id = order.Id, paymentStatus = order.PaymentStatus });
         }
 
+        // POST: api/admin/toggle-busy-mode
+        [HttpPost("toggle-busy-mode")]
+        public async Task<IActionResult> ToggleBusyMode()
+        {
+            var setting = await _context.StoreSettings.FirstOrDefaultAsync(s => s.Key == "IsBusyMode");
+            if (setting == null)
+            {
+                setting = new StoreSetting { Key = "IsBusyMode", Value = "true", Description = "廚房爆單模式開關", UpdatedAt = TaiwanTimeHelper.Now };
+                _context.StoreSettings.Add(setting);
+            }
+            else
+            {
+                setting.Value = setting.Value == "true" ? "false" : "true";
+                setting.UpdatedAt = TaiwanTimeHelper.Now;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true, isBusyMode = setting.Value == "true" });
+        }
+
         // GET: api/admin/orders/{id}/receipt
         [HttpGet("orders/{id}/receipt")]
         public async Task<IActionResult> GetReceipt(int id)
