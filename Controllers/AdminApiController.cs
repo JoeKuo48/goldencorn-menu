@@ -67,7 +67,9 @@ namespace GoldenCornOrder.Controllers
                 {
                     var startOfDay = targetDate.Date;
                     var endOfDay = startOfDay.AddDays(1);
-                    query = query.Where(o => o.CreatedAt >= startOfDay && o.CreatedAt < endOfDay);
+                    var startUtc = startOfDay.AddHours(-8);
+                    var endUtc = startUtc.AddDays(1);
+                    query = query.Where(o => (o.CreatedAt >= startOfDay && o.CreatedAt < endOfDay) || (o.CreatedAt >= startUtc && o.CreatedAt < endUtc));
                 }
             }
 
@@ -135,6 +137,23 @@ namespace GoldenCornOrder.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, order.Id, order.OrderNumber, order.OrderStatus });
+        }
+
+        // POST: api/admin/orders/{id}/toggle-payment
+        [HttpPost("orders/{id}/toggle-payment")]
+        public async Task<IActionResult> TogglePaymentStatus(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound(new { message = "找不到該訂單" });
+            }
+
+            order.PaymentStatus = order.PaymentStatus == "Paid" ? "Unpaid" : "Paid";
+            order.UpdatedAt = TaiwanTimeHelper.Now;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, id = order.Id, paymentStatus = order.PaymentStatus });
         }
 
         // GET: api/admin/orders/{id}/receipt
@@ -211,34 +230,32 @@ namespace GoldenCornOrder.Controllers
             // If it requires plate sides, copy from default option groups if available
             if (menuItem.RequiresPlateSides)
             {
-                var existingGroup = await _context.OptionGroups
-                    .Include(g => g.Options)
-                    .FirstOrDefaultAsync(g => g.Name == "美式餐盤自選配料");
+                var templateItem = await _context.MenuItems
+                    .Include(m => m.OptionGroups)
+                        .ThenInclude(g => g.Options)
+                    .FirstOrDefaultAsync(m => m.RequiresPlateSides && m.OptionGroups.Any());
                 
-                if (existingGroup != null)
+                if (templateItem != null)
                 {
-                    menuItem.OptionGroups = new List<OptionGroup>
+                    menuItem.OptionGroups = templateItem.OptionGroups.Select(g => new OptionGroup
                     {
-                        new()
+                        Name = g.Name,
+                        EnglishName = g.EnglishName,
+                        Description = g.Description,
+                        IsRequired = g.IsRequired,
+                        MinSelect = g.MinSelect,
+                        MaxSelect = g.MaxSelect,
+                        DisplayOrder = g.DisplayOrder,
+                        Options = g.Options.Select(o => new OptionItem
                         {
-                            Name = existingGroup.Name,
-                            EnglishName = existingGroup.EnglishName,
-                            Description = existingGroup.Description,
-                            IsRequired = existingGroup.IsRequired,
-                            MinSelect = existingGroup.MinSelect,
-                            MaxSelect = existingGroup.MaxSelect,
-                            DisplayOrder = 1,
-                            Options = existingGroup.Options.Select(o => new OptionItem
-                            {
-                                Name = o.Name,
-                                EnglishName = o.EnglishName,
-                                ExtraPrice = o.ExtraPrice,
-                                IsAvailable = true,
-                                DisplayOrder = o.DisplayOrder,
-                                Tag = o.Tag
-                            }).ToList()
-                        }
-                    };
+                            Name = o.Name,
+                            EnglishName = o.EnglishName,
+                            ExtraPrice = o.ExtraPrice,
+                            IsAvailable = o.IsAvailable,
+                            DisplayOrder = o.DisplayOrder,
+                            Tag = o.Tag
+                        }).ToList()
+                    }).ToList();
                 }
             }
 
@@ -290,33 +307,32 @@ namespace GoldenCornOrder.Controllers
             {
                 if (item.OptionGroups == null || !item.OptionGroups.Any())
                 {
-                    var existingGroup = await _context.OptionGroups
-                        .Include(g => g.Options)
-                        .FirstOrDefaultAsync(g => g.Name == "美式餐盤自選配料");
-                    if (existingGroup != null)
+                    var templateItem = await _context.MenuItems
+                        .Include(m => m.OptionGroups)
+                            .ThenInclude(g => g.Options)
+                        .FirstOrDefaultAsync(m => m.RequiresPlateSides && m.OptionGroups.Any() && m.Id != item.Id);
+
+                    if (templateItem != null)
                     {
-                        item.OptionGroups = new List<OptionGroup>
+                        item.OptionGroups = templateItem.OptionGroups.Select(g => new OptionGroup
                         {
-                            new()
+                            Name = g.Name,
+                            EnglishName = g.EnglishName,
+                            Description = g.Description,
+                            IsRequired = g.IsRequired,
+                            MinSelect = g.MinSelect,
+                            MaxSelect = g.MaxSelect,
+                            DisplayOrder = g.DisplayOrder,
+                            Options = g.Options.Select(o => new OptionItem
                             {
-                                Name = existingGroup.Name,
-                                EnglishName = existingGroup.EnglishName,
-                                Description = existingGroup.Description,
-                                IsRequired = existingGroup.IsRequired,
-                                MinSelect = existingGroup.MinSelect,
-                                MaxSelect = existingGroup.MaxSelect,
-                                DisplayOrder = 1,
-                                Options = existingGroup.Options.Select(o => new OptionItem
-                                {
-                                    Name = o.Name,
-                                    EnglishName = o.EnglishName,
-                                    ExtraPrice = o.ExtraPrice,
-                                    IsAvailable = true,
-                                    DisplayOrder = o.DisplayOrder,
-                                    Tag = o.Tag
-                                }).ToList()
-                            }
-                        };
+                                Name = o.Name,
+                                EnglishName = o.EnglishName,
+                                ExtraPrice = o.ExtraPrice,
+                                IsAvailable = o.IsAvailable,
+                                DisplayOrder = o.DisplayOrder,
+                                Tag = o.Tag
+                            }).ToList()
+                        }).ToList();
                     }
                 }
             }
@@ -547,9 +563,11 @@ namespace GoldenCornOrder.Controllers
         {
             var today = TaiwanTimeHelper.Today;
             var tomorrow = today.AddDays(1);
+            var todayStartUtc = today.AddHours(-8);
+            var tomorrowEndUtc = todayStartUtc.AddDays(1);
 
             var todayOrders = await _context.Orders
-                .Where(o => o.CreatedAt >= today && o.CreatedAt < tomorrow && o.OrderStatus != "Cancelled")
+                .Where(o => ((o.CreatedAt >= today && o.CreatedAt < tomorrow) || (o.CreatedAt >= todayStartUtc && o.CreatedAt < tomorrowEndUtc)) && o.OrderStatus != "Cancelled")
                 .Include(o => o.Items)
                 .ToListAsync();
 
@@ -606,8 +624,9 @@ namespace GoldenCornOrder.Controllers
 
             foreach (var o in orders)
             {
+                var displayTime = o.CreatedAt.Kind == DateTimeKind.Utc ? o.CreatedAt.AddHours(8) : o.CreatedAt;
                 var itemsSummary = string.Join("； ", o.Items.Select(i => $"{i.MenuItemName} x{i.Quantity} ({i.SelectedOptionsSummary})"));
-                var row = $"\"{o.OrderNumber}\",\"{o.CreatedAt:yyyy/MM/dd HH:mm}\",\"{o.CustomerName}\",\"{o.CustomerPhone}\",\"{o.DiningType}\",\"{o.TableNumber}\",\"{o.PickupTime}\",\"{o.OrderStatus}\",\"{o.PaymentMethod}\",\"{o.PaymentStatus}\",\"{o.TransferLast5}\",{o.TotalAmount},\"{itemsSummary.Replace("\"", "\"\"")}\",\"{o.CustomerNote?.Replace("\"", "\"\"")}\"";
+                var row = $"\"{o.OrderNumber}\",\"{displayTime:yyyy/MM/dd HH:mm}\",\"{o.CustomerName}\",\"{o.CustomerPhone}\",\"{o.DiningType}\",\"{o.TableNumber}\",\"{o.PickupTime}\",\"{o.OrderStatus}\",\"{o.PaymentMethod}\",\"{o.PaymentStatus}\",\"{o.TransferLast5}\",{o.TotalAmount},\"{itemsSummary.Replace("\"", "\"\"")}\",\"{o.CustomerNote?.Replace("\"", "\"\"")}\"";
                 sb.AppendLine(row);
             }
 

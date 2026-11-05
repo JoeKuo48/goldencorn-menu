@@ -65,8 +65,10 @@ namespace GoldenCornOrder.Controllers
             // Generate Order Number: GC-yyyyMMdd-001 using Taiwan Timezone (UTC+8)
             var today = TaiwanTimeHelper.Today;
             var tomorrow = today.AddDays(1);
+            var todayStartUtc = today.AddHours(-8);
+            var tomorrowEndUtc = todayStartUtc.AddDays(1);
             var todayOrdersCount = await _context.Orders
-                .CountAsync(o => o.CreatedAt >= today && o.CreatedAt < tomorrow);
+                .CountAsync(o => (o.CreatedAt >= today && o.CreatedAt < tomorrow) || (o.CreatedAt >= todayStartUtc && o.CreatedAt < tomorrowEndUtc));
             
             var orderSeq = (todayOrdersCount + 1).ToString("D3");
             var orderNumber = $"GC-{today:yyyyMMdd}-{orderSeq}";
@@ -84,7 +86,7 @@ namespace GoldenCornOrder.Controllers
                 PaymentStatus = dto.PaymentMethod == "Cash" ? "Unpaid" : "Paid",
                 TransferLast5 = dto.TransferLast5?.Trim(),
                 OrderStatus = "Pending",
-                CreatedAt = TaiwanTimeHelper.Now
+                CreatedAt = DateTime.UtcNow
             };
 
             decimal totalAmount = 0;
