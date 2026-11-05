@@ -11,10 +11,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/admin.css?v=3.7">
-    <link rel="stylesheet" href="/css/style.css?v=3.7">
+    <link rel="stylesheet" href="/css/admin.css?v=4.0">
+    <link rel="stylesheet" href="/css/style.css?v=4.0">
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="/js/admin.js?v=3.7"></script>
+    <script src="/js/admin.js?v=4.0"></script>
 </head>
 <body>
 
@@ -55,6 +55,9 @@
                 <span class="live-dot"></span>
                 <span>即時連線中</span>
             </div>
+            <button id="btnBusyModeToggle" class="btn-busy-mode" onclick="toggleBusyMode()" title="點擊切換廚房爆單忙碌模式">
+                ⚡ 廚房接單：正常 (15-20分)
+            </button>
             <button id="btnAudioToggle" class="btn-audio-toggle" onclick="toggleAudioAlert()" title="開啟或關閉提示音">
                 🔔 提示音：開
             </button>
@@ -278,6 +281,48 @@
                 <div style="text-align:right;">
                     <button type="button" class="btn-primary-admin" onclick="saveAdminSettings()" style="background:#e11d48; border-color:#e11d48; padding:10px 24px;">
                         <span>💾</span> 儲存公休彈窗設定
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kitchen Capacity & Peak Rush Control Card (A+D Solution) -->
+            <div style="background:#fff; border-radius:12px; border:2px solid #d97706; padding:24px; max-width:800px; margin-bottom:24px; box-shadow:0 4px 16px rgba(217,119,6,0.08);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:24px;">⚡</span>
+                        <h3 style="font-size:16px; font-weight:800; color:#b45309; margin:0;">
+                            出餐產能與尖峰防爆單控管 (A+D 方案)
+                        </h3>
+                    </div>
+                    <span style="font-size:12px; background:#fef3c7; color:#92400e; padding:3px 10px; border-radius:20px; font-weight:700; border:1px solid #fde68a;">
+                        每30分鐘額度自動控管
+                    </span>
+                </div>
+                <p style="font-size:13px; color:var(--admin-muted); margin-bottom:16px;">
+                    系統自動統計每個 30 分鐘時段的訂單金額。當特定時段（例如 18:00-18:30）累積金額達到上限時，前台該時段將<strong>自動標記「滿單額滿」並禁止點選</strong>，客人會自動分流至前後時段，保護廚房不爆單！
+                </p>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" for="settingSlotAmountLimit">
+                            每 30 分鐘接單金額上限 (NT$) <span style="color:#b91c1c;">*</span>
+                        </label>
+                        <input type="number" id="settingSlotAmountLimit" class="form-control" value="2000" min="500" step="100">
+                        <small style="color:#64748b; font-size:11px;">預設 2,000 元（滿單自動鎖定時段，客人自動選其他時間）</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="settingBusyEstimatedMinutes">
+                            爆單時預估製作等候時間 (分鐘) <span style="color:#b91c1c;">*</span>
+                        </label>
+                        <input type="number" id="settingBusyEstimatedMinutes" class="form-control" value="45" min="20" step="5">
+                        <small style="color:#64748b; font-size:11px;">上方切換「爆單中」時，前台現場即時單顯示此等待時間</small>
+                    </div>
+                </div>
+
+                <div style="text-align:right;">
+                    <button type="button" class="btn-primary-admin" onclick="saveCapacitySettings()" style="background:#d97706;">
+                        <span>💾</span> 儲存產能控管設定
                     </button>
                 </div>
             </div>
