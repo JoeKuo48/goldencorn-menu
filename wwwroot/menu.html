@@ -203,9 +203,35 @@
                 </div>
 
                 <div class="form-group" id="pickupTimeGroup">
-                    <label class="form-label" for="orderPickupTime" id="lblOrderPickupTime">預計取餐時間</label>
-                    <input type="text" id="orderPickupTime" class="form-control" value="儘速製作 (約 15-20 分鐘)" placeholder="例如：儘速製作 或 18:30">
-                    <div id="pickupTimeHint" style="font-size:12px; color:#b45309; margin-top:4px; display:none; font-weight:600;">⚠️ 目前非現場營業時段，請填寫預計取餐日期與時間（如：週五 18:00 或 10/24 17:30）。</div>
+                    <label class="form-label" for="orderPickupTime" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>預計取餐時間 <span style="color:#b91c1c;">*</span></span>
+                        <span id="slotCapacityHint" style="font-size:11.5px; color:#64748b; font-weight:500;">預約額滿為止</span>
+                    </label>
+
+                    <!-- Busy mode notice banner -->
+                    <div id="busyModeNotice" style="display:none; background:#fff7ed; border:1px solid #fed7aa; color:#c2410c; padding:8px 12px; border-radius:8px; font-size:12.5px; margin-bottom:10px; font-weight:700;">
+                        🔥 目前正值出餐高峰期，慢火現烤約需 40-50 分鐘，建議選擇後續預約時段或耐心等候！
+                    </div>
+
+                    <!-- Pickup Type Selector (儘速製作 vs 預約時段) -->
+                    <div id="pickupTypeButtons" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                        <button type="button" class="btn-dining-toggle active" id="btnPickupAsap" onclick="setPickupMode('asap')">
+                            ⚡ 儘速製作 <span id="asapEstTime" style="font-size:11px; display:block; opacity:0.8;">(約 15-20 分鐘)</span>
+                        </button>
+                        <button type="button" class="btn-dining-toggle" id="btnPickupSlot" onclick="setPickupMode('slot')">
+                            📅 預約時段 <span style="font-size:11px; display:block; opacity:0.8;">(指定取餐時間)</span>
+                        </button>
+                    </div>
+
+                    <!-- Dropdown for Slots -->
+                    <div id="slotSelectContainer" style="display:none; margin-bottom:6px;">
+                        <select id="pickupSlotSelect" class="form-control" onchange="onPickupSlotSelect(this.value)">
+                            <option value="">載入可預約時段中...</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" id="orderPickupTime" value="儘速製作 (約 15-20 分鐘)">
+                    <div id="pickupTimeHint" style="font-size:12px; color:#b45309; margin-top:4px; display:none; font-weight:600;">⚠️ 目前非現場即時營業時段，請選擇預計取餐時段。</div>
                 </div>
 
                 <!-- Payment Methods -->
