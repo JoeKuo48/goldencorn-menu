@@ -428,11 +428,42 @@ function flashAdminTitle(newText) {
     }, 800);
 }
 
+let selectedKdsDate = "all";
+
 function setKdsFilter(status, btnEl) {
     currentFilterStatus = status;
+    selectedKdsDate = "all";
     document.querySelectorAll(".kds-filter-btn").forEach(b => b.classList.remove("active"));
     if (btnEl) btnEl.classList.add("active");
     loadKdsOrders();
+}
+
+function setKdsDateFilter(dateKey) {
+    selectedKdsDate = dateKey;
+    if (allOrders) {
+        renderKdsCards(allOrders);
+    }
+}
+
+// 取得訂單所屬台灣日期資訊
+function getOrderDateInfo(order) {
+    const d = getOrderRealCreatedAt(order);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const dateKey = `${yyyy}-${mm}-${dd}`;
+    const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+    const dayName = days[d.getDay()];
+
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const isToday = (dateKey === todayKey);
+
+    const displayLabel = isToday
+        ? `🌟 今日 ${mm}/${dd} (${dayName})`
+        : `📅 ${yyyy}/${mm}/${dd} (${dayName})`;
+
+    return { dateKey, displayLabel, isToday, rawDate: d };
 }
 
 // 取得真實下單時間（自動校正伺服器 UTC 與台灣時區 +8 差異，防止負數時間）
@@ -527,11 +558,103 @@ async function toggleOrderPaymentStatus(orderId) {
     }
 }
 
+function renderSingleKdsCard(order) {
+    const elapsedMins = getOrderElapsedMins(order);
+    const isUrgent = order.orderStatus === "Pending" && elapsedMins > 5;
+
+    // Payment status badge
+    let paymentBadgeHtml = `<span style="background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🔴 現場收款 (現金/到店掃碼) · NT$ ${order.totalAmount}</span>`;
+    if (order.paymentMethod === "LinePay") {
+        paymentBadgeHtml = `<span style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🟡 線上先 LINE Pay (取餐需核對) · NT$ ${order.totalAmount}</span>`;
+    } else if (order.paymentMethod === "BankTransfer") {
+        paymentBadgeHtml = `<span style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🏦 銀行轉帳 (待核帳 · 後5碼: <strong>${order.transferLast5 || '未填'}</strong>) · NT$ ${order.totalAmount}</span>`;
+    }
+
+    let cardHtml = `
+        <div class="kds-card ${order.orderStatus}" data-id="${order.id}">
+            <div class="kds-card-header" style="align-items: flex-start;">
+                <div>
+                    <span class="kds-order-num">${order.orderNumber}</span>
+                    <div style="font-size:11.5px; color:#64748b; margin-top:4px;">
+                        下單時間: ${formatOrderTime(order)}
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                    <span class="kds-badge ${order.diningType}">
+                        ${order.diningType === 'DineIn' ? `🍽️ 內用 (${order.tableNumber || '未填'})` : '🥡 外帶自取'}
+                    </span>
+                    <div class="kds-pickup-badge">
+                        ⏰ 取餐: <strong>${order.pickupTime || '儘速製作'}</strong>
+                    </div>
+                    <div>
+                        ${renderPaymentStatusBadge(order)}
+                    </div>
+                </div>
+            </div>
+
+            <div class="kds-card-meta">
+                <div>👤 <strong>${order.customerName}</strong> (${order.customerPhone})</div>
+                <div style="${isUrgent ? 'color:#dc2626; font-weight:800;' : ''}">⏱️ ${elapsedMins} 分鐘前</div>
+            </div>
+
+            <div style="padding: 4px 16px 8px;">
+                ${paymentBadgeHtml}
+            </div>
+
+            <div class="kds-items-list">
+    `;
+
+    (order.items || []).forEach(item => {
+        cardHtml += `
+            <div>
+                <div class="kds-item-row">
+                    <div>
+                        <span class="kds-item-qty">${item.quantity}x</span>
+                        <span class="kds-item-name">${item.menuItemName}</span>
+                    </div>
+                    <div style="font-size:13px; font-weight:700; color:var(--admin-muted);">
+                        NT$ ${item.subTotal}
+                    </div>
+                </div>
+                ${item.selectedOptionsSummary ? `<div class="kds-item-options">↳ ${item.selectedOptionsSummary}</div>` : ''}
+                ${item.itemNote ? `<div class="kds-item-note">💬 備註: ${item.itemNote}</div>` : ''}
+            </div>
+        `;
+    });
+
+    cardHtml += `</div>`;
+
+    if (order.customerNote) {
+        cardHtml += `
+            <div class="kds-note-box">
+                <strong>全單備註：</strong>${order.customerNote}
+            </div>
+        `;
+    }
+
+    cardHtml += `
+            <div class="kds-card-footer">
+                <div class="kds-total-text">NT$ ${order.totalAmount}</div>
+                <div class="kds-btn-group">
+                    <button class="btn-kds-action print" title="列印小票" onclick="openReceiptModal(${order.id})">🖨️</button>
+                    ${renderKdsActionButtons(order)}
+                </div>
+            </div>
+        </div>
+    `;
+
+    return cardHtml;
+}
+
 function renderKdsCards(orders) {
     const grid = document.getElementById("kdsGrid");
     if (!grid) return;
 
+    const dateToolbar = document.getElementById("kdsDateFilterToolbar");
+    const pillContainer = document.getElementById("kdsDatePillContainer");
+
     if (orders.length === 0) {
+        if (dateToolbar) dateToolbar.style.display = "none";
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; color: var(--admin-muted);">
                 <div style="font-size: 36px; margin-bottom: 8px;">📋</div>
@@ -542,108 +665,107 @@ function renderKdsCards(orders) {
         return;
     }
 
-    // 出單排序改為：依據訂單上的「預約取餐時間」先後排定順序！
-    let displayOrders = [...orders];
-    if (currentFilterStatus === "active" || currentFilterStatus === "Pending" || currentFilterStatus === "Preparing" || currentFilterStatus === "Ready") {
+    // 若為「今日已完成」或「全部紀錄」，啟用日期分組與日期快選工具列
+    const isCompletedOrAll = (currentFilterStatus === "Completed" || currentFilterStatus === "all");
+
+    if (isCompletedOrAll) {
+        // 依據台灣日期分組
+        const groupMap = new Map();
+        orders.forEach(order => {
+            const dateInfo = getOrderDateInfo(order);
+            if (!groupMap.has(dateInfo.dateKey)) {
+                groupMap.set(dateInfo.dateKey, {
+                    dateKey: dateInfo.dateKey,
+                    displayLabel: dateInfo.displayLabel,
+                    isToday: dateInfo.isToday,
+                    orders: [],
+                    totalAmount: 0
+                });
+            }
+            const grp = groupMap.get(dateInfo.dateKey);
+            grp.orders.push(order);
+            grp.totalAmount += order.totalAmount;
+        });
+
+        // 日期由新到舊排序
+        const sortedGroups = Array.from(groupMap.values()).sort((a, b) => b.dateKey.localeCompare(a.dateKey));
+
+        // 渲染日期篩選按鈕 (Pills)
+        if (dateToolbar && pillContainer) {
+            dateToolbar.style.display = "flex";
+            let pillsHtml = `
+                <button class="kds-date-pill ${selectedKdsDate === 'all' ? 'active' : ''}" onclick="setKdsDateFilter('all')">
+                    全部日期 (${orders.length})
+                </button>
+            `;
+            sortedGroups.forEach(g => {
+                pillsHtml += `
+                    <button class="kds-date-pill ${g.isToday ? 'today-pill' : ''} ${selectedKdsDate === g.dateKey ? 'active' : ''}" onclick="setKdsDateFilter('${g.dateKey}')">
+                        ${g.displayLabel} (${g.orders.length})
+                    </button>
+                `;
+            });
+            pillContainer.innerHTML = pillsHtml;
+        }
+
+        // 決定要渲染的群組
+        const groupsToRender = (selectedKdsDate === "all")
+            ? sortedGroups
+            : sortedGroups.filter(g => g.dateKey === selectedKdsDate);
+
+        if (groupsToRender.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 50px 0; color: var(--admin-muted);">
+                    <div style="font-size: 28px; margin-bottom: 8px;">📅</div>
+                    <div style="font-size: 15px; font-weight: 700;">該日期沒有相關訂單</div>
+                </div>
+            `;
+            return;
+        }
+
+        let html = "";
+        groupsToRender.forEach(grp => {
+            // 每個日期內依下單/完成倒序排列
+            grp.orders.sort((a, b) => b.id - a.id);
+
+            html += `
+                <div class="kds-date-group-card ${grp.isToday ? 'today' : ''}">
+                    <div class="kds-date-group-header">
+                        <div class="kds-date-title-block">
+                            <span class="kds-date-group-badge ${grp.isToday ? 'today' : ''}">
+                                ${grp.isToday ? '🌟 今日完成' : '📁 歷史完成紀錄'}
+                            </span>
+                            <span class="kds-date-group-text">${grp.displayLabel}</span>
+                            <span class="kds-date-group-count">共 ${grp.orders.length} 筆已完成訂單</span>
+                        </div>
+                        <div class="kds-date-group-subtotal">
+                            當日營業額小計：<strong>NT$ ${grp.totalAmount.toLocaleString()}</strong>
+                        </div>
+                    </div>
+                    <div class="kds-cards-subgrid">
+                        ${grp.orders.map(o => renderSingleKdsCard(o)).join("")}
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = html;
+
+    } else {
+        // 進行中的訂單（全部進行中 / Pending / Preparing / Ready）
+        if (dateToolbar) dateToolbar.style.display = "none";
+
+        // 依據預約取餐時間先後排定順序
+        let displayOrders = [...orders];
         displayOrders.sort((a, b) => {
             const timeA = getOrderTargetPickupDate(a).getTime();
             const timeB = getOrderTargetPickupDate(b).getTime();
             if (timeA !== timeB) return timeA - timeB;
             return a.id - b.id;
         });
-    } else {
-        // 歷史訂單或已取消：最新完成的在最前
-        displayOrders.sort((a, b) => b.id - a.id);
+
+        grid.innerHTML = displayOrders.map(o => renderSingleKdsCard(o)).join("");
     }
-
-    let html = "";
-    displayOrders.forEach(order => {
-        const elapsedMins = getOrderElapsedMins(order);
-        const isUrgent = order.orderStatus === "Pending" && elapsedMins > 5;
-
-        // Payment status badge
-        let paymentBadgeHtml = `<span style="background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🔴 現場收款 (現金/到店掃碼) · NT$ ${order.totalAmount}</span>`;
-        if (order.paymentMethod === "LinePay") {
-            paymentBadgeHtml = `<span style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🟡 線上先 LINE Pay (取餐需核對) · NT$ ${order.totalAmount}</span>`;
-        } else if (order.paymentMethod === "BankTransfer") {
-            paymentBadgeHtml = `<span style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; font-size:11.5px; font-weight:900; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:4px;">🏦 銀行轉帳 (待核帳 · 後5碼: <strong>${order.transferLast5 || '未填'}</strong>) · NT$ ${order.totalAmount}</span>`;
-        }
-
-        html += `
-            <div class="kds-card ${order.orderStatus}" data-id="${order.id}">
-                <div class="kds-card-header" style="align-items: flex-start;">
-                    <div>
-                        <span class="kds-order-num">${order.orderNumber}</span>
-                        <div style="font-size:11.5px; color:#64748b; margin-top:4px;">
-                            下單時間: ${formatOrderTime(order)}
-                        </div>
-                    </div>
-                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
-                        <span class="kds-badge ${order.diningType}">
-                            ${order.diningType === 'DineIn' ? `🍽️ 內用 (${order.tableNumber || '未填'})` : '🥡 外帶自取'}
-                        </span>
-                        <div class="kds-pickup-badge">
-                            ⏰ 取餐: <strong>${order.pickupTime || '儘速製作'}</strong>
-                        </div>
-                        <div>
-                            ${renderPaymentStatusBadge(order)}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="kds-card-meta">
-                    <div>👤 <strong>${order.customerName}</strong> (${order.customerPhone})</div>
-                    <div style="${isUrgent ? 'color:#dc2626; font-weight:800;' : ''}">⏱️ ${elapsedMins} 分鐘前</div>
-                </div>
-
-                <div style="padding: 4px 16px 8px;">
-                    ${paymentBadgeHtml}
-                </div>
-
-                <div class="kds-items-list">
-        `;
-
-        (order.items || []).forEach(item => {
-            html += `
-                <div>
-                    <div class="kds-item-row">
-                        <div>
-                            <span class="kds-item-qty">${item.quantity}x</span>
-                            <span class="kds-item-name">${item.menuItemName}</span>
-                        </div>
-                        <div style="font-size:13px; font-weight:700; color:var(--admin-muted);">
-                            NT$ ${item.subTotal}
-                        </div>
-                    </div>
-                    ${item.selectedOptionsSummary ? `<div class="kds-item-options">↳ ${item.selectedOptionsSummary}</div>` : ''}
-                    ${item.itemNote ? `<div class="kds-item-note">💬 備註: ${item.itemNote}</div>` : ''}
-                </div>
-            `;
-        });
-
-        html += `</div>`;
-
-        if (order.customerNote) {
-            html += `
-                <div class="kds-note-box">
-                    <strong>全單備註：</strong>${order.customerNote}
-                </div>
-            `;
-        }
-
-        html += `
-                <div class="kds-card-footer">
-                    <div class="kds-total-text">NT$ ${order.totalAmount}</div>
-                    <div class="kds-btn-group">
-                        <button class="btn-kds-action print" title="列印小票" onclick="openReceiptModal(${order.id})">🖨️</button>
-                        ${renderKdsActionButtons(order)}
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-
-    grid.innerHTML = html;
 }
 
 function renderKdsActionButtons(order) {
@@ -1459,6 +1581,28 @@ async function loadAdminStats() {
     }
 }
 
+// Google Sheets 一鍵複製與開啟 sheets.new
+async function copyAndOpenGoogleSheets() {
+    showAdminToast("⏳ 正在取得依日期分類的報表資料...");
+    try {
+        const res = await fetch("/api/admin/export-orders?format=tsv");
+        if (!res.ok) {
+            showAdminToast("❌ 取得報表失敗，改由下載 CSV 檔案");
+            window.location.href = "/api/admin/export-orders";
+            return;
+        }
+        const text = await res.text();
+        await navigator.clipboard.writeText(text);
+
+        window.open("https://sheets.new", "_blank");
+        showAdminToast("📋 報表已複製到剪貼簿！已為您開啟 Google 試算表，請直接按 Ctrl + V 貼上！");
+    } catch (err) {
+        console.error("Google sheets copy failed:", err);
+        window.location.href = "/api/admin/export-orders";
+        showAdminToast("📋 已為您下載 CSV 檔案，可直接上傳至 Google 雲端硬碟開啟！");
+    }
+}
+
 // 7. Store Settings
 async function loadAdminSettings() {
     try {
@@ -1474,6 +1618,8 @@ async function loadAdminSettings() {
         if (document.getElementById("settingAnnouncement")) document.getElementById("settingAnnouncement").value = settings.Announcement || "";
         if (document.getElementById("settingIsOpen")) document.getElementById("settingIsOpen").value = settings.IsOpen || "true";
         if (document.getElementById("settingStoreTip")) document.getElementById("settingStoreTip").value = settings.StoreTip || "";
+        if (document.getElementById("settingNoticeDelivery")) document.getElementById("settingNoticeDelivery").value = settings.NoticeDelivery || "";
+        if (document.getElementById("settingNoticeContact")) document.getElementById("settingNoticeContact").value = settings.NoticeContact || "";
         if (document.getElementById("settingBankCode")) document.getElementById("settingBankCode").value = settings.BankCode || "";
         if (document.getElementById("settingBankAccount")) document.getElementById("settingBankAccount").value = settings.BankAccount || "";
         if (document.getElementById("settingBankAccountName")) document.getElementById("settingBankAccountName").value = settings.BankAccountName || "";
@@ -1557,6 +1703,8 @@ async function saveAdminSettings() {
         Announcement: document.getElementById("settingAnnouncement")?.value || "",
         IsOpen: document.getElementById("settingIsOpen")?.value || "true",
         StoreTip: document.getElementById("settingStoreTip")?.value || "",
+        NoticeDelivery: document.getElementById("settingNoticeDelivery")?.value || document.getElementById("cmsNoticeDelivery")?.value || "",
+        NoticeContact: document.getElementById("settingNoticeContact")?.value || document.getElementById("cmsNoticeContact")?.value || "",
         BankCode: document.getElementById("settingBankCode")?.value || "",
         BankAccount: document.getElementById("settingBankAccount")?.value || "",
         BankAccountName: document.getElementById("settingBankAccountName")?.value || "",
@@ -1581,7 +1729,10 @@ async function saveAdminSettings() {
         });
 
         if (res.ok) {
-            showAdminToast("門市、收款與 LINE 推播設定已成功儲存！");
+            // 雙向同步前台與 CMS 頁面欄位
+            if (document.getElementById("cmsNoticeDelivery")) document.getElementById("cmsNoticeDelivery").value = payload.NoticeDelivery;
+            if (document.getElementById("cmsNoticeContact")) document.getElementById("cmsNoticeContact").value = payload.NoticeContact;
+            showAdminToast("門市基本資訊、營業公告與收款設定已成功儲存！");
         } else {
             showAdminToast("設定儲存失敗");
         }
@@ -1865,6 +2016,8 @@ async function saveAdminHomepageSettings() {
         });
 
         if (res.ok) {
+            if (document.getElementById("settingNoticeDelivery")) document.getElementById("settingNoticeDelivery").value = payload.NoticeDelivery;
+            if (document.getElementById("settingNoticeContact")) document.getElementById("settingNoticeContact").value = payload.NoticeContact;
             showAdminToast("✅ 首頁與派對餐盒所有文案設定已成功儲存！");
         } else {
             showAdminToast("設定儲存失敗");
