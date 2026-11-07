@@ -11,10 +11,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/admin.css?v=4.0">
-    <link rel="stylesheet" href="/css/style.css?v=4.0">
+    <link rel="stylesheet" href="/css/admin.css?v=4.2">
+    <link rel="stylesheet" href="/css/style.css?v=4.2">
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="/js/admin.js?v=4.0"></script>
+    <script src="/js/admin.js?v=4.2"></script>
 </head>
 <body>
 
@@ -90,6 +90,14 @@
                     <button class="kds-filter-btn" onclick="setKdsFilter('Ready', this)">待取餐 (Ready)</button>
                     <button class="kds-filter-btn" onclick="setKdsFilter('Completed', this)">今日已完成</button>
                     <button class="kds-filter-btn" onclick="setKdsFilter('all', this)">全部紀錄</button>
+                </div>
+            </div>
+
+            <!-- KDS Date Filter Toolbar (依日期分類切換) -->
+            <div id="kdsDateFilterToolbar" class="kds-date-toolbar" style="display:none;">
+                <span class="kds-date-toolbar-label">📅 依照日期篩選檢視：</span>
+                <div id="kdsDatePillContainer" class="kds-date-pills">
+                    <!-- Dynamically populated date buttons -->
                 </div>
             </div>
 
@@ -183,12 +191,24 @@
             <div class="kds-header">
                 <div>
                     <h2 class="kds-title">營運數據與銷售統計</h2>
-                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">今日即時營收與全品項銷售排行分析</p>
+                    <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">今日即時營收與全品項銷售排行分析（支援 Google 試算表直接開啟）</p>
                 </div>
-                <div>
-                    <a href="/api/admin/export-orders" class="btn-primary-admin" style="text-decoration:none;">
-                        <span>📥</span> 匯出 CSV 訂單報表
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="btn-primary-admin" onclick="copyAndOpenGoogleSheets()" style="background:#0f9d58; border-color:#0f9d58; font-weight:800; cursor:pointer;" title="複製依日期排版資料並直接開啟 Google 試算表">
+                        <span>📊</span> 一鍵複製到 Google 試算表 (Google Sheets)
+                    </button>
+                    <a href="/api/admin/export-orders" class="btn-primary-admin" style="text-decoration:none; background:#475569; border-color:#475569;" title="下載依日期分類與當日小計的 CSV 檔案">
+                        <span>📥</span> 下載依日期分類 CSV
                     </a>
+                </div>
+            </div>
+
+            <!-- Google Sheets Quick Tip Banner -->
+            <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:12px; padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
+                <div style="font-size:24px;">📊</div>
+                <div style="font-size:13px; color:#166534; line-height:1.6;">
+                    <strong>Google 試算表 (Google Sheets) 完美檢視：</strong>
+                    點選上方<strong>【一鍵複製到 Google 試算表】</strong>，系統會自動依日期群組排版並計算各日小計，複製完成後會自動開啟 Google Sheets，直接按下鍵盤 <strong>Ctrl + V (貼上)</strong> 即可，完全免除本機 Excel 亂碼或版面錯亂！
                 </div>
             </div>
 
@@ -368,13 +388,23 @@
                 <!-- Store Tip (The Lightbulb notice) -->
                 <div class="form-group">
                     <label class="form-label" for="settingStoreTip">
-                        💡 門市資訊底部溫馨提醒 (有燈泡處敘述)
+                        💡 門市資訊底部溫馨提醒 (門市公告彈窗與菜單溫馨提醒)
                     </label>
-                    <textarea id="settingStoreTip" class="form-control" rows="5">💡現階段為主廚一人工作室，建議提前預約，部分燻肉品項才不會缺貨唷！
-💡如需外送，皆以LALAMOVE平台試算運費。EX.7.5公里機車外送約140元
-💡試營運期間，消費滿600元外送直接免運！再送美式燒烤玉米肋排乙份！
-💡有任何問題，如企業商務套餐、下午茶點心團購等等，請私訊IG粉專，由主廚一對一服務。
-💡IG: goldencorn_diner</textarea>
+                    <textarea id="settingStoreTip" class="form-control" rows="4" placeholder="填寫溫馨提醒（例如：一人作業若有久候請多包涵...）"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="settingNoticeDelivery">
+                        🛵 外送與自取說明 (門市公告彈窗第 3 區塊)
+                    </label>
+                    <textarea id="settingNoticeDelivery" class="form-control" rows="3" placeholder="• 本店餐點皆為低溫慢火柴燻，建議提前預約以確保肉品庫存..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="settingNoticeContact">
+                        🤝 企業團訂與客製諮詢說明 (門市公告彈窗第 4 區塊)
+                    </label>
+                    <textarea id="settingNoticeContact" class="form-control" rows="3" placeholder="企業商務套餐、下午茶點心團購、野餐派對包，請私訊 IG 粉專..."></textarea>
                 </div>
 
                 <div class="form-group">

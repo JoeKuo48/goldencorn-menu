@@ -971,6 +971,15 @@
                     </div>
                 </div>
 
+                <!-- 主廚溫馨提醒 (StoreTip) -->
+                <div class="notice-section-box" id="noticeTipBox" style="display:none;">
+                    <div class="notice-section-title">
+                        [ 💡 主廚溫馨提醒 ]
+                    </div>
+                    <div class="notice-section-content" id="noticeTip" style="white-space:pre-wrap; color:#166534; background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0; font-weight:600; line-height:1.6;">
+                    </div>
+                </div>
+
                 <!-- 外送與優惠 -->
                 <div class="notice-section-box">
                     <div class="notice-section-title">
@@ -1159,6 +1168,12 @@
                 }
                 if (s.Address && document.getElementById("noticeAddress")) {
                     document.getElementById("noticeAddress").textContent = s.Address;
+                }
+                if (s.StoreTip && s.StoreTip.trim()) {
+                    if (document.getElementById("noticeTipBox")) document.getElementById("noticeTipBox").style.display = "block";
+                    if (document.getElementById("noticeTip")) document.getElementById("noticeTip").innerHTML = s.StoreTip.replace(/\n/g, '<br>');
+                } else if (document.getElementById("noticeTipBox")) {
+                    document.getElementById("noticeTipBox").style.display = "none";
                 }
                 if (s.NoticeDelivery && document.getElementById("noticeDelivery")) {
                     document.getElementById("noticeDelivery").innerHTML = s.NoticeDelivery.replace(/\n/g, '<br>');
