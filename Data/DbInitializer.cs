@@ -205,8 +205,8 @@ namespace GoldenCornOrder.Data
             UpsertMenuItem(catPlates.Id, "卡津風味烤魚", "Cajun Grilled Fish", 230, "卡津為路易斯安那州的經典風味，多種香草香料混合，略帶煙燻味及溫和草本香氣。", "有去逛漁港才有(可提前預訂)", true, 4, "/img/2.jpg", true);
             UpsertMenuItem(catPlates.Id, "德州燻烤牛胸肉", "Texas Smoked Brisket", 250, "冠軍香料柴火48小時熟成，不一定每天都有。", "主廚推薦", true, 5, "/img/2.jpg", true);
             UpsertMenuItem(catPlates.Id, "萊姆炭香鮭魚菲力", "Grilled Lime Salmon Fillet", 240, "蚵仔寮直送整條鮭魚只取菲力，厚切鮭魚丁口感飽滿, 外層帶有淡淡煙燻香氣。", "海港直送", true, 6, "/img/2.jpg", true);
-            UpsertMenuItem(catPlates.Id, "克里奧萊姆鮮蝦", "Creole Shrimp", 220, "南方香料醃製, 淡淡地萊姆清香，大火炙燒脆彈鮮甜。", "主廚手剝去腸泥", true, 7, "/img/2.jpg", true);
-            UpsertMenuItem(catPlates.Id, "美式酸奶炸雞柳條", "Chicken Tender with Yogurt", 190, "住太遠不要點，炸物不夠脆主廚會傷心。", "人氣", false, 8, "/img/4.jpg", true);
+            UpsertMenuItem(catPlates.Id, "克里奧萊姆鮮蝦", "Creole Shrimp", 230, "南方香料醃製, 淡淡地萊姆清香，大火炙燒脆彈鮮甜。", "主廚手剝去腸泥", true, 7, "/img/2.jpg", true);
+            UpsertMenuItem(catPlates.Id, "美式酸奶炸雞柳條", "Chicken Tender with Yogurt", 190, "住太遠不要點，炸物不夠脆主廚會傷心。", "人氣", true, 8, "/img/4.jpg", true);
 
             // 2. 美墨小點（SNACKS）
             UpsertMenuItem(catSnacks.Id, "海鹽經典美式細薯", "Classic American Fries with Sea Salt", 70, "鞋帶細薯，通常在餐酒館才吃得到。", null, false, 1, "/img/4.jpg", true);
@@ -229,22 +229,6 @@ namespace GoldenCornOrder.Data
             UpsertMenuItem(catSauces.Id, "卡羅萊納BBQ燒烤醬", "Carolina BBQ Sauce", 15, "經典道地濃郁酸甜，胡椒的微微辣是大人的口味。", null, false, 1, "/img/6.jpg", true);
             UpsertMenuItem(catSauces.Id, "燒烤酸辣醬", "BBQ Spicy Sauce", 25, "煙燻感的酸甜辣醬，偏酸微辣。", null, false, 2, "/img/2.jpg", true);
             UpsertMenuItem(catSauces.Id, "蒔蘿優格醬", "Ranch Sauce", 15, "蒔蘿與優格特調，簡單清爽什麼都能沾。", null, false, 3, "/img/6.jpg", true);
-
-            // 確保「美式酸奶炸雞柳」位於美式餐盤，且不需選配料
-            var chickenItems = context.MenuItems
-                .Include(m => m.OptionGroups)
-                .Where(m => m.Name.Contains("炸雞柳") && m.Name.Contains("酸奶"))
-                .ToList();
-            foreach (var ci in chickenItems)
-            {
-                ci.CategoryId = catPlates.Id;
-                ci.RequiresPlateSides = false;
-                if (ci.OptionGroups != null && ci.OptionGroups.Any())
-                {
-                    context.OptionGroups.RemoveRange(ci.OptionGroups);
-                }
-            }
-            context.SaveChanges();
 
             // Clean up obsolete menu items that were renamed or removed
             var validNames = new HashSet<string>
@@ -295,6 +279,28 @@ namespace GoldenCornOrder.Data
                 if (soldOutOptions.Contains(opt.Name))
                 {
                     opt.IsAvailable = false;
+                }
+            }
+
+            // Explicitly ensure user requirements:
+            // 1. 克里奧鮮蝦 230元
+            var shrimpItem = context.MenuItems.FirstOrDefault(m => m.Name.Contains("鮮蝦"));
+            if (shrimpItem != null)
+            {
+                shrimpItem.Price = 230;
+            }
+
+            // 2. 美式酸奶炸雞柳條屬於美式餐盤 所以要有配料的選擇
+            var chickenTenderItem = context.MenuItems
+                .Include(m => m.OptionGroups)
+                    .ThenInclude(g => g.Options)
+                .FirstOrDefault(m => m.Name.Contains("炸雞柳") && m.CategoryId == catPlates.Id);
+            if (chickenTenderItem != null)
+            {
+                chickenTenderItem.RequiresPlateSides = true;
+                if (chickenTenderItem.OptionGroups == null || !chickenTenderItem.OptionGroups.Any())
+                {
+                    chickenTenderItem.OptionGroups = CreatePlateOptionGroups();
                 }
             }
 
@@ -400,9 +406,11 @@ namespace GoldenCornOrder.Data
                 ["PartyInquiryPhoneLink"] = ("tel:0910237105", "電話洽詢連結"),
                 ["LineChannelAccessToken"] = ("fq8y2BxxQgc1HTk3FjLehq6vwk5o7w/qUPaq13SBOawDme5JPpmEJEiSnqIA/j761V4xWEiRY3Z+WmxAIGjfF77lx3JZjr6Alnz+jjHBdyt8qqqFpluvsIKWPbKk0MqvfugY1K22JL84gV4ET7bdRAdB04t89/1O/w1cDnyilFU=", "LINE Bot Channel Access Token"),
                 ["LineAdminUserId"] = ("", "老闆的 LINE User ID"),
-                ["PopupNoticeEnabled"] = ("true", "進站彈窗開關"),
-                ["PopupNoticeTitle"] = ("🚨 門市臨時公休公告", "進站彈窗標題"),
-                ["PopupNoticeContent"] = ("親愛的顧客您好：\n十月底因主廚有外燴任務，會進行燻肉及其他備料行程，將暫停供應餐點。十一月才會恢復上線唷！\n敬請見諒，如有任何問題歡迎私訊官方LINE，感謝大家的體諒與支持；）", "進站彈窗內容")
+                ["PopupNoticeEnabled"] = ("false", "進站彈窗開關"),
+                ["PopupNoticeTitle"] = ("🚨 門市公告", "進站彈窗標題"),
+                ["PopupNoticeContent"] = ("超級感謝各位的喜愛！能夠親自來一趟都市裡的綠洲取餐，希望每個人都能緩下腳步，並在等待餐點時吸收一點芬多精XD 大多數時間皆為一人作業，若有久候請多多包涵，Golden Corn會持續進步的！進到田裡若沒有看到工作人員，可以敲敲黃色前門或白色窗戶，再次感謝各～～～", "進站彈窗內容"),
+                ["SlotAmountLimit"] = ("2000", "每30分鐘訂單金額上限"),
+                ["BusyEstimatedMinutes"] = ("45", "廚房爆單預估製作分鐘數")
             };
 
             foreach (var kvp in defaultSettings)
