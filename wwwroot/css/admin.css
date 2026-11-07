@@ -124,6 +124,32 @@ body {
   gap: 12px;
 }
 
+.btn-busy-mode {
+  background: rgba(217, 119, 6, 0.25);
+  border: 1px solid #f59e0b;
+  color: #fbbf24;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-busy-mode:hover {
+  background: rgba(217, 119, 6, 0.4);
+}
+
+.btn-busy-mode.active {
+  background: #dc2626 !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+  animation: live-blink 1.8s infinite;
+}
+
 .btn-audio-toggle {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -788,3 +814,141 @@ input:checked + .slider:before {
     min-width: 600px;
   }
 }
+
+/* ================= KDS Date Toolbar & Daily Grouping ================= */
+.kds-date-toolbar {
+  background: #ffffff;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.kds-date-toolbar-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gc-green);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kds-date-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.kds-date-pill {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 5px 13px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kds-date-pill:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.kds-date-pill.active {
+  background: var(--gc-green);
+  border-color: var(--gc-green);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(18, 37, 24, 0.25);
+}
+
+.kds-date-group-card {
+  grid-column: 1 / -1;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 18px 20px 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.kds-date-group-card.today {
+  background: #f8fafc;
+  border-color: #059669;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.08);
+}
+
+.kds-date-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.kds-date-title-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.kds-date-group-badge {
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.kds-date-group-badge.today {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.kds-date-group-text {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.kds-date-group-count {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.kds-date-group-subtotal {
+  font-size: 13.5px;
+  color: #334155;
+  background: #f1f5f9;
+  padding: 5px 12px;
+  border-radius: 8px;
+}
+
+.kds-date-group-subtotal strong {
+  font-size: 15.5px;
+  color: #b45309;
+}
+
+.kds-cards-subgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+
