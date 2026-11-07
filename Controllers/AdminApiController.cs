@@ -632,27 +632,163 @@ namespace GoldenCornOrder.Controllers
 
         // GET: api/admin/export-orders
         [HttpGet("export-orders")]
-        public async Task<IActionResult> ExportOrders()
+        public async Task<IActionResult> ExportOrders([FromQuery] string? format = "csv")
         {
             var orders = await _context.Orders
                 .Include(o => o.Items)
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
 
+            var isTsv = string.Equals(format, "tsv", StringComparison.OrdinalIgnoreCase);
+            var delimiter = isTsv ? "\t" : ",";
             var sb = new StringBuilder();
-            sb.AppendLine("訂單編號,下單時間(台灣時區),顧客姓名,電話,用餐方式,桌號,預約時間,狀態,付款方式,付款狀態,轉帳後五碼,金額,品項明細,備註");
 
-            foreach (var o in orders)
+            string EscapeField(string? text)
             {
-                var displayTime = o.CreatedAt.Kind == DateTimeKind.Utc ? o.CreatedAt.AddHours(8) : o.CreatedAt;
-                var itemsSummary = string.Join("； ", o.Items.Select(i => $"{i.MenuItemName} x{i.Quantity} ({i.SelectedOptionsSummary})"));
-                var row = $"\"{o.OrderNumber}\",\"{displayTime:yyyy/MM/dd HH:mm}\",\"{o.CustomerName}\",\"{o.CustomerPhone}\",\"{o.DiningType}\",\"{o.TableNumber}\",\"{o.PickupTime}\",\"{o.OrderStatus}\",\"{o.PaymentMethod}\",\"{o.PaymentStatus}\",\"{o.TransferLast5}\",{o.TotalAmount},\"{itemsSummary.Replace("\"", "\"\"")}\",\"{o.CustomerNote?.Replace("\"", "\"\"")}\"";
-                sb.AppendLine(row);
+                if (string.IsNullOrEmpty(text)) return isTsv ? "" : "\"\"";
+                if (isTsv)
+                {
+                    return text.Replace("\t", " ").Replace("\r", " ").Replace("\n", " ");
+                }
+                return $"\"{text.Replace("\"", "\"\"")}\"";
+            }
+
+            // Headers
+            var headers = new[]
+            {
+                "日期分組",
+                "訂單編號",
+                "下單時間(台灣時區)",
+                "顧客姓名",
+                "電話",
+                "用餐方式",
+                "桌號",
+                "預約取餐時間",
+                "狀態",
+                "付款方式",
+                "付款狀態",
+                "轉帳後五碼",
+                "訂單金額",
+                "品項明細",
+                "備註"
+            };
+
+            sb.AppendLine(string.Join(delimiter, headers.Select(EscapeField)));
+
+            // Group by Taiwan Date
+            var groupedOrders = orders
+                .GroupBy(o => (o.CreatedAt.Kind == DateTimeKind.Utc ? o.CreatedAt.AddHours(8) : o.CreatedAt).Date)
+                .OrderByDescending(g => g.Key);
+
+            decimal grandTotal = 0;
+            int totalOrdersCount = 0;
+
+            foreach (var group in groupedOrders)
+            {
+                var groupDate = group.Key;
+                var dayOfWeekStr = GetTaiwanDayOfWeek(groupDate.DayOfWeek);
+                var dateHeaderLabel = $"{groupDate:yyyy/MM/dd} ({dayOfWeekStr})";
+
+                decimal dayTotal = 0;
+                int dayCount = 0;
+
+                foreach (var o in group.OrderByDescending(x => x.CreatedAt))
+                {
+                    var displayTime = o.CreatedAt.Kind == DateTimeKind.Utc ? o.CreatedAt.AddHours(8) : o.CreatedAt;
+                    var diningTypeText = o.DiningType == "DineIn" ? "內用" : "外帶自取";
+                    var itemsSummary = string.Join("； ", o.Items.Select(i => $"{i.MenuItemName} x{i.Quantity} ({i.SelectedOptionsSummary})"));
+
+                    dayTotal += o.TotalAmount;
+                    dayCount++;
+
+                    var row = new[]
+                    {
+                        dateHeaderLabel,
+                        o.OrderNumber,
+                        displayTime.ToString("yyyy/MM/dd HH:mm"),
+                        o.CustomerName,
+                        o.CustomerPhone,
+                        diningTypeText,
+                        o.TableNumber ?? "",
+                        o.PickupTime ?? "",
+                        o.OrderStatus,
+                        o.PaymentMethod,
+                        o.PaymentStatus,
+                        o.TransferLast5 ?? "",
+                        o.TotalAmount.ToString(),
+                        itemsSummary,
+                        o.CustomerNote ?? ""
+                    };
+
+                    sb.AppendLine(string.Join(delimiter, row.Select(EscapeField)));
+                }
+
+                grandTotal += dayTotal;
+                totalOrdersCount += dayCount;
+
+                // Daily Subtotal Row
+                var subtotalRow = new[]
+                {
+                    $"【{dateHeaderLabel} 當日小計】",
+                    $"共 {dayCount} 筆訂單",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "當日營收：",
+                    dayTotal.ToString(),
+                    "",
+                    ""
+                };
+                sb.AppendLine(string.Join(delimiter, subtotalRow.Select(EscapeField)));
+            }
+
+            // Grand Total Row
+            var grandTotalRow = new[]
+            {
+                "【全期歷史總計】",
+                $"共 {totalOrdersCount} 筆訂單",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "歷史總營收：",
+                grandTotal.ToString(),
+                "",
+                ""
+            };
+            sb.AppendLine(string.Join(delimiter, grandTotalRow.Select(EscapeField)));
+
+            if (isTsv)
+            {
+                return Content(sb.ToString(), "text/tab-separated-values; charset=utf-8");
             }
 
             var bytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
             return File(bytes, "text/csv; charset=utf-8", $"GoldenCorn_Orders_{TaiwanTimeHelper.Now:yyyyMMdd_HHmm}.csv");
         }
+
+        private static string GetTaiwanDayOfWeek(DayOfWeek dow) => dow switch
+        {
+            DayOfWeek.Sunday => "週日",
+            DayOfWeek.Monday => "週一",
+            DayOfWeek.Tuesday => "週二",
+            DayOfWeek.Wednesday => "週三",
+            DayOfWeek.Thursday => "週四",
+            DayOfWeek.Friday => "週五",
+            DayOfWeek.Saturday => "週六",
+            _ => ""
+        };
 
         public class LineTestRequestDto
         {
