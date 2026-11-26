@@ -3,6 +3,7 @@
  */
 
 let allOrders = [];
+let allKdsOrders = [];
 let alertedPendingOrderIds = new Set();
 let lastReminderChimeTime = 0;
 let isAudioAlertEnabled = true;
@@ -405,6 +406,7 @@ async function loadKdsOrders() {
         }
 
         allOrders = displayOrders;
+        allKdsOrders = displayOrders;
         renderKdsCards(displayOrders);
         updateKdsBadgeCounts();
 
@@ -793,15 +795,19 @@ function renderKdsActionButtons(order) {
 let currentNotifyOrder = null;
 
 async function handleNotifyPickup(orderId) {
-    const order = (allKdsOrders || []).find(o => o.id === orderId);
-    await updateOrderStatus(orderId, 'Ready');
-    if (order) {
-        openLineNotifyModal(orderId);
+    try {
+        await updateOrderStatus(orderId, 'Ready');
+    } catch (err) {
+        console.error("更新訂單為 Ready 狀態失敗:", err);
     }
+    openLineNotifyModal(orderId);
 }
 
 function openLineNotifyModal(orderId) {
-    const order = (allKdsOrders || []).find(o => o.id === orderId);
+    const list = (typeof allOrders !== "undefined" && Array.isArray(allOrders) && allOrders.length > 0) 
+        ? allOrders 
+        : (typeof allKdsOrders !== "undefined" && Array.isArray(allKdsOrders) ? allKdsOrders : []);
+    const order = list.find(o => o.id === orderId);
     if (!order) return;
     currentNotifyOrder = order;
 
