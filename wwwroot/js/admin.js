@@ -776,10 +776,11 @@ function renderKdsActionButtons(order) {
         `;
     } else if (order.orderStatus === "Preparing") {
         return `
-            <button class="btn-kds-action ready" onclick="updateOrderStatus(${order.id}, 'Ready')">通知取餐 ➔</button>
+            <button class="btn-kds-action ready" onclick="handleNotifyPickup(${order.id})">通知取餐 ➔</button>
         `;
     } else if (order.orderStatus === "Ready") {
         return `
+            <button class="btn-kds-action ready" style="background:#06C755; color:#fff;" onclick="openLineNotifyModal(${order.id})">📲 LINE 顧客取餐</button>
             <button class="btn-kds-action complete" onclick="updateOrderStatus(${order.id}, 'Completed')">完成訂單 ✓</button>
         `;
     } else {
@@ -787,6 +788,75 @@ function renderKdsActionButtons(order) {
             <span style="font-size:12px; font-weight:700; color:var(--admin-muted);">${order.orderStatus}</span>
         `;
     }
+}
+
+let currentNotifyOrder = null;
+
+async function handleNotifyPickup(orderId) {
+    const order = (allKdsOrders || []).find(o => o.id === orderId);
+    await updateOrderStatus(orderId, 'Ready');
+    if (order) {
+        openLineNotifyModal(orderId);
+    }
+}
+
+function openLineNotifyModal(orderId) {
+    const order = (allKdsOrders || []).find(o => o.id === orderId);
+    if (!order) return;
+    currentNotifyOrder = order;
+
+    const infoBox = document.getElementById("lineNotifyOrderInfo");
+    const diningText = order.diningType === "DineIn" ? `🍽️ 內用 (桌號: ${order.tableNumber || '現場安排'})` : `🥡 外帶自取`;
+    
+    if (infoBox) {
+        infoBox.innerHTML = `
+            <div><strong>📋 訂單編號：</strong>#${order.orderNumber}</div>
+            <div><strong>👤 顧客姓名：</strong>${order.customerName} (${order.customerPhone})</div>
+            <div><strong>🍽️ 用餐方式：</strong>${diningText}</div>
+            <div><strong>⏰ 預約取餐：</strong>${order.pickupTime || '現場取餐'}</div>
+            <div><strong>💰 訂單金額：</strong>NT$ ${order.totalAmount} (${order.paymentStatus === 'Paid' ? '已付款' : '未付款'})</div>
+        `;
+    }
+
+    const pickupText = `【Golden Corn 慢靈魂 取餐通知】\n` +
+        `${order.customerName} 您好！您的餐點（單號：${order.orderNumber}）已經製作完成、熱騰騰出爐囉！🎉\n` +
+        `請憑此訊息或單號前往門市取餐，感謝您的耐心等候！\n` +
+        `📍 門市地址：高雄市楠梓區金富街85-1號\n` +
+        `📞 門市電話：0910-237-105`;
+
+    const lineBtn = document.getElementById("btnOpenLineChat");
+    if (lineBtn) {
+        lineBtn.href = `https://line.me/R/oaMessage/@260nqbpr/?${encodeURIComponent(pickupText)}`;
+    }
+
+    const callBtn = document.getElementById("btnCallCustomer");
+    if (callBtn) {
+        callBtn.href = `tel:${order.customerPhone ? order.customerPhone.replace(/[^0-9]/g, '') : ''}`;
+    }
+
+    const modal = document.getElementById("lineNotifyModalBackdrop");
+    if (modal) modal.classList.add("show");
+}
+
+function closeLineNotifyModal() {
+    const modal = document.getElementById("lineNotifyModalBackdrop");
+    if (modal) modal.classList.remove("show");
+}
+
+function copyPickupMessageToClipboard() {
+    if (!currentNotifyOrder) return;
+    const order = currentNotifyOrder;
+    const pickupText = `【Golden Corn 慢靈魂 取餐通知】\n` +
+        `${order.customerName} 您好！您的餐點（單號：${order.orderNumber}）已經製作完成、熱騰騰出爐囉！🎉\n` +
+        `請憑此訊息或單號前往門市取餐，感謝您的耐心等候！\n` +
+        `📍 門市地址：高雄市楠梓區金富街85-1號\n` +
+        `📞 門市電話：0910-237-105`;
+
+    navigator.clipboard.writeText(pickupText).then(() => {
+        showAdminToast("📋 已複製取餐通知內容！可直接至 LINE 貼上發送給客人");
+    }).catch(err => {
+        showAdminToast("複製失敗，請手動複製");
+    });
 }
 
 async function updateOrderStatus(orderId, nextStatus) {
@@ -798,7 +868,11 @@ async function updateOrderStatus(orderId, nextStatus) {
         });
 
         if (res.ok) {
-            showAdminToast(`訂單狀態已更新為：${getStatusName(nextStatus)}`);
+            if (nextStatus === "Ready") {
+                showAdminToast("🔔 訂單狀態已更新為【可取餐】，已連動發送 LINE 官方取餐通知！");
+            } else {
+                showAdminToast(`訂單狀態已更新為：${getStatusName(nextStatus)}`);
+            }
             loadKdsOrders();
             loadAdminStats();
         } else {
@@ -1617,7 +1691,6 @@ async function loadAdminSettings() {
         if (document.getElementById("settingHours")) document.getElementById("settingHours").value = settings.BusinessHours || "";
         if (document.getElementById("settingAnnouncement")) document.getElementById("settingAnnouncement").value = settings.Announcement || "";
         if (document.getElementById("settingIsOpen")) document.getElementById("settingIsOpen").value = settings.IsOpen || "true";
-        if (document.getElementById("settingStoreTip")) document.getElementById("settingStoreTip").value = settings.StoreTip || "";
         if (document.getElementById("settingNoticeDelivery")) document.getElementById("settingNoticeDelivery").value = settings.NoticeDelivery || "";
         if (document.getElementById("settingNoticeContact")) document.getElementById("settingNoticeContact").value = settings.NoticeContact || "";
         if (document.getElementById("settingBankCode")) document.getElementById("settingBankCode").value = settings.BankCode || "";
@@ -1702,7 +1775,6 @@ async function saveAdminSettings() {
         BusinessHours: document.getElementById("settingHours")?.value || "",
         Announcement: document.getElementById("settingAnnouncement")?.value || "",
         IsOpen: document.getElementById("settingIsOpen")?.value || "true",
-        StoreTip: document.getElementById("settingStoreTip")?.value || "",
         NoticeDelivery: document.getElementById("settingNoticeDelivery")?.value || document.getElementById("cmsNoticeDelivery")?.value || "",
         NoticeContact: document.getElementById("settingNoticeContact")?.value || document.getElementById("cmsNoticeContact")?.value || "",
         BankCode: document.getElementById("settingBankCode")?.value || "",
@@ -1712,14 +1784,19 @@ async function saveAdminSettings() {
         LineServiceUrl: document.getElementById("settingLineServiceUrl")?.value || "https://line.me/R/ti/p/@260nqbpr",
         IgServiceUrl: document.getElementById("settingIgServiceUrl")?.value || "https://www.instagram.com/goldencorn_diner/",
         AdminPin: document.getElementById("settingAdminPin")?.value || "Hawking",
-        LineChannelAccessToken: document.getElementById("settingLineChannelAccessToken")?.value?.trim() || "",
-        LineAdminUserId: document.getElementById("settingLineAdminUserId")?.value?.trim() || "",
+        LineChannelAccessToken: document.getElementById("settingLineChannelAccessToken")?.value?.trim() || undefined,
+        LineAdminUserId: document.getElementById("settingLineAdminUserId")?.value?.trim() || undefined,
         PopupNoticeEnabled: document.getElementById("settingPopupNoticeEnabled")?.value || "false",
         PopupNoticeTitle: document.getElementById("settingPopupNoticeTitle")?.value || "🚨 門市臨時公休公告",
         PopupNoticeContent: document.getElementById("settingPopupNoticeContent")?.value || "",
-        SlotAmountLimit: document.getElementById("settingSlotAmountLimit")?.value || "2000",
-        BusyEstimatedMinutes: document.getElementById("settingBusyEstimatedMinutes")?.value || "45"
+        SlotAmountLimit: document.getElementById("settingSlotAmountLimit")?.value || "3000",
+        BusyEstimatedMinutes: document.getElementById("settingBusyEstimatedMinutes")?.value || "30"
     };
+
+    // 移除未填寫的 undefined 欄位，避免覆蓋已設定之 LINE 金鑰
+    Object.keys(payload).forEach(key => {
+        if (payload[key] === undefined) delete payload[key];
+    });
 
     try {
         const res = await fetch("/api/settings", {

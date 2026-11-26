@@ -77,6 +77,50 @@ namespace GoldenCornOrder.Services
             }
         }
 
+        public async Task SendOrderReadyAlertAsync(Order order)
+        {
+            try
+            {
+                var tokenSetting = await _context.StoreSettings.FirstOrDefaultAsync(s => s.Key == "LineChannelAccessToken");
+                var userIdSetting = await _context.StoreSettings.FirstOrDefaultAsync(s => s.Key == "LineAdminUserId");
+
+                var token = tokenSetting?.Value?.Trim();
+                var userId = userIdSetting?.Value?.Trim();
+
+                if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(userId))
+                {
+                    return;
+                }
+
+                var itemsText = string.Join("\n", order.Items.Select(i =>
+                {
+                    var opt = string.IsNullOrWhiteSpace(i.SelectedOptionsSummary) ? "" : $"\n  配料: {i.SelectedOptionsSummary}";
+                    var note = string.IsNullOrWhiteSpace(i.ItemNote) ? "" : $"\n  備註: {i.ItemNote}";
+                    return $"• {i.MenuItemName} x{i.Quantity} (${i.SubTotal:0}){opt}{note}";
+                }));
+
+                var diningTypeText = order.DiningType == "DineIn" ? $"🍽️ 內用 (桌號: {order.TableNumber})" : "🥡 外帶自取";
+
+                var message = $"🔔【Golden Corn 取餐通知已發出】\n" +
+                              $"━━━━━━━━━━━━━━━━\n" +
+                              $"📋 單號：{order.OrderNumber}\n" +
+                              $"👤 顧客：{order.CustomerName} ({order.CustomerPhone})\n" +
+                              $"🍽️ 方式：{diningTypeText}\n" +
+                              $"⏰ 取餐時間：{order.PickupTime}\n" +
+                              $"💰 金額：${order.TotalAmount:0}\n" +
+                              $"━━━━━━━━━━━━━━━━\n" +
+                              $"🍖 訂購餐點：\n{itemsText}\n" +
+                              $"━━━━━━━━━━━━━━━━\n" +
+                              $"✅ 狀態：餐點已出爐！已通知顧客前來取餐。";
+
+                await PushMessageToLineAsync(token, userId, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send LINE order ready notification");
+            }
+        }
+
         public async Task<(bool Success, string Message)> SendTestMessageAsync(string? testToken = null, string? testUserId = null)
         {
             try

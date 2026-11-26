@@ -115,6 +115,9 @@
                     <p style="font-size:13px; color:var(--admin-muted); margin-top:2px;">可隨時新增、修改餐點品名、價格、分類，並一鍵切換供應/沽清狀態</p>
                 </div>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <a href="/menu-sheet.html" target="_blank" class="btn-primary-admin" style="background:#c69214; border-color:#c69214; text-decoration:none;" title="查看與下載適用於 Google 商家的一頁式高畫質菜單海報">
+                        <span>📄</span> Google 商家一頁式菜單
+                    </a>
                     <button type="button" class="btn-primary-admin" onclick="openCreateItemModal()" style="background:#16a34a; border-color:#16a34a;">
                         <span>➕</span> 新增餐點品項
                     </button>
@@ -383,14 +386,6 @@
                 <div class="form-group">
                     <label class="form-label" for="settingHours">營業時間與預訂說明</label>
                     <textarea id="settingHours" class="form-control" rows="3">週四至週六 16:30-22:30 《週日至週三僅接受線上提前預點》</textarea>
-                </div>
-
-                <!-- Store Tip (The Lightbulb notice) -->
-                <div class="form-group">
-                    <label class="form-label" for="settingStoreTip">
-                        💡 門市資訊底部溫馨提醒 (門市公告彈窗與菜單溫馨提醒)
-                    </label>
-                    <textarea id="settingStoreTip" class="form-control" rows="4" placeholder="填寫溫馨提醒（例如：一人作業若有久候請多包涵...）"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -1173,6 +1168,37 @@
                     關閉
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- LINE 取餐通知彈窗 -->
+    <div class="modal-backdrop" id="lineNotifyModalBackdrop" onclick="if(event.target===this) closeLineNotifyModal()">
+        <div class="modal-card" style="max-width: 480px; text-align: center; padding: 28px 24px;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🔔</div>
+            <h3 style="font-size: 20px; font-weight: 800; color: #182e20; margin-bottom: 8px;">餐點已出爐 · 通知顧客取餐</h3>
+            <p style="font-size: 13.5px; color: #64748b; line-height: 1.6; margin-bottom: 16px;">
+                系統已自動更新狀態為【可取餐】，並已推播至 LINE 官方！<br>您可一鍵開啟 LINE 官方聊天室發送或複製取餐訊息：
+            </p>
+            
+            <div id="lineNotifyOrderInfo" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; text-align: left; margin-bottom: 18px; font-size: 13px; line-height: 1.8; color: #334155;">
+                <!-- 動態注入訂單明細 -->
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a id="btnOpenLineChat" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #06C755; color: #fff; font-weight: 800; font-size: 15px; padding: 13px 18px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 12px rgba(6,199,85,0.25);">
+                    <span>🟢 開啟官方 LINE 聊天室發送</span>
+                </a>
+                <button type="button" class="btn btn-secondary" onclick="copyPickupMessageToClipboard()" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 700; padding: 12px 18px; border-radius: 10px; cursor: pointer;">
+                    📋 一鍵複製取餐通知內容
+                </button>
+                <a id="btnCallCustomer" href="#" style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #0284c7; font-size: 13.5px; font-weight: 700; padding: 8px; text-decoration: none;">
+                    📞 致電顧客
+                </a>
+            </div>
+
+            <button type="button" style="margin-top: 14px; background: transparent; color: #64748b; border: none; font-size: 13px; cursor: pointer; text-decoration: underline;" onclick="closeLineNotifyModal()">
+                關閉視窗
+            </button>
         </div>
     </div>
 

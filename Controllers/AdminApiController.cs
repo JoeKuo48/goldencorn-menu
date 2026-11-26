@@ -136,6 +136,28 @@ namespace GoldenCornOrder.Controllers
 
             await _context.SaveChangesAsync();
 
+            // 連動 LINE 官方推播通知：當訂單狀態變更為 Ready (通知取餐/可取餐)
+            if (dto.Status == "Ready" && oldStatus != "Ready")
+            {
+                var orderWithItems = await _context.Orders
+                    .Include(o => o.Items)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+                if (orderWithItems != null)
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _lineService.SendOrderReadyAlertAsync(orderWithItems);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error sending LINE ready alert: {ex.Message}");
+                        }
+                    });
+                }
+            }
+
             return Ok(new { success = true, order.Id, order.OrderNumber, order.OrderStatus });
         }
 

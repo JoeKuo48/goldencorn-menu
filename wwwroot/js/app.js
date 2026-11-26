@@ -76,9 +76,6 @@ function renderStoreSettings() {
     if (document.getElementById("storeInfoHours") && storeSettings.BusinessHours) {
         document.getElementById("storeInfoHours").textContent = storeSettings.BusinessHours;
     }
-    if (document.getElementById("storeInfoTip") && storeSettings.StoreTip) {
-        document.getElementById("storeInfoTip").textContent = storeSettings.StoreTip;
-    }
 
     // Entrance Popup Notice (臨時公休 / 重要進站公告)
     if (storeSettings.PopupNoticeEnabled === "true" || storeSettings.PopupNoticeEnabled === true) {
@@ -186,7 +183,6 @@ function renderMenuItems(filterCatId = "all", searchQuery = "") {
         if (cat.name.includes("美式餐盤")) {
             html += `
                 <div class="plate-included-banner">
-                    <span class="plate-included-icon">🥗</span>
                     <div>
                         <strong>美式餐盤皆附：</strong>嫩葉生菜 + 美式自選配料（5選1，可於點餐時挑選或加購小米飯）
                     </div>
@@ -411,7 +407,7 @@ function renderOptionGroupsInModal(item) {
     if (item.requiresPlateSides || (item.name && item.name.includes("排")) || (item.name && item.name.includes("牛胸肉"))) {
         html += `
             <div style="background:#eef3ec; padding:10px 12px; border-radius:8px; font-size:13px; color:var(--gc-green-dark); margin-bottom:14px; display:flex; align-items:center; gap:6px;">
-                <span>🥗</span> <strong>標配：</strong>美式餐盤皆附一份【嫩葉生菜】
+                <strong>標配：</strong>美式餐盤皆附一份【嫩葉生菜】
             </div>
         `;
     }

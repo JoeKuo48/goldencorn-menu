@@ -41,6 +41,12 @@ namespace GoldenCornOrder.Controllers
 
             foreach (var kvp in updates)
             {
+                // 保護 LINE 金鑰與管理員 ID：若傳入為空白則保留原值，絕不被空字串清空
+                if ((kvp.Key == "LineChannelAccessToken" || kvp.Key == "LineAdminUserId") && string.IsNullOrWhiteSpace(kvp.Value))
+                {
+                    continue;
+                }
+
                 var setting = await _context.StoreSettings.FirstOrDefaultAsync(s => s.Key == kvp.Key);
                 if (setting != null)
                 {

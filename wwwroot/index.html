@@ -931,8 +931,10 @@
         <div style="font-family: var(--font-display); font-size: 15px; letter-spacing: 2px; font-weight: 800;">GOLDEN CORN · 慢靈魂製造所</div>
         <div style="margin: 4px 0; letter-spacing: 1px;">後勁 Houjing · Texas Smoked BBQ &amp; Soul Food</div>
         <div style="font-size: 11px; margin-top: 6px; color: #78907e;">工作室地址：高雄市楠梓區金富街85-1號 · 0910237105</div>
-        <div style="margin-top: 12px;">
-            <a href="/admin.html">⚙️ 店家管理後台登入</a>
+        <div style="margin-top: 14px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+            <a href="/menu-sheet.html" target="_blank" style="color:#f7d268; font-weight:700; text-decoration:none;">📄 查看一頁式總覽菜單 (Google商家用)</a>
+            <span style="color:rgba(255,255,255,0.2);">|</span>
+            <a href="/admin.html" style="color:#94a3b8; text-decoration:none;">⚙️ 店家管理後台登入</a>
         </div>
     </footer>
 
@@ -968,15 +970,6 @@
                     </div>
                     <div class="notice-section-content" id="noticeAddress">
                         高雄市楠梓區金富街85-1號（外公的田間貨櫃工作室）
-                    </div>
-                </div>
-
-                <!-- 主廚溫馨提醒 (StoreTip) -->
-                <div class="notice-section-box" id="noticeTipBox" style="display:none;">
-                    <div class="notice-section-title">
-                        [ 💡 主廚溫馨提醒 ]
-                    </div>
-                    <div class="notice-section-content" id="noticeTip" style="white-space:pre-wrap; color:#166534; background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0; font-weight:600; line-height:1.6;">
                     </div>
                 </div>
 
@@ -1168,12 +1161,6 @@
                 }
                 if (s.Address && document.getElementById("noticeAddress")) {
                     document.getElementById("noticeAddress").textContent = s.Address;
-                }
-                if (s.StoreTip && s.StoreTip.trim()) {
-                    if (document.getElementById("noticeTipBox")) document.getElementById("noticeTipBox").style.display = "block";
-                    if (document.getElementById("noticeTip")) document.getElementById("noticeTip").innerHTML = s.StoreTip.replace(/\n/g, '<br>');
-                } else if (document.getElementById("noticeTipBox")) {
-                    document.getElementById("noticeTipBox").style.display = "none";
                 }
                 if (s.NoticeDelivery && document.getElementById("noticeDelivery")) {
                     document.getElementById("noticeDelivery").innerHTML = s.NoticeDelivery.replace(/\n/g, '<br>');
